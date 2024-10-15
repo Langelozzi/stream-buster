@@ -1,0 +1,53 @@
+{
+	"info": {
+		"_postman_id": "85462be9-3921-4aab-8776-f08834afdf32",
+		"name": "Category Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19412124"
+	},
+	"item": [
+		{
+			"name": "Get all categories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/category",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/category/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"category",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

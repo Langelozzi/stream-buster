@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "867315b3-b9e6-42ee-8762-b7bce1dea484",
+		"name": "usertag",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24345796"
+	},
+	"item": [
+		{
+			"name": "Get All usertags",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/usertag?includeDeleted=true&full=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"usertag"
+					],
+					"query": [
+						{
+							"key": "includeDeleted",
+							"value": "true"
+						},
+						{
+							"key": "full",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create usertag",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": 3,\r\n    \"tagId\": 1,\r\n    \"isOwner\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/usertag/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"usertag",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete usertag",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/usertag/3/1?softDelete=false",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"usertag",
+						"3",
+						"1"
+					],
+					"query": [
+						{
+							"key": "softDelete",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

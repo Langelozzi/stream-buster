@@ -1,0 +1,296 @@
+{
+	"info": {
+		"_postman_id": "7917927c-d8bb-4709-afaa-b78265e17824",
+		"name": "3800 backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24345796",
+		"_collection_link": "https://planetary-zodiac-52319.postman.co/workspace/New-Team-Workspace~b147e754-b2e5-479e-b59a-1752e3175559/collection/24345796-7917927c-d8bb-4709-afaa-b78265e17824?action=share&source=collection_link&creator=24345796"
+	},
+	"item": [
+		{
+			"name": "document search examples",
+			"item": [
+				{
+					"name": "File type and name",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Params\": [\n    {\n      \"Field\": \"FileName\",\n      \"Operator\": \"LIKE\",\n      \"Value\": \"%report%\"\n    },\n    {\n      \"Field\": \"FileType\",\n      \"Operator\": \"=\",\n      \"Value\": \".pdf\"\n    }\n  ],\n  \"LogicalOperator\": \"AND\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/document",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "credit value range",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Params\": [\n    {\n      \"Field\": \"CreditValue\",\n      \"Operator\": \">=\",\n      \"Value\": 10\n    },\n    {\n      \"Field\": \"CreditValue\",\n      \"Operator\": \"<=\",\n      \"Value\": 50\n    }\n  ],\n  \"LogicalOperator\": \"AND\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/document",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "date range",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Params\": [\n    {\n      \"Field\": \"UploadedAt\",\n      \"Operator\": \">=\",\n      \"Value\": \"2024-01-01T00:00:00Z\"\n    },\n    {\n      \"Field\": \"UploadedAt\",\n      \"Operator\": \"<\",\n      \"Value\": \"2024-02-01T00:00:00Z\"\n    }\n  ],\n  \"LogicalOperator\": \"AND\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/document",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleted and with tag",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Params\": [\n    {\n      \"Field\": \"UploadedAt\",\n      \"Operator\": \">=\",\n      \"Value\": \"2024-01-01T00:00:00Z\"\n    },\n    {\n      \"Field\": \"UploadedAt\",\n      \"Operator\": \"<\",\n      \"Value\": \"2024-02-01T00:00:00Z\"\n    }\n  ],\n  \"LogicalOperator\": \"AND\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/document",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "specific file tyupes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"Params\": [\n    {\n      \"Field\": \"FileType\",\n      \"Operator\": \"IN\",\n      \"Value\": [\"pdf\", \"docx\", \"xlsx\"]\n    }\n  ],\n  \"LogicalOperator\": \"AND\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/document",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"document"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "document test",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all docuemtn",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create document",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FileStorageUrl\": \"quickstart-sample-container2\",\n  \"CreditValue\": 0,\n  \"FileType\": \" pdf\",\n  \"FileName\": \"test.pdf\",\n  \"FilePath\": \"./test.pdf\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload document",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/camer/Documents/Bcit2024/3800/dropalltables.sql"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download Document",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

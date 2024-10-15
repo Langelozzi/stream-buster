@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "7d345da9-24a3-46d0-a836-ed74b61f1e3e",
+		"name": "DOCSWAP Tag CRUD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34882361"
+	},
+	"item": [
+		{
+			"name": "Get all Tags",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/tag/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tag",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tag by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/tag/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tag",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Tag",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"FileStorageURL\": \"http://example.com/document.pdf\",\r\n  \"CreditValue\": 10,\r\n  \"FileName\": \"document.pdf\",\r\n  \"FileType\": \"pdf\",\r\n  \"FileSize\": 1024,\r\n  \"FilePath\": \"/documents/\"\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Tags in Bulk",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"Name\": \"Finance\",\r\n        \"Description\": \"Financial documents and reports\"\r\n    },\r\n    {\r\n        \"Name\": \"Healthcare\",\r\n        \"Description\": \"Health-related documents\"\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/tag/bulk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tag",
+						"bulk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Tag by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "DELETE http://localhost:8080/api/v1/tag/2",
+					"protocol": "DELETE http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tag",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Tags in Bulk",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"ID\" : 1,\r\n        \"Name\": \"Education\",\r\n        \"Description\": \"Documents related to educational materials\"\r\n    },\r\n    {\r\n        \"ID\" : 3,\r\n        \"Name\": \"Healthcare\",\r\n        \"Description\": \"Health-related documents\"\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/tag/bulk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tag",
+						"bulk"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,210 @@
+{
+	"info": {
+		"_postman_id": "d135c851-a246-47ed-acc4-7f4e138a380e",
+		"name": "Docswap document",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34882361"
+	},
+	"item": [
+		{
+			"name": "Get Document By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Documents",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create document",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FileStorageUrl\": \"some/url/in/blob\",\n  \"CreditValue\": 0,\n  \"FileType\": \" pdf\",\n  \"FileName\": \"test.pdf\",\n  \"FilePath\": \"./test.pdf\", \n  \"UploadedAt\": \"1753-01-01 00:00:00\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Bulk Document",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"FileStorageURL\": \"http://example2.com/document.pdf\",\r\n    \"UploadedAt\": \"2024-05-15T13:49:49.740Z\",\r\n    \"CreditValue\": 20,\r\n    \"FileType\": \"pdf\",\r\n    \"FileName\": \"document3.pdf\",\r\n    \"FilePath\": \"/documents/\",\r\n    \"DeletedAt\": null\r\n  },\r\n  {\r\n    \"FileStorageURL\": \"http://example3.com/document.pdf\",\r\n    \"UploadedAt\": \"2024-05-15T13:59:28.347Z\",\r\n    \"CreditValue\": 20,\r\n    \"FileType\": \"pdf\",\r\n    \"FileName\": \"document4.pdf\",\r\n    \"FilePath\": \"/documents/\",\r\n    \"DeletedAt\": null\r\n  }\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/bulk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						"bulk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload document",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/camer/Documents/Bcit2024/3800/dropalltables.sql"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Document",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Bulk Document",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"ID\" : 2,\r\n    \"FileStorageURL\": \"http://example3.com/document.pdf\",\r\n    \"UploadedAt\": \"2024-05-15T13:49:49.740Z\",\r\n    \"CreditValue\": 20,\r\n    \"FileType\": \"pdf\",\r\n    \"FileName\": \"document3.pdf\",\r\n    \"FilePath\": \"/documents/\",\r\n    \"DeletedAt\": null\r\n  },\r\n  {\r\n    \"ID\" : 3,\r\n    \"FileStorageURL\": \"http://example4.com/document.pdf\",\r\n    \"UploadedAt\": \"2024-05-15T13:59:28.347Z\",\r\n    \"CreditValue\": 20,\r\n    \"FileType\": \"pdf\",\r\n    \"FileName\": \"document4.pdf\",\r\n    \"FilePath\": \"/documents/\",\r\n    \"DeletedAt\": null\r\n  }\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/document/bulk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"document",
+						"bulk"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

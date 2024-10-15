@@ -1,0 +1,1611 @@
+basePath: /api/v1
+definitions:
+  models.Category:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parent:
+        $ref: '#/definitions/models.Category'
+      parentID:
+        type: integer
+    type: object
+  models.Config:
+    properties:
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      value:
+        type: string
+    type: object
+  models.Document:
+    properties:
+      additionalDetails:
+        type: string
+      address:
+        type: string
+      approvedAt:
+        type: string
+      approvedBy:
+        type: integer
+      approvedByUser:
+        $ref: '#/definitions/models.User'
+      category:
+        $ref: '#/definitions/models.Category'
+      categoryID:
+        type: integer
+      creditValue:
+        type: integer
+      deletedAt:
+        type: string
+      description:
+        type: string
+      fileName:
+        type: string
+      filePath:
+        type: string
+      fileStorageURL:
+        type: string
+      fileType:
+        type: string
+      id:
+        type: integer
+      tags:
+        items:
+          $ref: '#/definitions/models.DocumentTag'
+        type: array
+      uploadedAt:
+        type: string
+    type: object
+  models.DocumentTag:
+    properties:
+      deletedAt:
+        type: string
+      document:
+        $ref: '#/definitions/models.Document'
+      documentID:
+        type: integer
+      tag:
+        $ref: '#/definitions/models.Tag'
+      tagID:
+        type: integer
+    type: object
+  models.Permission:
+    properties:
+      deletedAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/models.RolePermission'
+        type: array
+    type: object
+  models.Role:
+    properties:
+      deletedAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      permissions:
+        items:
+          $ref: '#/definitions/models.RolePermission'
+        type: array
+      users:
+        items:
+          $ref: '#/definitions/models.UserRole'
+        type: array
+    type: object
+  models.RolePermission:
+    properties:
+      deletedAt:
+        type: string
+      permission:
+        $ref: '#/definitions/models.Permission'
+      permissionID:
+        type: integer
+      role:
+        $ref: '#/definitions/models.Role'
+      roleID:
+        type: integer
+    type: object
+  models.Tag:
+    properties:
+      deletedAt:
+        type: string
+      description:
+        type: string
+      documents:
+        items:
+          $ref: '#/definitions/models.DocumentTag'
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.User:
+    properties:
+      authenticationType:
+        type: string
+      biography:
+        type: string
+      configs:
+        items:
+          $ref: '#/definitions/models.UserConfig'
+        type: array
+      deletedAt:
+        type: string
+      documents:
+        items:
+          $ref: '#/definitions/models.UserDocument'
+        type: array
+      email:
+        type: string
+      externalUserID:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/models.UserRole'
+        type: array
+      username:
+        type: string
+    type: object
+  models.UserConfig:
+    properties:
+      config:
+        $ref: '#/definitions/models.Config'
+      configID:
+        type: integer
+      deletedAt:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
+    type: object
+  models.UserDocument:
+    properties:
+      deletedAt:
+        type: string
+      document:
+        $ref: '#/definitions/models.Document'
+      documentID:
+        type: integer
+      isOwner:
+        type: boolean
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
+    type: object
+  models.UserRole:
+    properties:
+      deletedAt:
+        type: string
+      role:
+        $ref: '#/definitions/models.Role'
+      roleID:
+        type: integer
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
+    type: object
+  models.UserTag:
+    properties:
+      deletedAt:
+        type: string
+      tag:
+        $ref: '#/definitions/models.Tag'
+      tagID:
+        type: integer
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
+    type: object
+  search.LogicalOperator:
+    enum:
+    - AND
+    - OR
+    type: string
+    x-enum-varnames:
+    - And
+    - Or
+  search.Operator:
+    enum:
+    - =
+    - '!='
+    - '>'
+    - '>='
+    - <
+    - <=
+    - LIKE
+    - NOT LIKE
+    - IN
+    - NOT IN
+    - IS NULL
+    - IS NOT NULL
+    type: string
+    x-enum-varnames:
+    - Equal
+    - NotEqual
+    - GreaterThan
+    - GreaterThanOrEqual
+    - LessThan
+    - LessThanOrEqual
+    - Like
+    - NotLike
+    - In
+    - NotIn
+    - IsNull
+    - IsNotNull
+  search.Param:
+    properties:
+      AssociationForeignKey:
+        type: string
+      Field:
+        type: string
+      Operator:
+        $ref: '#/definitions/search.Operator'
+      Value: {}
+    type: object
+  search.Search:
+    properties:
+      LogicalOperator:
+        $ref: '#/definitions/search.LogicalOperator'
+      Params:
+        items:
+          $ref: '#/definitions/search.Param'
+        type: array
+    type: object
+externalDocs:
+  description: OpenAPI Specification for DOCSWAP
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@doc-swap.com
+    name: DOC-SWAP Support
+    url: http://www.doc-swap.com/support
+  description: DOCSWAP is a platform designed for realtors to efficiently share, manage,
+    and analyze documents on a neighborhood level. It enables realtors to make better
+    use of the content created for each listing by organizing it into a searchable
+    database that supports both uploads and downloads of documents. These documents
+    are categorized to facilitate market analysis, putting the power of data directly
+    into the hands of realtors and market analysts interested in housing information
+    in the lower mainland.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: DOCSWAP API
+  version: "1.0"
+paths:
+  /category:
+    get:
+      consumes:
+      - application/json
+      description: get all categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Category'
+            type: array
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all categories
+      tags:
+      - categories
+  /category/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get a category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Category'
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve a category
+      tags:
+      - categories
+  /category/search:
+    post:
+      consumes:
+      - application/json
+      description: Search for categories with the given search parameters
+      parameters:
+      - description: Search object
+        in: body
+        name: searchObj
+        required: true
+        schema:
+          $ref: '#/definitions/search.Search'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the category
+          schema:
+            items:
+              $ref: '#/definitions/models.Category'
+            type: array
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Search categories
+      tags:
+      - categories
+  /document/:
+    get:
+      description: Get all documents from the database
+      parameters:
+      - default: false
+        description: Set to true to include soft deleted documents
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full tag details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the document
+          schema:
+            items:
+              $ref: '#/definitions/models.Document'
+            type: array
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all documents
+      tags:
+      - documents
+    post:
+      consumes:
+      - application/json
+      description: Create multiple new document records
+      parameters:
+      - description: Document objects
+        in: body
+        name: document
+        required: true
+        schema:
+          $ref: '#/definitions/models.Document'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the document records
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to create document records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create multiple new document records
+      tags:
+      - documents
+  /document/{documentId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a document records via its ID
+      parameters:
+      - description: Document ID
+        in: path
+        name: documentID
+        required: true
+        type: integer
+      - default: true
+        description: Set too false to fully delete the document record
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the document record
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Failed to delete the document record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a document record
+      tags:
+      - documents
+  /document/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get document record by ID
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: false
+        description: Set to true to include soft deleted documents
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full tag details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the document
+          schema:
+            $ref: '#/definitions/models.Document'
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve document record
+      tags:
+      - documents
+  /document/bulk:
+    delete:
+      consumes:
+      - application/json
+      description: Delete multiple document records using documentID
+      parameters:
+      - description: Document objects that need to be deleted
+        in: body
+        name: documents
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Document'
+          type: array
+      - default: true
+        description: Set too false to fully delete the document records
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the document records
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to delete document records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete multiple document records
+      tags:
+      - documents
+  /document/download:
+    get:
+      description: Download a document by its file location
+      parameters:
+      - description: File Location
+        in: query
+        name: fileLocation
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: Successfully downloaded the document
+          schema:
+            type: file
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Download document
+      tags:
+      - documents
+  /document/search:
+    post:
+      consumes:
+      - application/json
+      description: Search for documents with the given search parameters
+      parameters:
+      - description: Search object
+        in: body
+        name: searchObj
+        required: true
+        schema:
+          $ref: '#/definitions/search.Search'
+      - default: false
+        description: Set to true to include full tag details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the document
+          schema:
+            items:
+              $ref: '#/definitions/models.Document'
+            type: array
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Search documents
+      tags:
+      - documents
+  /documenttag/:
+    get:
+      consumes:
+      - application/json
+      description: Get all document tag records
+      parameters:
+      - default: false
+        description: Set to true to include soft deleted document tags
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full tag and document details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of document tag records
+          schema:
+            items:
+              $ref: '#/definitions/models.DocumentTag'
+            type: array
+        "400":
+          description: 'Error: No document tag records found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all document tag records
+      tags:
+      - documenttags
+    post:
+      consumes:
+      - application/json
+      description: Create a new document tag record
+      parameters:
+      - description: Document Tag object that needs to be created
+        in: body
+        name: documentTag
+        required: true
+        schema:
+          $ref: '#/definitions/models.DocumentTag'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the document tag record
+          schema:
+            $ref: '#/definitions/models.DocumentTag'
+        "400":
+          description: 'Error: Unable to create document tag record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new document tag record
+      tags:
+      - documenttags
+  /documenttag/{documentId}/{tagId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a document tag record by its ID
+      parameters:
+      - description: Document ID
+        in: path
+        name: documentId
+        required: true
+        type: integer
+      - description: Tag ID
+        in: path
+        name: tagId
+        required: true
+        type: integer
+      - default: true
+        description: Set to false to fully delete the document tag record
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the document tag record
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to delete document tag record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a document tag record by its ID
+      tags:
+      - documenttags
+    get:
+      consumes:
+      - application/json
+      description: Get a document tag record by its ID
+      parameters:
+      - description: Document ID
+        in: path
+        name: documentId
+        required: true
+        type: integer
+      - description: Tag ID
+        in: path
+        name: tagId
+        required: true
+        type: integer
+      - default: false
+        description: Set to true to include soft deleted document tags
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full document and tag details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the document tag record
+          schema:
+            $ref: '#/definitions/models.DocumentTag'
+        "400":
+          description: 'Error: No document tag record found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve a document tag record by its ID
+      tags:
+      - documenttags
+  /documenttag/bulk:
+    delete:
+      consumes:
+      - application/json
+      description: Delete multiple document tag records by their ID
+      parameters:
+      - description: Document Tag objects that need to be deleted
+        in: body
+        name: documentTags
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.DocumentTag'
+          type: array
+      - default: true
+        description: Set to false to fully delete the document tag records
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the document tag records
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to delete document tag records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete multiple document tag records by their ID
+      tags:
+      - documenttags
+    post:
+      consumes:
+      - application/json
+      description: Create multiple new document tag records
+      parameters:
+      - description: Document Tag objects that need to be created
+        in: body
+        name: documentTags
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.DocumentTag'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the document tag records
+          schema:
+            items:
+              $ref: '#/definitions/models.DocumentTag'
+            type: array
+        "400":
+          description: 'Error: Unable to create document tag records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create multiple new document tag records
+      tags:
+      - documenttags
+  /tag/:
+    get:
+      description: Get all tags from the database
+      parameters:
+      - default: false
+        description: Set to true to include soft deleted tags
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full tag details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the tag
+          schema:
+            items:
+              $ref: '#/definitions/models.Tag'
+            type: array
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all tags
+      tags:
+      - tags
+    post:
+      consumes:
+      - application/json
+      description: Create multiple new tag records
+      parameters:
+      - description: Tag objects
+        in: body
+        name: tag
+        required: true
+        schema:
+          $ref: '#/definitions/models.Tag'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the tag records
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to create tag records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create multiple new tag records
+      tags:
+      - tags
+  /tag/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get tag record by ID
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: false
+        description: Set to true to include soft deleted tags
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full tag details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the tag
+          schema:
+            $ref: '#/definitions/models.Tag'
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve tag record
+      tags:
+      - tags
+  /tag/{tagId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a tag records via its ID
+      parameters:
+      - description: Tag ID
+        in: path
+        name: tagID
+        required: true
+        type: integer
+      - default: true
+        description: Set to false to fully delete the tag record
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the tag record
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Failed to delete the tag record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a tag record
+      tags:
+      - tags
+  /tag/bulk:
+    delete:
+      consumes:
+      - application/json
+      description: Delete multiple tag records using tagID
+      parameters:
+      - description: Tag objects that need to be deleted
+        in: body
+        name: tags
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Tag'
+          type: array
+      - default: true
+        description: Set to false to fully delete the tag records
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the tag records
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to delete tag records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete multiple tag records
+      tags:
+      - tags
+  /tag/search:
+    post:
+      consumes:
+      - application/json
+      description: Search for tags with the given search parameters
+      parameters:
+      - description: Search object
+        in: body
+        name: searchObj
+        required: true
+        schema:
+          $ref: '#/definitions/search.Search'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the tag
+          schema:
+            items:
+              $ref: '#/definitions/models.Tag'
+            type: array
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Search tags
+      tags:
+      - tags
+  /user/:
+    get:
+      consumes:
+      - application/json
+      description: get all user records
+      parameters:
+      - default: false
+        description: Set to true to include soft deleted users
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full user details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of users
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "400":
+          description: 'Error: No user records found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: create a new user record
+      parameters:
+      - description: User object that needs to be created
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 'Error: Invalid request body'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new user
+      tags:
+      - users
+  /user/{id}/:
+    delete:
+      consumes:
+      - application/json
+      description: delete a user record
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: true
+        description: Set to false to disable soft delete
+        in: query
+        name: softDelete
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted the user
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Invalid user ID'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: get a user record
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - default: false
+        description: Set to true to include soft deleted user
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full user details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 'Error: No user records found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve a user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: update a user record
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User object that needs to be updated
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 'Error: Invalid request body'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update a user
+      tags:
+      - users
+  /user/current:
+    put:
+      consumes:
+      - application/json
+      description: update the authenticated user's record using external ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the current user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 'Error: Invalid request body'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: 'Error: User not found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update current user
+      tags:
+      - users
+  /user/current/:
+    get:
+      consumes:
+      - application/json
+      description: get the current user record
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the current user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 'Error: No user records found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve the current user
+      tags:
+      - users
+  /userdocument/:
+    get:
+      consumes:
+      - application/json
+      description: Get all user document records
+      parameters:
+      - default: false
+        description: Set to true to include soft deleted user documents
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full user and document details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of user document records
+          schema:
+            items:
+              $ref: '#/definitions/models.UserDocument'
+            type: array
+        "400":
+          description: 'Error: No user document records found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all user document records
+      tags:
+      - userdocuments
+    post:
+      consumes:
+      - application/json
+      description: Create a new user document record
+      parameters:
+      - description: User Document object that needs to be created
+        in: body
+        name: userDocument
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserDocument'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the user document record
+          schema:
+            $ref: '#/definitions/models.UserDocument'
+        "400":
+          description: 'Error: Unable to create user document record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new user document record
+      tags:
+      - userdocuments
+  /userdocument/{userId}/{documentId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user document record by its ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Document ID
+        in: path
+        name: documentId
+        required: true
+        type: integer
+      - default: true
+        description: Set to false to fully delete the user document record
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the user document record
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to delete user document record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a user document record by its ID
+      tags:
+      - userdocuments
+    get:
+      consumes:
+      - application/json
+      description: Get a user document record by its ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Document ID
+        in: path
+        name: documentId
+        required: true
+        type: integer
+      - default: false
+        description: Set to true to include soft deleted user documents
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full user and document details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the user document record
+          schema:
+            $ref: '#/definitions/models.UserDocument'
+        "400":
+          description: 'Error: No user document record found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve a user document record by its ID
+      tags:
+      - userdocuments
+  /userdocument/bulk:
+    delete:
+      consumes:
+      - application/json
+      description: Delete multiple user document records by their ID
+      parameters:
+      - description: User Document objects that need to be deleted
+        in: body
+        name: userDocuments
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.UserDocument'
+          type: array
+      - default: true
+        description: Set to false to fully delete the user document records
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the user document records
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to delete user document records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete multiple user document records by their ID
+      tags:
+      - userdocuments
+    post:
+      consumes:
+      - application/json
+      description: Create multiple new user document records
+      parameters:
+      - description: User Document objects that need to be created
+        in: body
+        name: userDocuments
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.UserDocument'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the user document records
+          schema:
+            items:
+              $ref: '#/definitions/models.UserDocument'
+            type: array
+        "400":
+          description: 'Error: Unable to create user document records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create multiple new user document records
+      tags:
+      - userdocuments
+  /usertag/:
+    get:
+      consumes:
+      - application/json
+      description: Get all user Tag records
+      parameters:
+      - default: false
+        description: Set to true to include soft deleted user Tags
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full user and Tag details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the list of user Tag records
+          schema:
+            items:
+              $ref: '#/definitions/models.UserTag'
+            type: array
+        "400":
+          description: 'Error: No user Tag records found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all user Tag records
+      tags:
+      - UserTags
+    post:
+      consumes:
+      - application/json
+      description: Create a new user Tag record
+      parameters:
+      - description: User Tag object that needs to be created
+        in: body
+        name: UserTag
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserTag'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the user Tag record
+          schema:
+            $ref: '#/definitions/models.UserTag'
+        "400":
+          description: 'Error: Unable to create user Tag record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new user Tag record
+      tags:
+      - UserTags
+  /usertag/{userId}/{TagId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user Tag record by its ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Tag ID
+        in: path
+        name: TagId
+        required: true
+        type: integer
+      - default: true
+        description: Set to false to fully delete the user Tag record
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the user Tag record
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to delete user Tag record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a user Tag record by its ID
+      tags:
+      - UserTags
+  /usertag/{userId}/{tagId}:
+    get:
+      consumes:
+      - application/json
+      description: Get a user Tag record by its ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Tag ID
+        in: path
+        name: TagId
+        required: true
+        type: integer
+      - default: false
+        description: Set to true to include soft deleted user Tags
+        in: query
+        name: includeDeleted
+        type: boolean
+      - default: false
+        description: Set to true to include full user and Tag details
+        in: query
+        name: full
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the user Tag record
+          schema:
+            $ref: '#/definitions/models.UserTag'
+        "400":
+          description: 'Error: No user Tag record found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve a user Tag record by its ID
+      tags:
+      - UserTags
+  /usertag/bulk:
+    delete:
+      consumes:
+      - application/json
+      description: Delete multiple user Tag records by their ID
+      parameters:
+      - description: User Tag objects that need to be deleted
+        in: body
+        name: UserTags
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.UserTag'
+          type: array
+      - default: true
+        description: Set to false to fully delete the user Tag records
+        in: query
+        name: softDelete
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the user Tag records
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Unable to delete user Tag records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete multiple user Tag records by their ID
+      tags:
+      - UserTags
+    post:
+      consumes:
+      - application/json
+      description: Create multiple new user Tag records
+      parameters:
+      - description: User Tag objects that need to be created
+        in: body
+        name: UserTags
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.UserTag'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the user Tag records
+          schema:
+            items:
+              $ref: '#/definitions/models.UserTag'
+            type: array
+        "400":
+          description: 'Error: Unable to create user Tag records'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create multiple new user Tag records
+      tags:
+      - UserTags
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
