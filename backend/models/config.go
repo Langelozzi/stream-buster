@@ -8,4 +8,5 @@ type Config struct {
 	Name      string     `gorm:"not null"`
 	Value     string     `gorm:"default:''"`
 	DeletedAt *time.Time `gorm:"index"`
+	CreatedAt *time.Time `gorm:"index"`
 }

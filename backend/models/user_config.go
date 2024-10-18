@@ -9,4 +9,5 @@ type UserConfig struct {
 	User      User       `gorm:"foreignKey:UserID"`
 	Config    Config     `gorm:"foreignKey:ConfigID"`
 	DeletedAt *time.Time `gorm:"index"`
+	CreatedAt *time.Time `gorm:"index"`
 }

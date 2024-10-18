@@ -1,0 +1,17 @@
+as a user I want to be able to login and create an account
+
+as a user i want to be able to search for a show or movie
+
+as a user i want to be able to select a show or movie and view its information 
+
+as a user i want to be able to be able to browse the details of show
+	- episdoes in current season 
+	- season of show
+
+as a user i want to be able to have a list of all te media that i have recently watched
+
+as a user i want to be able to watch media 
+
+as a user i want to be able to get reccomended shows 
+
+as a user i want to be able to be able to create custum lists of media
