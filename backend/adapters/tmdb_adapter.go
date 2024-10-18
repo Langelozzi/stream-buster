@@ -3,7 +3,10 @@ package adapters
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/STREAM-BUSTER/stream-buster/models/api"
+	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
+	"time"
 )
 
 func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
@@ -12,38 +15,84 @@ func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
 		return nil, err
 	}
 
+	var castedResults []interface{}
 	// Access the "results" array
 	if results, ok := jsonMap["results"].([]interface{}); ok {
-		// Iterate through the results and print the information
+		// Iterate through the results and cast them to our structs
 		for _, item := range results {
 			if itemMap, ok := item.(map[string]interface{}); ok {
-				// Media object info
-				tmdbId := itemMap["id"].(int)
-				title := itemMap["name"].(string)
-				posterPath := GetFullImagePath(itemMap["poster_path"].(string))
+				mediaType := CastToMediaType(itemMap)
+				media := CastToMedia(itemMap, mediaType)
 
-				// Media type object info
-				mediaType := itemMap["media_type"].(string)
-
-				// Movie object info
-				overview := itemMap["overview"].(string)
-				releaseDate := itemMap["release_date"].(string)
-
-				// Ideas:
-				// Make helper functions for creating each individual object, media, media_type, movie, tv
-				// The movie one will require a media object to be passed in, etc.
-				// ...
-				// Make a conditional here for if mediatype is tv or movie
-
+				if mediaType.Name == "movie" {
+					movie := CastToMovie(itemMap, media)
+					castedResults = append(castedResults, movie)
+				} else if mediaType.Name == "tv" {
+					tv := CastToTV(itemMap, media)
+					castedResults = append(castedResults, tv)
+				}
 			}
 		}
 	} else {
 		fmt.Println("No results found or results is not an array")
 	}
 
-	fmt.Println(jsonMap)
+	return castedResults, nil
+}
 
-	return []interface{}{}, nil
+func CastToMediaType(obj map[string]interface{}) *db.MediaType {
+	mediaType := obj["media_type"].(string)
+
+	return &db.MediaType{
+		Name: mediaType,
+	}
+}
+
+func CastToMedia(obj map[string]interface{}, mediaType *db.MediaType) *db.Media {
+	tmdbId := int(obj["id"].(float64))
+	title := obj["name"].(string)
+	posterPath := GetFullImagePath(obj["poster_path"].(string))
+
+	return &db.Media{
+		TMDBID:      tmdbId,
+		Title:       title,
+		PosterImage: posterPath,
+		MediaType:   mediaType,
+	}
+}
+
+func CastToMovie(obj map[string]interface{}, media *db.Media) *api.Movie {
+	overview := obj["overview"].(string)
+	releaseDate := ConvertStringToDate(obj["release_date"].(string))
+
+	return &api.Movie{
+		Media:       media,
+		Overview:    overview,
+		ReleaseDate: releaseDate,
+	}
+}
+
+func CastToTV(obj map[string]interface{}, media *db.Media) *api.TV {
+	overview := obj["overview"].(string)
+	firstAirDate := ConvertStringToDate(obj["first_air_date"].(string))
+
+	return &api.TV{
+		Media:        media,
+		Overview:     overview,
+		FirstAirDate: firstAirDate,
+	}
+}
+
+func ConvertStringToDate(str string) *time.Time {
+	layout := "2006-01-02"
+
+	parsedDate, err := time.Parse(layout, str)
+	if err != nil {
+		fmt.Println("Error parsing date:", err)
+		return nil
+	}
+
+	return &parsedDate
 }
 
 func GetFullImagePath(relativePath string) string {
