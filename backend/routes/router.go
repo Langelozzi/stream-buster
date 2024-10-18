@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/middlewares"
-	"github.com/DOC-SWAP/Docswap-backend/routes/api/v1"
+	"github.com/STREAM-BUSTER/stream-buster/middlewares"
+	v1 "github.com/STREAM-BUSTER/stream-buster/routes/api/v1"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +17,7 @@ func InitRouter() *gin.Engine {
 	// Setup routes for v1
 	v1RouterGroup := router.Group("/api/v1")
 	{
-
+		v1.SetSearchRoutes(v1RouterGroup)
 	}
 	// {
 	// 	// Setup public routes

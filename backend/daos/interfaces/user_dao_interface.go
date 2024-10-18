@@ -1,6 +1,6 @@
 package interfaces
 
-import "github.com/DOC-SWAP/Docswap-backend/models"
+import "github.com/STREAM-BUSTER/stream-buster/models"
 
 type UserDaoInterface interface {
 	GetAllUsersDao(includeDeleted bool, full bool) ([]models.User, error)

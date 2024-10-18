@@ -1,10 +1,9 @@
 package database
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/utils/database/post_deployment_functions"
+	"github.com/STREAM-BUSTER/stream-buster/models"
+	"github.com/STREAM-BUSTER/stream-buster/utils/database/post_deployment_functions"
 	"log"
-
-	"github.com/DOC-SWAP/Docswap-backend/models"
 )
 
 func InitializeDb() {
@@ -13,18 +12,8 @@ func InitializeDb() {
 	// List of all models
 	modelsToMigrate := []interface{}{
 		&models.User{},
-		&models.Document{},
 		&models.Config{},
-		&models.Role{},
-		&models.Tag{},
-		&models.Permission{},
-		&models.UserDocument{},
-		&models.DocumentTag{},
 		&models.UserConfig{},
-		&models.UserRole{},
-		&models.RolePermission{},
-		&models.Category{},
-		&models.UserTag{},
 	}
 
 	// Automatically migrate schema for each model
@@ -35,7 +24,6 @@ func InitializeDb() {
 		log.Printf("Successfully migrated model %T", model)
 	}
 
-	post_deployment_functions.CreateCategories(db)
 	post_deployment_functions.CreateAdminUser(db)
 
 	log.Print("Database initialized successfully.")

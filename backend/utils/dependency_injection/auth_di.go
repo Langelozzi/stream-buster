@@ -1,6 +1,6 @@
 package dependency_injection
 
-import "github.com/DOC-SWAP/Docswap-backend/utils/auth"
+import "github.com/STREAM-BUSTER/stream-buster/utils/auth"
 
 func InitAuthDependencies() auth.AuthHandlerInterface {
 	var authHandler auth.AuthHandlerInterface = auth.NewAzureAuthHandler()

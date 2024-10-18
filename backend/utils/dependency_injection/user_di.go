@@ -1,11 +1,11 @@
 package dependency_injection
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/controllers"
-	"github.com/DOC-SWAP/Docswap-backend/daos"
-	daoInterfaces "github.com/DOC-SWAP/Docswap-backend/daos/interfaces"
-	"github.com/DOC-SWAP/Docswap-backend/services"
-	servInterfaces "github.com/DOC-SWAP/Docswap-backend/services/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/controllers"
+	"github.com/STREAM-BUSTER/stream-buster/daos"
+	daoInterfaces "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/services"
+	servInterfaces "github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 )
 
 func InitUserDependencies() *controllers.UserController {

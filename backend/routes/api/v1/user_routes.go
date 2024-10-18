@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/utils/dependency_injection"
+	"github.com/STREAM-BUSTER/stream-buster/utils/dependency_injection"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +15,7 @@ func SetUserRoutes(router *gin.RouterGroup) {
 		group.GET("/current", controller.GetCurrentUserHandler)
 		group.POST("/", controller.CreateUserHandler)
 		group.PUT("/:id", controller.UpdateUserHandler)
-		group.PUT("/current", controller.UpdateCurrentUserHandler)
+		//group.PUT("/current", controller.UpdateCurrentUserHandler)
 		group.DELETE("/:id", controller.DeleteUserHandler)
 	}
 }

@@ -1,8 +1,8 @@
 package daos
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/models"
-	"github.com/DOC-SWAP/Docswap-backend/utils/database"
+	"github.com/STREAM-BUSTER/stream-buster/models"
+	"github.com/STREAM-BUSTER/stream-buster/utils/database"
 	"time"
 )
 

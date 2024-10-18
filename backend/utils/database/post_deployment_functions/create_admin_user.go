@@ -3,12 +3,11 @@ package post_deployment_functions
 import (
 	"errors"
 	"fmt"
-	"github.com/DOC-SWAP/Docswap-backend/models"
+	"github.com/STREAM-BUSTER/stream-buster/models"
 	"gorm.io/gorm"
 )
 
 func CreateAdminUser(db *gorm.DB) {
-
 	// Check if a user with ID 1 already exists
 	var existingUser models.User
 	result := db.First(&existingUser, 1)
@@ -25,10 +24,9 @@ func CreateAdminUser(db *gorm.DB) {
 
 	// Create the admin user
 	user := models.User{
-		ID:                 1,
-		Username:           "admin",
-		AuthenticationType: "local",
-		DeletedAt:          nil,
+		ID:        1,
+		Username:  "admin",
+		DeletedAt: nil,
 	}
 	db.Create(&user)
 

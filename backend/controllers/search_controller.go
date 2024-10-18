@@ -36,7 +36,7 @@ func (contr *SearchController) GetMultiMediaSearchResults(c *gin.Context) {
 	}
 
 	// call the service
-	content, err := contr.service.SearchMultiMedia("Batman")
+	content, err := contr.service.SearchMultiMedia(query)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "No user records found. Error: " + err.Error(),

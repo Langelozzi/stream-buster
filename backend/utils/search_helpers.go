@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/models/search"
+	"github.com/STREAM-BUSTER/stream-buster/models/search"
 	"gorm.io/gorm"
 	"reflect"
 	"strings"

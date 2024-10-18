@@ -6,9 +6,6 @@ import (
 )
 
 func CORS() gin.HandlerFunc {
-	// Get the client origin from environment variable
-	//clientUrl := utils.GetEnvVariable("CLIENT_URL")
-
 	config := cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},

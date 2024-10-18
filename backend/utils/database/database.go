@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-	"github.com/DOC-SWAP/Docswap-backend/utils"
+	"github.com/STREAM-BUSTER/stream-buster/utils"
 	_ "github.com/microsoft/go-mssqldb"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"

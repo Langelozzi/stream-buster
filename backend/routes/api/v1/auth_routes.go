@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/utils/dependency_injection"
+	"github.com/STREAM-BUSTER/stream-buster/utils/dependency_injection"
 	"github.com/gin-gonic/gin"
 )
 

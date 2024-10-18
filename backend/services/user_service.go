@@ -1,8 +1,8 @@
 package services
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/daos/interfaces"
-	"github.com/DOC-SWAP/Docswap-backend/models"
+	"github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/models"
 )
 
 type UserService struct {

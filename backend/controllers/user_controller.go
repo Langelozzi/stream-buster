@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/DOC-SWAP/Docswap-backend/models"
-	"github.com/DOC-SWAP/Docswap-backend/services/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/models"
+	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -232,33 +232,33 @@ func (contr *UserController) UpdateUserHandler(c *gin.Context) {
 // @Failure 400 {object} map[string]interface{} "Error: Invalid request body"
 // @Failure 404 {object} map[string]interface{} "Error: User not found"
 // @Router /user/current [put]
-func (contr *UserController) UpdateCurrentUserHandler(c *gin.Context) {
-	userInterface, exists := c.Get("user")
-	if !exists {
-		c.JSON(404, gin.H{"error": "User not found"})
-		return
-	}
-
-	user, ok := userInterface.(*models.User)
-	if !ok || user.ExternalUserID == "" {
-		c.JSON(404, gin.H{"error": "User not found"})
-		return
-	}
-
-	var updateData models.User
-	if err := c.ShouldBindJSON(&updateData); err != nil {
-		c.JSON(400, gin.H{"error": "Invalid request body"})
-		return
-	}
-
-	updatedUser, err := contr.service.UpdateUserByExternalID(user.ExternalUserID, &updateData)
-	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to update user: " + err.Error()})
-		return
-	}
-
-	c.JSON(200, updatedUser)
-}
+//func (contr *UserController) UpdateCurrentUserHandler(c *gin.Context) {
+//	userInterface, exists := c.Get("user")
+//	if !exists {
+//		c.JSON(404, gin.H{"error": "User not found"})
+//		return
+//	}
+//
+//	user, ok := userInterface.(*models.User)
+//	if !ok || user.ExternalUserID == "" {
+//		c.JSON(404, gin.H{"error": "User not found"})
+//		return
+//	}
+//
+//	var updateData models.User
+//	if err := c.ShouldBindJSON(&updateData); err != nil {
+//		c.JSON(400, gin.H{"error": "Invalid request body"})
+//		return
+//	}
+//
+//	updatedUser, err := contr.service.UpdateUserByExternalID(user.ExternalUserID, &updateData)
+//	if err != nil {
+//		c.JSON(500, gin.H{"error": "Failed to update user: " + err.Error()})
+//		return
+//	}
+//
+//	c.JSON(200, updatedUser)
+//}
 
 // DeleteUserHandler deletes a user
 // @Summary Delete a user
