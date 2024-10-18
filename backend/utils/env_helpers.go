@@ -7,11 +7,6 @@ import (
 )
 
 func GetEnvVariable(key string) string {
-
-	if value, exists := os.LookupEnv("SQLAZURECONNSTR_" + key); exists {
-		return value
-	}
-
 	value := os.Getenv(key)
 	if value != "" {
 		return value
