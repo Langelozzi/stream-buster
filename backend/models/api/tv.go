@@ -1,17 +1,19 @@
-package models
+package api
 
-import "time"
+import (
+	dbModels "github.com/STREAM-BUSTER/stream-buster/models/db"
+	"time"
+)
 
-// User represents the user of the system
 type TV struct {
-	MediaId           string 
-	Media             Media
+	MediaID uint
+	Media   *dbModels.Media
 
 	Overview string
 
-	SeasonCount int
+	SeasonCount  int
 	EpisodeCount int
 
-	Seasons Season[]
-	FirstAirDate date
+	Seasons      []*Season
+	FirstAirDate *time.Time
 }

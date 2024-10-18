@@ -1,4 +1,4 @@
-module github.com/DOC-SWAP/Docswap-backend
+module github.com/STREAM-BUSTER/stream-buster
 
 go 1.22
 

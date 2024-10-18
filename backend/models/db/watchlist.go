@@ -1,19 +1,17 @@
+package db
 
-package models
+import (
+	"github.com/STREAM-BUSTER/stream-buster/models"
+	"time"
+)
 
-import "time"
-
-// User represents the user of the system
 type Watchlist struct {
-	UserID                 uint   `gorm:"foreignKey:UserID"`
-	User               User 
+	UserID uint `gorm:"foreignKey:ID"`
+	User   *models.User
 
-	MediaId           string `gorm:"foreignKey:MediaID"`
-	Media             Media
+	MediaId string `gorm:"foreignKey:ID"`
+	Media   *Media `gorm:"constraint:OnDelete:SET NULL;"`
 
-	MediaTypeId       uint `gorm:"foreignKeyMediaTypeID`
-	MediaType         MediaType
-
-	DeletedAt          *time.Time     `gorm:"index"`
-	CreatedAt          *time.Time     `gorm:"index"`
+	DeletedAt *time.Time `gorm:"index"`
+	CreatedAt *time.Time `gorm:"index"`
 }

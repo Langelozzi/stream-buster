@@ -1,8 +1,6 @@
-package models
-
-import "time"
+package api
 
 type Genre struct {
-	ID int
+	ID   int
 	Name string
 }

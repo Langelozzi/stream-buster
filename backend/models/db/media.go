@@ -1,14 +1,17 @@
-
-package models
+package db
 
 import "time"
 
-// User represents the user of the system
 type Media struct {
-	ID                 uint   `gorm:"primaryKey"`
-	TMDBID          int 
-	Title string
+	ID     uint `gorm:"primaryKey"`
+	TMDBID int
+
+	Title       string
 	PosterImage string
-	DeletedAt          *time.Time     `gorm:"index"`
-	CreatedAt          *time.Time     `gorm:"index"`
+
+	MediaTypeId uint       `gorm:"foreignKey:ID"`
+	MediaType   *MediaType `gorm:"constraint:OnDelete:SET NULL;"`
+
+	DeletedAt *time.Time `gorm:"index"`
+	CreatedAt *time.Time `gorm:"index"`
 }

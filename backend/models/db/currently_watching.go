@@ -1,21 +1,20 @@
-package models
+package db
 
-import "time"
+import (
+	"github.com/STREAM-BUSTER/stream-buster/models"
+	"time"
+)
 
-// User represents the user of the system
 type CurrentlyWatching struct {
-	UserID                 uint   `gorm:"foreignKey:UserID"`
-	User               User 
+	UserID uint         `gorm:"foreignKey:ID"`
+	User   *models.User `gorm:"constraint:OnDelete:CASCADE;"`
 
-	MediaId           string `gorm:"foreignKey:MediaID"`
-	Media             Media
+	MediaId string `gorm:"foreignKey:ID"`
+	Media   *Media `gorm:"constraint:OnDelete:SET NULL;"`
 
-	MediaTypeId       uint `gorm:"foreignKeyMediaTypeID`
-	MediaType         MediaType
+	EpisodeNumber int
+	SeasonNumber  int
 
-	EpisodeNumber     int 
-	SeasonNumber     int
-
-	DeletedAt          *time.Time     `gorm:"index"`
-	CreatedAt          *time.Time     `gorm:"index"`
+	DeletedAt *time.Time `gorm:"index"` // Use pointer to allow null
+	CreatedAt *time.Time `gorm:"index"` // Use pointer to allow null
 }

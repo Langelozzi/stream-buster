@@ -1,18 +1,17 @@
+package api
 
-package models
-
-import "time"
+import dbModels "github.com/STREAM-BUSTER/stream-buster/models/db"
 
 type Season struct {
-	MediaId           string 
-	Media             Media
+	MediaID uint
+	Media   *dbModels.Media
 
-	Name string
+	Name     string
 	Overview string
 
 	SeasonTMDBID string
 	SeasonNumber int
 
 	PosterPath string
-	Episodes Episode[]
+	Episodes   []*Episode
 }
