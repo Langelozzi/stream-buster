@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	_ "github.com/DOC-SWAP/Docswap-backend/docs"
-	"github.com/DOC-SWAP/Docswap-backend/routes"
-	"github.com/DOC-SWAP/Docswap-backend/utils/database"
+	"github.com/STREAM-BUSTER/stream-buster/routes"
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
@@ -30,7 +28,7 @@ import (
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	// Uncomment the following line to run the db initialization for updates
-	database.InitializeDb()
+	//database.InitializeDb()
 
 	// Initialize the router
 	router := routes.InitRouter()
