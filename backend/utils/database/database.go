@@ -3,8 +3,7 @@ package database
 import (
 	"fmt"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
-	_ "github.com/microsoft/go-mssqldb"
-	"gorm.io/driver/sqlserver"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 	"sync"
@@ -26,7 +25,7 @@ func initialize() {
 	// check to make sure the connection exists
 
 	var err error
-	instance, err = gorm.Open(sqlserver.Open(connectionString), &gorm.Config{})
+	instance, err = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Error creating connection pool: ", err.Error())
 	}
