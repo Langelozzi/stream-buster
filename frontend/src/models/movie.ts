@@ -1,5 +1,5 @@
-import { Media } from './Media';
-import { Genre } from './Genre';  // Assuming a Genre interface
+import { Media } from './media';
+import { Genre } from './genre';  // Assuming a Genre interface
 
 export interface Movie {
   mediaID: number;

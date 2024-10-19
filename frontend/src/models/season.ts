@@ -1,5 +1,5 @@
-import { Media } from './Media';
-import { Episode } from './Episode';  // Assuming an Episode interface
+import { Media } from './media';
+import { Episode } from './episode';  // Assuming an Episode interface
 
 export interface Season {
   mediaID: number;

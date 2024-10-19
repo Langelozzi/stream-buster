@@ -1,5 +1,5 @@
-import { Media } from './Media';
-import { Season } from './Season';  // Assuming a Season interface
+import { Media } from './media';
+import { Season } from './season';  // Assuming a Season interface
 
 export interface TV {
   mediaID: number;

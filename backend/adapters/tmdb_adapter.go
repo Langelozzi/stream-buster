@@ -22,6 +22,9 @@ func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
 		for _, item := range results {
 			if itemMap, ok := item.(map[string]interface{}); ok {
 				mediaType := CastToMediaType(itemMap)
+				if mediaType.Name != "tv" && mediaType.Name != "movie" {
+					continue
+				}
 				media := CastToMedia(itemMap, mediaType)
 
 				if mediaType.Name == "movie" {
@@ -41,7 +44,10 @@ func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
 }
 
 func CastToMediaType(obj map[string]interface{}) *db.MediaType {
-	mediaType := obj["media_type"].(string)
+	mediaType := ""
+	if obj["media_type"] != nil {
+		mediaType = obj["media_type"].(string)
+	}
 
 	return &db.MediaType{
 		Name: mediaType,
@@ -50,8 +56,18 @@ func CastToMediaType(obj map[string]interface{}) *db.MediaType {
 
 func CastToMedia(obj map[string]interface{}, mediaType *db.MediaType) *db.Media {
 	tmdbId := int(obj["id"].(float64))
-	title := obj["name"].(string)
-	posterPath := GetFullImagePath(obj["poster_path"].(string))
+
+	var title string
+	if mediaType.Name == "tv" {
+		title = obj["name"].(string)
+	} else {
+		title = obj["title"].(string)
+	}
+
+	posterPath := ""
+	if obj["poster_path"] != nil {
+		posterPath = GetFullImagePath(obj["poster_path"].(string))
+	}
 
 	return &db.Media{
 		TMDBID:      tmdbId,
