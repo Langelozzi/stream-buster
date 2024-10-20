@@ -1,8 +1,14 @@
 package dependency_injection
 
-import "github.com/STREAM-BUSTER/stream-buster/utils/auth"
+import (
+	"github.com/STREAM-BUSTER/stream-buster/daos"
+	iDao "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/services"
+	iServices "github.com/STREAM-BUSTER/stream-buster/services/interfaces"
+)
 
-func InitAuthDependencies() auth.AuthHandlerInterface {
-	var authHandler auth.AuthHandlerInterface = auth.NewAzureAuthHandler()
-	return authHandler
+func InitAuthDependencies() iServices.AuthServiceInterface {
+	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
+	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao)
+	return authService
 }
