@@ -88,3 +88,7 @@ func (service AuthService) authenticateMiddleware(c *gin.Context) {
 	// Continue with the next middleware or route handler
 	c.Next()
 }
+
+func (service AuthService) CheckCredentials(username string, password string) (bool, error) {
+	return true, nil
+}
