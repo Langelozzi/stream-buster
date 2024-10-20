@@ -3,6 +3,7 @@ package daos
 import (
 	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/utils/database"
+	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
 
