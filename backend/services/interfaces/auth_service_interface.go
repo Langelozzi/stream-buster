@@ -1,13 +1,9 @@
 package interfaces
 
-import (
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
-)
+import "github.com/golang-jwt/jwt/v4"
 
 type AuthServiceInterface interface {
-	createToken(username string) (string, error)
-	getRole(username string) string
-	authenticateMiddleware(c *gin.Context)
-	verifyToken(tokenString string) (*jwt.Token, error)
+	CreateToken(username string) (string, error)
+	// authenticateMiddleware(c *gin.Context)
+	VerifyToken(tokenString string) (*jwt.Token, error)
 }
