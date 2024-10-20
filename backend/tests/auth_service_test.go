@@ -53,3 +53,21 @@ func TestCreateToken_ValidToken(t *testing.T) {
 		t.Errorf("Token is invalid")
 	}
 }
+
+func TestCreateAndVerifyToken(t *testing.T) {
+	var dao daoInterfaces.AuthDaoInterface = daos.NewAuthDao()
+	var authService servInterfaces.AuthServiceInterface = services.NewAuthService(dao)
+
+	token, err := authService.CreateToken("cameron")
+	if err != nil {
+		t.Fatalf("Error creating token: %v", err)
+	}
+
+	verifiedToken, err := authService.VerifyToken(token)
+	if err != nil {
+		t.Fatalf("Error verifying token %v", err)
+	}
+
+	fmt.Println(verifiedToken)
+
+}
