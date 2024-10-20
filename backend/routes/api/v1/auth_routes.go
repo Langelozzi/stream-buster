@@ -6,12 +6,11 @@ import (
 )
 
 func SetAuthRoutes(router *gin.RouterGroup) {
-	userController := dependency_injection.InitUserDependencies()
 	authController := dependency_injection.InitAuthDependencies()
 
 	authGroup := router.Group("/auth")
 	{
-		authGroup.POST("/register", userController.CreateUserHandler)
-		authGroup.POST("/login", userController.LoginUser())
+		authGroup.POST("/register", authController.CreateUser)
+		authGroup.POST("/login", authController.LoginUser)
 	}
 }

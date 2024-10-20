@@ -2,13 +2,10 @@ package controllers
 
 import (
 	"fmt"
-	"net/http"
-	"strconv"
-
-	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type AuthController struct {
@@ -22,16 +19,16 @@ func NewAuthController(service interfaces.AuthServiceInterface) *AuthController 
 }
 
 // LoginUser logs in valid users
-// @Summary Logs in valid users j
-// @Description checks the credentails of the user and returns a jwt in a cookie
+// @Summary Logs in valid users
+// @Description Authenticates a user using the provided username and password, and returns a JWT token in a cookie if successful.
 // @Tags Auth
-// @Accept  json
-// @Produce
-// @Param includeDeleted query bool false "Set to true to include soft deleted users" default(false)
-// @Param full query bool false "Set to true to include full user details" default(false)
-// @Success 200 {array} models.User "Successfully retrieved the list of users"
-// @Failure 400 {object} map[string]interface{} "Error: No user records found"
-// @Router /user/ [get]
+// @Accept  application/x-www-form-urlencoded
+// @Produce  json
+// @Param username formData string true "Username"
+// @Param password formData string true "Password"
+// @Success 200 {string} string "Successfully logged in, JWT set in cookie"
+// @Failure 400 {object} map[string]interface{} "Invalid username or password"
+// @Router /auth/login [post]
 func (contr *AuthController) LoginUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
@@ -50,8 +47,12 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 
 		fmt.Printf("Token created: %s\n", tokenString)
 		c.SetCookie("token", tokenString, 3600, "/", utils.GetEnvVariable("DOMAIN"), false, true)
-		c.Redirect(http.StatusOK, "/")
+		c.String(http.StatusOK, "Autorized")
 	} else {
 		c.String(http.StatusUnauthorized, "Invalid credentials")
 	}
+}
+
+func (contr *AuthController) CreateUser(c *gin.Context) {
+
 }
