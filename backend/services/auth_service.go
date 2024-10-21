@@ -38,7 +38,7 @@ func (service AuthService) CreateToken(username string) (string, error) {
 	}
 
 	// Print information about the created token
-	fmt.Printf("Token claims added: %+v\n", claims)
+	// fmt.Printf("Token claims added: %+v\n", claims)
 	return tokenString, nil
 }
 
@@ -67,7 +67,7 @@ func (service AuthService) authenticateMiddleware(c *gin.Context) {
 	// Retrieve the token from the cookie
 	tokenString, err := c.Cookie("token")
 	if err != nil {
-		fmt.Println("Token missing in cookie")
+		// fmt.Println("Token missing in cookie")
 		c.Redirect(http.StatusSeeOther, "/login")
 		c.Abort()
 		return
@@ -76,14 +76,22 @@ func (service AuthService) authenticateMiddleware(c *gin.Context) {
 	// Verify the token
 	token, err := service.VerifyToken(tokenString)
 	if err != nil {
-		fmt.Printf("Token verification failed: %v\\n", err)
+		// fmt.Printf("Token verification failed: %v\\n", err)
 		c.Redirect(http.StatusSeeOther, "/login")
 		c.Abort()
 		return
 	}
 
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+
+		c.Set("user", claims)
+	} else {
+		c.Redirect(http.StatusSeeOther, "/login")
+		c.Abort()
+		return
+	}
 	// Print information about the verified token
-	fmt.Printf("Token verified successfully. Claims: %+v\\n", token.Claims)
+	// fmt.Printf("Token verified successfully. Claims: %+v\\n", token.Claims)
 
 	// Continue with the next middleware or route handler
 	c.Next()

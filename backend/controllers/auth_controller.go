@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
@@ -45,7 +44,7 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 			return
 		}
 
-		fmt.Printf("Token created: %s\n", tokenString)
+		// fmt.Printf("Token created: %s\n", tokenString)
 		c.SetCookie("token", tokenString, 3600, "/", utils.GetEnvVariable("DOMAIN"), false, true)
 		c.String(http.StatusOK, "Autorized")
 	} else {

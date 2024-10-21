@@ -1,15 +1,13 @@
-package tests
+package test
 
 import (
-	"fmt"
-	"testing"
-
 	"github.com/STREAM-BUSTER/stream-buster/daos"
 	daoInterfaces "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/services"
 	servInterfaces "github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/golang-jwt/jwt/v4"
+	"testing"
 )
 
 var secretKey = []byte("my_secret_key")
@@ -34,7 +32,6 @@ func TestCreateToken_ValidToken(t *testing.T) {
 	var authService servInterfaces.AuthServiceInterface = services.NewAuthService(dao)
 	username := "testuser"
 	tokenString, err := authService.CreateToken(username)
-	fmt.Println(tokenString)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
