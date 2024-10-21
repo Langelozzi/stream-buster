@@ -13,7 +13,7 @@ import (
 )
 
 var secretKey = []byte(utils.GetEnvVariable(utils.GetEnvVariable("JWT_SECRET")))
-
+var refreshTokenValidLengthSeconds = 60 * 60 * 24 * 6 // 7 days
 type AuthService struct {
 	Dao iDao.AuthDaoInterface
 }
@@ -42,6 +42,20 @@ func (service AuthService) CreateToken(username string) (string, error) {
 	return tokenString, nil
 }
 
+func (service AuthService) CreateRefreshToken(username string) (string, error) {
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub":  username,                                                                           // Subject (user identifier)
+		"type": "refresh-token",                                                                    // type
+		"exp":  time.Now().Add(time.Second * time.Duration(refreshTokenValidLengthSeconds)).Unix(), // Expiration time
+		"iat":  time.Now().Unix(),                                                                  // Issued at
+	})
+	tokenString, err := claims.SignedString(secretKey)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+}
+
 func (service AuthService) VerifyToken(tokenString string) (*jwt.Token, error) {
 	// Parse the token with the secret key
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -63,7 +77,7 @@ func (service AuthService) VerifyToken(tokenString string) (*jwt.Token, error) {
 }
 
 // Function to verify JWT tokens
-func (service AuthService) authenticateMiddleware(c *gin.Context) {
+func (service AuthService) AuthenticateMiddleware(c *gin.Context) {
 	// Retrieve the token from the cookie
 	tokenString, err := c.Cookie("token")
 	if err != nil {
@@ -76,9 +90,7 @@ func (service AuthService) authenticateMiddleware(c *gin.Context) {
 	// Verify the token
 	token, err := service.VerifyToken(tokenString)
 	if err != nil {
-		// fmt.Printf("Token verification failed: %v\\n", err)
-		c.Redirect(http.StatusSeeOther, "/login")
-		c.Abort()
+		service.handleRefreshToken(c)
 		return
 	}
 
@@ -90,11 +102,35 @@ func (service AuthService) authenticateMiddleware(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	// Print information about the verified token
-	// fmt.Printf("Token verified successfully. Claims: %+v\\n", token.Claims)
 
-	// Continue with the next middleware or route handler
 	c.Next()
+}
+
+func (service AuthService) HandleRefreshToken(refreshTokenString string) (string, error) {
+	validToken, err := service.VerifyToken(refreshTokenString)
+	if err != nil {
+		return "", err
+	}
+
+	if !validToken.Valid {
+		return "", fmt.Errorf("Refresh Token is invalid")
+	}
+
+	claims, ok := validToken.Claims.(jwt.MapClaims)
+	if ok {
+		// create new token
+		username, ok := claims["username"].(string)
+		if !ok {
+
+		}
+		newAccessToken, err := service.CreateToken(username)
+		if err != nil {
+			// return some error
+			return "", err
+		}
+		return newAccessToken, nil
+	}
+	return "", fmt.Errorf("Error parsing claims")
 }
 
 func (service AuthService) CheckCredentials(username string, password string) (bool, error) {

@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type AuthController struct {
@@ -38,15 +40,41 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "Error validating users credentials")
 	}
 	if validCredentials {
+
 		tokenString, err := contr.service.CreateToken(username)
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error creating token")
 			return
 		}
+		refreshTokenString, err := contr.service.CreateRefreshToken(username)
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Error creating refreshToken")
+			return
+		}
+		maxRefreshTokenAge, err := strconv.Atoi(utils.GetEnvVariable("REFRESH_TOKEN_EXPIRATION_TIME"))
 
-		// fmt.Printf("Token created: %s\n", tokenString)
-		c.SetCookie("token", tokenString, 3600, "/", utils.GetEnvVariable("DOMAIN"), false, true)
+		c.SetCookie(
+			"refreshToken",                 // Name of the cookie
+			refreshTokenString,             // Value of the cookie
+			maxRefreshTokenAge,             // MaxAge (7 days)
+			"/",                            // Path
+			utils.GetEnvVariable("DOMAIN"), // Domain
+			false,                          // Secure flag (whether the cookie should be sent only over HTTPS)
+			false,                          // HttpOnly flag (whether the cookie is inaccessible to JavaScript)
+		)
+
+		c.SetCookie(
+			"token",                        // Name of the cookie
+			tokenString,                    // Value of the cookie
+			3600,                           // MaxAge (1 hour)
+			"/",                            // Path
+			utils.GetEnvVariable("DOMAIN"), // Domain
+			false,                          // Secure flag (whether the cookie should be sent only over HTTPS)
+			false,                          // HttpOnly flag (whether the cookie is inaccessible to JavaScript)
+		)
+
 		c.String(http.StatusOK, "Autorized")
+
 	} else {
 		c.String(http.StatusUnauthorized, "Invalid credentials")
 	}
