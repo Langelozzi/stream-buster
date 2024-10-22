@@ -2,13 +2,14 @@ package services
 
 import (
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
 	iDao "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
-	"strconv"
-	"time"
 )
 
 var secretKey = []byte(utils.GetEnvVariable(utils.GetEnvVariable("JWT_SECRET")))
@@ -93,7 +94,7 @@ func (service AuthService) RefreshToken(refreshTokenString string) (string, erro
 	if ok {
 
 		// create new token
-		username, ok := claims["username"].(string)
+		username, ok := claims["sub"].(string)
 		if !ok {
 			return "", fmt.Errorf("Error parsing username from claims")
 		}

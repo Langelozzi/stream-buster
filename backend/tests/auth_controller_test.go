@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -41,7 +40,6 @@ func TestLoginUser(t *testing.T) {
 	for _, cookie := range cookies {
 		if cookie.Name == "token" {
 			assert.NotEmpty(t, cookie.Value, "Expected token value in cookie")
-			fmt.Println(cookie)
 		}
 	}
 }
