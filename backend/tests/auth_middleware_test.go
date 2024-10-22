@@ -2,9 +2,14 @@ package test
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/STREAM-BUSTER/stream-buster/daos"
+	iDao "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/services"
+	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMiddleware(t *testing.T) {
@@ -13,10 +18,14 @@ func TestMiddleware(t *testing.T) {
 		fmt.Println("Error creating request:", err)
 		return
 	}
+	var dao iDao.AuthDaoInterface = daos.NewAuthDao()
+	var authService interfaces.AuthServiceInterface = services.NewAuthService(dao)
+
+	accessTokenString, err := authService.CreateToken("username")
 
 	cookie := &http.Cookie{
 		Name:     "token",
-		Value:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Mjk2MzQ2NDIsImlhdCI6MTcyOTYzMTA0MiwiaXNzIjoiYXV0aC1zZXJ2aWNlIiwic3ViIjoidGVzdHVzZXIifQ.XRdajlVpkYQQeWaLwt3ZMzYl7IXFaMavQ522JRmzmxs",
+		Value:    accessTokenString,
 		MaxAge:   3600,  // 1 hour
 		HttpOnly: false, // Secure the cookie by not allowing JavaScript access
 	}
@@ -40,16 +49,22 @@ func TestMiddleware_refreshToken(t *testing.T) {
 		return
 	}
 
+	var dao iDao.AuthDaoInterface = daos.NewAuthDao()
+	var authService interfaces.AuthServiceInterface = services.NewAuthService(dao)
+
+	accessTokenString, err := authService.CreateToken("username")
+
 	cookie := &http.Cookie{
 		Name:     "token",
-		Value:    "eyJhbGcOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Mjk2MjM5MDUsImlhdCI6MTcyOTYyMDMwNSwiaXNzIjoiYXV0aC1zZXJ2aWNlIiwic3ViIjoidGVzdHVzZXIifQ.BZc-7UlEvV5oj0P2mfxVYHgXGJjCoH3uDne-3i7e35I",
+		Value:    accessTokenString,
 		MaxAge:   3600,  // 1 hour
 		HttpOnly: false, // Secure the cookie by not allowing JavaScript access
 	}
 
+	refreshTokenString, err := authService.CreateRefreshToken("username")
 	refreshCookie := &http.Cookie{
 		Name:     "refreshToken",
-		Value:    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzAyMjcwOTMsImlhdCI6MTcyOTYyMjI5Mywic3ViIjoidGVzdHVzZXIiLCJ0eXBlIjoicmVmcmVzaC10b2tlbiJ9.pohYGI4c9abWg3lo13S4YzHpQgYKSJVNXA0jRnVUiXc",
+		Value:    refreshTokenString,
 		MaxAge:   3600,  // 1 hour
 		HttpOnly: false, // Secure the cookie by not allowing JavaScript access
 	}
