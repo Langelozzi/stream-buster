@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"github.com/STREAM-BUSTER/stream-buster/middlewares"
 	"github.com/STREAM-BUSTER/stream-buster/utils/dependency_injection"
 	"github.com/gin-gonic/gin"
 )
@@ -10,6 +11,7 @@ func SetAuthRoutes(router *gin.RouterGroup) {
 
 	authGroup := router.Group("/auth")
 	{
+		authGroup.GET("/test", middlewares.Auth(authController.Service), authController.TestAuthMiddleware)
 		authGroup.POST("/register", authController.CreateUser)
 		authGroup.POST("/login", authController.LoginUser)
 	}

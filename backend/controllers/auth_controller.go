@@ -10,12 +10,12 @@ import (
 )
 
 type AuthController struct {
-	service interfaces.AuthServiceInterface
+	Service interfaces.AuthServiceInterface
 }
 
 func NewAuthController(service interfaces.AuthServiceInterface) *AuthController {
 	return &AuthController{
-		service: service,
+		Service: service,
 	}
 }
 
@@ -34,19 +34,19 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	validCredentials, err := contr.service.CheckCredentials(username, password)
+	validCredentials, err := contr.Service.CheckCredentials(username, password)
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Error validating users credentials")
 	}
 	if validCredentials {
 
-		tokenString, err := contr.service.CreateToken(username)
+		tokenString, err := contr.Service.CreateToken(username)
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error creating token")
 			return
 		}
-		refreshTokenString, err := contr.service.CreateRefreshToken(username)
+		refreshTokenString, err := contr.Service.CreateRefreshToken(username)
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error creating refreshToken")
 			return
@@ -63,15 +63,7 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 			false,                          // HttpOnly flag (whether the cookie is inaccessible to JavaScript)
 		)
 
-		c.SetCookie(
-			"token",                        // Name of the cookie
-			tokenString,                    // Value of the cookie
-			3600,                           // MaxAge (1 hour)
-			"/",                            // Path
-			utils.GetEnvVariable("DOMAIN"), // Domain
-			false,                          // Secure flag (whether the cookie should be sent only over HTTPS)
-			false,                          // HttpOnly flag (whether the cookie is inaccessible to JavaScript)
-		)
+		contr.Service.SetTokenCookie(c, tokenString)
 
 		c.String(http.StatusOK, "Autorized")
 
@@ -82,4 +74,12 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 
 func (contr *AuthController) CreateUser(c *gin.Context) {
 
+}
+
+func (contr *AuthController) TestAuthMiddleware(c *gin.Context) {
+	user, exists := c.Get("user")
+	if !exists {
+		c.JSON(401, gin.H{"error": "No user found"})
+	}
+	c.JSON(200, user)
 }
