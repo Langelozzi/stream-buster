@@ -11,5 +11,6 @@ type AuthServiceInterface interface {
 	// authenticateMiddleware(c *gin.Context)
 	CheckCredentials(username string, password string) (bool, error)
 	VerifyToken(tokenString string) (*jwt.Token, error)
-	HandleRefreshToken(c *gin.Context) (string, error)
+	RefreshToken(refreshTokenString string) (string, error)
+	SetTokenCookie(c *gin.Context, tokenString string)
 }

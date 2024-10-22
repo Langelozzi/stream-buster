@@ -2,18 +2,17 @@ package services
 
 import (
 	"fmt"
-	"net/http"
-	"time"
-
 	"github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
 	iDao "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"strconv"
+	"time"
 )
 
 var secretKey = []byte(utils.GetEnvVariable(utils.GetEnvVariable("JWT_SECRET")))
-var refreshTokenValidLengthSeconds = 60 * 60 * 24 * 6 // 7 days
+
 type AuthService struct {
 	Dao iDao.AuthDaoInterface
 }
@@ -43,11 +42,12 @@ func (service AuthService) CreateToken(username string) (string, error) {
 }
 
 func (service AuthService) CreateRefreshToken(username string) (string, error) {
+	maxRefreshTokenAge, err := strconv.Atoi(utils.GetEnvVariable("REFRESH_TOKEN_EXPIRATION_TIME"))
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":  username,                                                                           // Subject (user identifier)
-		"type": "refresh-token",                                                                    // type
-		"exp":  time.Now().Add(time.Second * time.Duration(refreshTokenValidLengthSeconds)).Unix(), // Expiration time
-		"iat":  time.Now().Unix(),                                                                  // Issued at
+		"sub":  username,                                                               // Subject (user identifier)
+		"type": "refresh-token",                                                        // type
+		"exp":  time.Now().Add(time.Second * time.Duration(maxRefreshTokenAge)).Unix(), // Expiration time
+		"iat":  time.Now().Unix(),                                                      // Issued at
 	})
 	tokenString, err := claims.SignedString(secretKey)
 	if err != nil {
@@ -77,36 +77,8 @@ func (service AuthService) VerifyToken(tokenString string) (*jwt.Token, error) {
 }
 
 // Function to verify JWT tokens
-func (service AuthService) AuthenticateMiddleware(c *gin.Context) {
-	// Retrieve the token from the cookie
-	tokenString, err := c.Cookie("token")
-	if err != nil {
-		// fmt.Println("Token missing in cookie")
-		c.Redirect(http.StatusSeeOther, "/login")
-		c.Abort()
-		return
-	}
 
-	// Verify the token
-	token, err := service.VerifyToken(tokenString)
-	if err != nil {
-		service.handleRefreshToken(c)
-		return
-	}
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-
-		c.Set("user", claims)
-	} else {
-		c.Redirect(http.StatusSeeOther, "/login")
-		c.Abort()
-		return
-	}
-
-	c.Next()
-}
-
-func (service AuthService) HandleRefreshToken(refreshTokenString string) (string, error) {
+func (service AuthService) RefreshToken(refreshTokenString string) (string, error) {
 	validToken, err := service.VerifyToken(refreshTokenString)
 	if err != nil {
 		return "", err
@@ -117,11 +89,13 @@ func (service AuthService) HandleRefreshToken(refreshTokenString string) (string
 	}
 
 	claims, ok := validToken.Claims.(jwt.MapClaims)
+
 	if ok {
+
 		// create new token
 		username, ok := claims["username"].(string)
 		if !ok {
-
+			return "", fmt.Errorf("Error parsing username from claims")
 		}
 		newAccessToken, err := service.CreateToken(username)
 		if err != nil {
@@ -129,8 +103,24 @@ func (service AuthService) HandleRefreshToken(refreshTokenString string) (string
 			return "", err
 		}
 		return newAccessToken, nil
+
+	} else {
+
+		return "", fmt.Errorf("Error parsing claims")
+
 	}
-	return "", fmt.Errorf("Error parsing claims")
+}
+
+func (service AuthService) SetTokenCookie(c *gin.Context, tokenString string) {
+	c.SetCookie(
+		"token",                        // Name of the cookie
+		tokenString,                    // Value of the cookie
+		3600,                           // MaxAge (1 hour)
+		"/",                            // Path
+		utils.GetEnvVariable("DOMAIN"), // Domain
+		false,                          // Secure flag (whether the cookie should be sent only over HTTPS)
+		false,                          // HttpOnly flag (whether the cookie is inaccessible to JavaScript)
+	)
 }
 
 func (service AuthService) CheckCredentials(username string, password string) (bool, error) {
