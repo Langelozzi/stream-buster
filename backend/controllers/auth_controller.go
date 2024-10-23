@@ -4,18 +4,21 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
 )
 
 type AuthController struct {
-	Service interfaces.AuthServiceInterface
+	Service     interfaces.AuthServiceInterface
+	userService interfaces.UserServiceInterface
 }
 
-func NewAuthController(service interfaces.AuthServiceInterface) *AuthController {
+func NewAuthController(service interfaces.AuthServiceInterface, userService interfaces.UserServiceInterface) *AuthController {
 	return &AuthController{
-		Service: service,
+		Service:     service,
+		userService: userService,
 	}
 }
 
@@ -73,7 +76,27 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 }
 
 func (contr *AuthController) CreateUser(c *gin.Context) {
+	username := c.PostForm("Username")
+	firstName := c.PostForm("FirstName")
+	lastName := c.PostForm("LastName")
+	email := c.PostForm("Email")
+	password := c.PostForm("Password")
 
+	// Create the user object
+	newUser := models.User{
+		Username:  username,
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Password:  password,
+	}
+
+	createdUser, err := contr.userService.CreateUser(&newUser)
+	if err != nil {
+		c.String(400, "Error Creating user")
+	}
+
+	c.JSON(201, createdUser)
 }
 
 func (contr *AuthController) TestAuthMiddleware(c *gin.Context) {
