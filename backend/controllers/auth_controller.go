@@ -8,6 +8,7 @@ import (
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 type AuthController struct {
@@ -49,19 +50,23 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 
 		tokenString, err := contr.Service.CreateToken(username)
 
-		if err != nil {
+		if err != nil || tokenString == "" {
 			c.String(http.StatusInternalServerError, "Error creating token")
 			return
 		}
 
 		refreshTokenString, err := contr.Service.CreateRefreshToken(username)
 
-		if err != nil {
+		if err != nil || refreshTokenString == "" {
 			c.String(http.StatusInternalServerError, "Error creating refreshToken")
 			return
 		}
 
 		maxRefreshTokenAge, err := strconv.Atoi(utils.GetEnvVariable("REFRESH_TOKEN_EXPIRATION_TIME"))
+
+		if err != nil {
+			c.String(http.StatusInternalServerError, "Error fetching refresh token age")
+		}
 
 		c.SetCookie(
 			"refreshToken",                 // Name of the cookie
