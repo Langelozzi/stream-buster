@@ -12,8 +12,8 @@ import (
 func TestLoginUser(t *testing.T) {
 	// Create the form data for the request
 	form := url.Values{}
-	form.Add("username", "testuser")
-	form.Add("password", "testpassword")
+	form.Add("username", "admin")
+	form.Add("password", "$tre@mBuster")
 
 	// Create the request, set the content-type to form-encoded
 	req, err := http.NewRequest("POST", "http://localhost:8080/api/v1/auth/login", strings.NewReader(form.Encode()))

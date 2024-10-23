@@ -21,6 +21,10 @@ func (service *UserService) GetUser(id int, includeDeleted bool, full bool) (*mo
 	return service.dao.GetUserDao(id, includeDeleted, full)
 }
 
+func (service *UserService) GetUserByUsername(username string, includeDeleted bool, full bool) (*models.User, error) {
+	return service.dao.GetUserByUsernameDao(username, includeDeleted, full)
+}
+
 func (service *UserService) CreateUser(user *models.User) (*models.User, error) {
 	return service.dao.CreateUserDao(user)
 }

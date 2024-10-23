@@ -37,7 +37,12 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	validCredentials, err := contr.Service.CheckCredentials(username, password)
+	user, err := contr.userService.GetUserByUsername(username, false, false)
+	if err != nil {
+		c.String(400, "user doesnt not exist")
+	}
+
+	validCredentials := contr.Service.CheckCredentials(username, password, user)
 
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Error validating users credentials")
