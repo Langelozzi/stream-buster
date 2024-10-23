@@ -11,6 +11,11 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.5",
+    "axios": "^1.7.7",
+    "bcryptjs": "^2.4.3",
     "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -20,6 +25,7 @@
     "@eslint/js": "^9.11.1",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.0.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/lodash": "^4.17.10",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",

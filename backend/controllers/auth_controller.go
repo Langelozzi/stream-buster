@@ -38,27 +38,29 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 	password := c.PostForm("password")
 
 	user, err := contr.userService.GetUserByUsername(username, false, false)
+
 	if err != nil {
-		c.String(400, "user doesnt not exist")
+		c.String(400, "User does not not exist")
 	}
 
 	validCredentials := contr.Service.CheckCredentials(username, password, user)
 
-	if err != nil {
-		c.String(http.StatusInternalServerError, "Error validating users credentials")
-	}
 	if validCredentials {
 
 		tokenString, err := contr.Service.CreateToken(username)
+
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error creating token")
 			return
 		}
+
 		refreshTokenString, err := contr.Service.CreateRefreshToken(username)
+
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error creating refreshToken")
 			return
 		}
+
 		maxRefreshTokenAge, err := strconv.Atoi(utils.GetEnvVariable("REFRESH_TOKEN_EXPIRATION_TIME"))
 
 		c.SetCookie(
@@ -73,10 +75,10 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 
 		contr.Service.SetTokenCookie(c, tokenString)
 
-		c.String(http.StatusOK, "Autorized")
+		c.String(http.StatusOK, "Authorized")
 
 	} else {
-		c.String(http.StatusUnauthorized, "Invalid credentials")
+		c.String(http.StatusUnauthorized, "Invalid Credentials")
 	}
 }
 

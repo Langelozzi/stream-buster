@@ -1,16 +1,17 @@
 package middlewares
 
 import (
+	"net/http"
+
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
-	"net/http"
 )
 
 func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("token")
-		if err != nil {
+		if err != nil || tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "No valid refresh token"})
 			c.Abort()
 			return
