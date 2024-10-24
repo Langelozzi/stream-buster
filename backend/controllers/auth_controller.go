@@ -8,6 +8,7 @@ import (
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 type AuthController struct {
@@ -43,13 +44,11 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 		c.String(400, "User does not not exist")
 	}
 
-	// todo 
-	// change to login service funciton
 	validCredentials := contr.Service.CheckCredentials(username, password, user)
 
 	if validCredentials {
 
-		tokenString, err := contr.Service.CreateToken(user)
+		tokenString, err := contr.Service.CreateToken(username)
 
 		if err != nil || tokenString == "" {
 			c.String(http.StatusInternalServerError, "Error creating token")

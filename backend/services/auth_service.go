@@ -25,10 +25,10 @@ func NewAuthService(dao interfaces.AuthDaoInterface) *AuthService {
 }
 
 // Function to create JWT tokens with claims
-func (service AuthService) CreateToken(user User) (string, error) {
+func (service AuthService) CreateToken(username string) (string, error) {
 	// Create a new JWT token with claims
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user": user,
+		"sub": username,                         // Subject (user identifier)
 		"iss": "auth-service",                   // Issuer
 		"exp": time.Now().Add(time.Hour).Unix(), // Expiration time
 		"iat": time.Now().Unix(),                // Issued at
