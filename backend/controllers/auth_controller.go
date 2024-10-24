@@ -8,7 +8,6 @@ import (
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 )
 
 type AuthController struct {
