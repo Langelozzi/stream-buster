@@ -43,6 +43,15 @@ func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
 	return castedResults, nil
 }
 
+func GetTotalPageCount(json string) (int, error) {
+	jsonMap, err := JSONToMap(json)
+	if err != nil {
+		return -1, err
+	}
+
+	return int(jsonMap["total_pages"].(float64)), nil
+}
+
 func CastToMediaType(obj map[string]interface{}) *db.MediaType {
 	mediaType := ""
 	if obj["media_type"] != nil {

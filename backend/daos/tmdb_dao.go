@@ -22,25 +22,52 @@ func (dao *TMDBDao) SearchMultiMedia(query string) ([]interface{}, error) {
 	relativeUrl := "/search/multi"
 	encodedQuery := url.QueryEscape(query)
 
-	getUrl := fmt.Sprintf("%s%s?api_key=%s&query=%s", baseUrl, relativeUrl, apiKey, encodedQuery)
+	var allResults []interface{}
+	page := 1
 
-	response, err := http.Get(getUrl)
-	if err != nil {
-		fmt.Printf("Error fetching from tmdb api: %v\n", err)
-		return nil, err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
+	for {
+		getUrl := fmt.Sprintf("%s%s?api_key=%s&query=%s&page=%d", baseUrl, relativeUrl, apiKey, encodedQuery, page)
+
+		response, err := http.Get(getUrl)
 		if err != nil {
-			fmt.Printf("Error closing request body stream: %v\n", err)
+			fmt.Printf("Error fetching from tmdb api: %v\n", err)
+			return nil, err
 		}
-	}(response.Body)
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			if err != nil {
+				fmt.Printf("Error closing request body stream: %v\n", err)
+			}
+		}(response.Body)
 
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Printf("Error reading response body: %v\n", err)
-		return nil, err
+		body, err := io.ReadAll(response.Body)
+		if err != nil {
+			fmt.Printf("Error reading response body: %v\n", err)
+			return nil, err
+		}
+
+		// Get how many pages there are
+		totalPages, err := adapters.GetTotalPageCount(string(body))
+		if err != nil {
+			return nil, err
+		}
+
+		// Parse the response into a structure that includes page and total_pages
+		parsedResponse, err := adapters.ParseSearchMultiMediaResponse(string(body))
+		if err != nil {
+			return nil, err
+		}
+
+		// Append the results
+		allResults = append(allResults, parsedResponse...)
+
+		// Check if we've fetched all pages
+		if page >= totalPages {
+			break
+		}
+		page++
 	}
 
-	return adapters.ParseSearchMultiMediaResponse(string(body))
+	return allResults, nil
+
 }
