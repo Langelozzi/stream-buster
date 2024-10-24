@@ -12,7 +12,7 @@ const LoginForm: React.FC = () => {
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		const form = new FormData()
-		form.append("username", email)
+		form.append("email", email)
 		form.append("password", password)
 		const res: AxiosResponse = await sendForm(form)
 		console.log(res)

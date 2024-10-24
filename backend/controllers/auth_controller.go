@@ -39,7 +39,7 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 
 	user, err := contr.userService.GetUserByEmail(email, false, false)
 
-	if err != nil {
+	if err != nil || user == nil {
 		c.String(400, "User does not not exist")
 	}
 
