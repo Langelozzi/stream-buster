@@ -1,7 +1,6 @@
 package services
 
 import (
-	"crypto/subtle"
 	"fmt"
 	"strconv"
 	"time"
@@ -12,6 +11,7 @@ import (
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var superSecretKey = []byte(utils.GetEnvVariable(utils.GetEnvVariable("JWT_SECRET")))
@@ -134,13 +134,44 @@ func (service AuthService) SetTokenCookie(c *gin.Context, tokenString string) {
 	)
 }
 
-func (service AuthService) CheckCredentials(username string, password string, user *models.User) bool {
-	aBytes := []byte(user.Password)
-	bBytes := []byte(password)
-
-	if len(aBytes) != len(bBytes) {
-		return false
+func (service AuthService) CreateUser(firstName, lastName, email, password string) (*models.User, error) {
+	// hash the password
+	hashPasswordString, err := service.HashPassword(password)
+	if err != nil {
 	}
 
-	return subtle.ConstantTimeCompare(aBytes, bBytes) == 1
+	// Create the user object
+	newUser := models.User{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Password:  hashPasswordString,
+	}
+	createdUser, err := service.userService.CreateUser(&newUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return createdUser, nil
+}
+
+// HashPassword hashes a raw password string using bcrypt
+func (service AuthService) HashPassword(password string) (string, error) {
+	// Generate a hashed password with bcrypt using a cost of bcrypt.DefaultCost
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
+}
+
+func (service AuthService) CheckCredentials(password string, user *models.User) bool {
+	return service.CheckPasswordHash(password, user.Password)
+}
+
+// CheckPasswordHash compares a hashed password with its possible plain-text equivalent
+func (service AuthService) CheckPasswordHash(password, hash string) bool {
+	// Compare the password with the hashed password
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }

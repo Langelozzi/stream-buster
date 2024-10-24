@@ -43,7 +43,7 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 		c.String(400, "User does not not exist")
 	}
 
-	validCredentials := contr.Service.CheckCredentials(email, password, user)
+	validCredentials := contr.Service.CheckCredentials(password, user)
 
 	if validCredentials {
 
