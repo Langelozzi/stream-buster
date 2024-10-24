@@ -25,9 +25,9 @@ func CreateAdminUser(db *gorm.DB) {
 	// Create the admin user
 	user := models.User{
 		ID:        1,
+		Email:     "Admin@streambuster.com",
 		FirstName: "Admin",
 		LastName:  "LnameAdmin",
-		Username:  "admin",
 		Password:  "$tre@mBuster",
 		DeletedAt: nil,
 	}

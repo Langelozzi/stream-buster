@@ -34,27 +34,27 @@ func NewAuthController(service interfaces.AuthServiceInterface, userService inte
 // @Failure 400 {object} map[string]interface{} "Invalid username or password"
 // @Router /auth/login [post]
 func (contr *AuthController) LoginUser(c *gin.Context) {
-	username := c.PostForm("username")
+	email := c.PostForm("email")
 	password := c.PostForm("password")
 
-	user, err := contr.userService.GetUserByUsername(username, false, false)
+	user, err := contr.userService.GetUserByEmail(email, false, false)
 
 	if err != nil {
 		c.String(400, "User does not not exist")
 	}
 
-	validCredentials := contr.Service.CheckCredentials(username, password, user)
+	validCredentials := contr.Service.CheckCredentials(email, password, user)
 
 	if validCredentials {
 
-		tokenString, err := contr.Service.CreateToken(username)
+		tokenString, err := contr.Service.CreateToken(email)
 
 		if err != nil || tokenString == "" {
 			c.String(http.StatusInternalServerError, "Error creating token")
 			return
 		}
 
-		refreshTokenString, err := contr.Service.CreateRefreshToken(username)
+		refreshTokenString, err := contr.Service.CreateRefreshToken(email)
 
 		if err != nil || refreshTokenString == "" {
 			c.String(http.StatusInternalServerError, "Error creating refreshToken")
@@ -87,15 +87,13 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 }
 
 func (contr *AuthController) CreateUser(c *gin.Context) {
-	username := c.PostForm("Username")
-	firstName := c.PostForm("FirstName")
-	lastName := c.PostForm("LastName")
 	email := c.PostForm("Email")
 	password := c.PostForm("Password")
+	firstName := c.PostForm("FirstName")
+	lastName := c.PostForm("LastName")
 
 	// Create the user object
 	newUser := models.User{
-		Username:  username,
 		FirstName: firstName,
 		LastName:  lastName,
 		Email:     email,

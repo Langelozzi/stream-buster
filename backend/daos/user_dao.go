@@ -52,7 +52,7 @@ func (dao *UserDao) GetUserDao(id int, includeDeleted bool, full bool) (*models.
 	return &user, nil
 }
 
-func (dao *UserDao) GetUserByUsernameDao(username string, includeDeleted bool, full bool) (*models.User, error) {
+func (dao *UserDao) GetUserByEmailDao(email string, includeDeleted bool, full bool) (*models.User, error) {
 	db := database.GetInstance()
 
 	var user models.User
@@ -66,8 +66,8 @@ func (dao *UserDao) GetUserByUsernameDao(username string, includeDeleted bool, f
 		query.Where("deleted_at IS NULL")
 	}
 
-	// Use the username in the query instead of ID
-	if err := query.Where("username = ?", username).First(&user).Error; err != nil {
+	// Use the email in the query instead of ID
+	if err := query.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 

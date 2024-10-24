@@ -12,7 +12,7 @@ import (
 func TestLoginUser(t *testing.T) {
 	// Create the form data for the request
 	form := url.Values{}
-	form.Add("username", "admin")
+	form.Add("email", "Admin@streambuster.com")
 	form.Add("password", "$tre@mBuster")
 
 	// Create the request, set the content-type to form-encoded
