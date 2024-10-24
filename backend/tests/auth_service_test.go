@@ -1,23 +1,26 @@
 package test
 
 import (
+	"testing"
+
 	"github.com/STREAM-BUSTER/stream-buster/daos"
-	daoInterfaces "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
+	iDao "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/services"
-	servInterfaces "github.com/STREAM-BUSTER/stream-buster/services/interfaces"
+	iServices "github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"github.com/golang-jwt/jwt/v4"
-	"testing"
 )
 
 var secretKey = []byte("my_secret_key")
 
 // TestCreateToken_ReturnsToken tests if the function returns a non-empty token string.
 func TestCreateToken_ReturnsToken(t *testing.T) {
-	var dao daoInterfaces.AuthDaoInterface = daos.NewAuthDao()
-	var authService servInterfaces.AuthServiceInterface = services.NewAuthService(dao)
+	var userDao iDao.UserDaoInterface = daos.NewUserDao()
+	var userService iServices.UserServiceInterface = services.NewUserService(userDao)
+	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
+	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
-	token, err := authService.CreateToken("testuser")
+	token, err := authService.CreateToken("Admin@streambuster.com")
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -28,10 +31,13 @@ func TestCreateToken_ReturnsToken(t *testing.T) {
 
 // TestCreateToken_ValidToken tests if the generated token is valid and contains the correct claims.
 func TestCreateToken_ValidToken(t *testing.T) {
-	var dao daoInterfaces.AuthDaoInterface = daos.NewAuthDao()
-	var authService servInterfaces.AuthServiceInterface = services.NewAuthService(dao)
-	username := "testuser"
-	tokenString, err := authService.CreateToken(username)
+	var userDao iDao.UserDaoInterface = daos.NewUserDao()
+	var userService iServices.UserServiceInterface = services.NewUserService(userDao)
+	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
+	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao, userService)
+
+	email := "Admin@streambuster.com"
+	tokenString, err := authService.CreateToken(email)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
@@ -52,10 +58,12 @@ func TestCreateToken_ValidToken(t *testing.T) {
 }
 
 func TestCreateAndVerifyToken(t *testing.T) {
-	var dao daoInterfaces.AuthDaoInterface = daos.NewAuthDao()
-	var authService servInterfaces.AuthServiceInterface = services.NewAuthService(dao)
+	var userDao iDao.UserDaoInterface = daos.NewUserDao()
+	var userService iServices.UserServiceInterface = services.NewUserService(userDao)
+	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
+	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
-	tokenString, err := authService.CreateToken("cameron")
+	tokenString, err := authService.CreateToken("Admin@streambuster.com")
 	if err != nil {
 		t.Fatalf("Error creating token: %v", err)
 	}

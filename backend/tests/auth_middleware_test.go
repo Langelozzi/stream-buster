@@ -18,10 +18,12 @@ func TestMiddleware(t *testing.T) {
 		fmt.Println("Error creating request:", err)
 		return
 	}
-	var dao iDao.AuthDaoInterface = daos.NewAuthDao()
-	var authService interfaces.AuthServiceInterface = services.NewAuthService(dao)
+	var userDao iDao.UserDaoInterface = daos.NewUserDao()
+	var userService interfaces.UserServiceInterface = services.NewUserService(userDao)
+	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
+	var authService interfaces.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
-	accessTokenString, err := authService.CreateToken("username")
+	accessTokenString, err := authService.CreateToken("admin")
 
 	cookie := &http.Cookie{
 		Name:     "token",
@@ -49,8 +51,10 @@ func TestMiddleware_refreshToken(t *testing.T) {
 		return
 	}
 
-	var dao iDao.AuthDaoInterface = daos.NewAuthDao()
-	var authService interfaces.AuthServiceInterface = services.NewAuthService(dao)
+	var userDao iDao.UserDaoInterface = daos.NewUserDao()
+	var userService interfaces.UserServiceInterface = services.NewUserService(userDao)
+	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
+	var authService interfaces.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
 	accessTokenString, err := authService.CreateToken("username")
 

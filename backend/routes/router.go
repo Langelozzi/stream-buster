@@ -25,8 +25,10 @@ func InitRouter() *gin.Engine {
 		v1.SetAuthRoutes(v1RouterGroup)
 	}
 
+	var userDao iDao.UserDaoInterface = daos.NewUserDao()
+	var userService iServices.UserServiceInterface = services.NewUserService(userDao)
 	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
-	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao)
+	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
 	// Setup private routes (requires authentication)
 	privateRouterGroup := v1RouterGroup.Group("")
