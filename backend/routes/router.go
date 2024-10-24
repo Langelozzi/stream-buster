@@ -18,6 +18,7 @@ func InitRouter() *gin.Engine {
 	v1RouterGroup := router.Group("/api/v1")
 	{
 		v1.SetSearchRoutes(v1RouterGroup)
+		v1.SetCDNRoutes(v1RouterGroup)
 	}
 	// {
 	// 	// Setup public routes

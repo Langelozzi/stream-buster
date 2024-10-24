@@ -15,7 +15,7 @@ func NewTMDBDao() *TMDBDao {
 	return &TMDBDao{}
 }
 
-func (dao TMDBDao) SearchMultiMedia(query string) ([]interface{}, error) {
+func (dao *TMDBDao) SearchMultiMedia(query string) ([]interface{}, error) {
 	// Get environment variables
 	baseUrl := utils.GetEnvVariable("TMDB_API_BASE_URL")
 	apiKey := utils.GetEnvVariable("TMDB_API_KEY")
