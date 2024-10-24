@@ -42,7 +42,5 @@ func (dao *TMDBDao) SearchMultiMedia(query string) ([]interface{}, error) {
 		return nil, err
 	}
 
-	fmt.Printf("Response body: %v\n", string(body))
-
 	return adapters.ParseSearchMultiMediaResponse(string(body))
 }

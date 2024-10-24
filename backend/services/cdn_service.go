@@ -19,7 +19,7 @@ func (service *CDNService) GetMovieContent(tmdbId string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return TransformContent(html)
+	return transformContent(html)
 }
 
 func (service *CDNService) GetTVContent(tmdbId string, seasonNum int, episodeNum int) (string, error) {
@@ -27,21 +27,21 @@ func (service *CDNService) GetTVContent(tmdbId string, seasonNum int, episodeNum
 	if err != nil {
 		return "", nil
 	}
-	return TransformContent(html)
+	return transformContent(html)
 }
 
-func TransformContent(html string) (string, error) {
-	srcUrl, err := GetContentSrcUrl(html)
+func transformContent(html string) (string, error) {
+	srcUrl, err := getContentSrcUrl(html)
 	if err != nil {
 		return "", err
 	}
 
-	wrappedHtml := GetWrappedHtmlContent(srcUrl)
+	wrappedHtml := getWrappedHtmlContent(srcUrl)
 
 	return wrappedHtml, nil
 }
 
-func GetContentSrcUrl(html string) (string, error) {
+func getContentSrcUrl(html string) (string, error) {
 	// Use a regex to find the src attribute of the iframe
 	re := regexp.MustCompile(`src="([^"]+)"`)
 	match := re.FindStringSubmatch(html)
@@ -57,7 +57,7 @@ func GetContentSrcUrl(html string) (string, error) {
 	return srcUrl, nil
 }
 
-func GetWrappedHtmlContent(contentSrcUrl string) string {
+func getWrappedHtmlContent(contentSrcUrl string) string {
 	// Create a wrapped HTML with an iframe
 	wrappedHTML := `
 		<!DOCTYPE html>

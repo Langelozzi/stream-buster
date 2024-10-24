@@ -3,11 +3,12 @@ package utils
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
-func DoesContentExistForTMDBId(tmdbId string) bool {
+func DoesContentExistForTMDBId(tmdbId int) bool {
 	baseUrl := GetEnvVariable("VIDSRC_BASE_URL")
-	url := fmt.Sprintf("%s/movie/%s", baseUrl, tmdbId)
+	url := fmt.Sprintf("%s/movie/%s", baseUrl, strconv.Itoa(tmdbId))
 
 	// Ping the vidsrc api to check if the content exists
 	response, err := http.Get(url)
