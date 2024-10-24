@@ -23,7 +23,7 @@ func TestMiddleware(t *testing.T) {
 	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
 	var authService interfaces.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
-	accessTokenString, err := authService.CreateToken("admin")
+	accessTokenString, err := authService.CreateToken("Admin@streambuster.com")
 
 	cookie := &http.Cookie{
 		Name:     "token",
@@ -56,7 +56,7 @@ func TestMiddleware_refreshToken(t *testing.T) {
 	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
 	var authService interfaces.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
-	accessTokenString, err := authService.CreateToken("username")
+	accessTokenString, err := authService.CreateToken("Admin@streambuster.com")
 
 	cookie := &http.Cookie{
 		Name:     "token",
@@ -65,7 +65,7 @@ func TestMiddleware_refreshToken(t *testing.T) {
 		HttpOnly: false, // Secure the cookie by not allowing JavaScript access
 	}
 
-	refreshTokenString, err := authService.CreateRefreshToken("username")
+	refreshTokenString, err := authService.CreateRefreshToken("Admin@streambuster.com")
 	refreshCookie := &http.Cookie{
 		Name:     "refreshToken",
 		Value:    refreshTokenString,
