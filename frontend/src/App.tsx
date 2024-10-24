@@ -1,10 +1,12 @@
-import './App.css'
+import { UserProvider } from './contexts/UserContext';
 import Router from './router/Router';
 
 function App() {
   return (
     <>
-      <Router />
+      <UserProvider>
+        <Router />
+      </UserProvider>
     </>
   )
 }
