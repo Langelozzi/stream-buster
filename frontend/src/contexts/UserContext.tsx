@@ -7,7 +7,10 @@ interface UserContextType {
 }
 
 interface TokenClaims {
-    user: User;
+    id: number,
+    email: string,
+    firstName: string,
+    lastName: string,
     iss: string;
     exp: number;
     iat: number;
@@ -34,7 +37,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (token) {
             try {
                 const tokenClaims = decodeToken(token);
-                setUser(tokenClaims.user);
+                setUser({ email: tokenClaims["email"], firstName: tokenClaims["firstName"], lastName: tokenClaims["lastName"], id: tokenClaims["id"] });
             } catch (e) {
                 console.log("Invalid jwt", e);
             }

@@ -1,52 +1,56 @@
 package middlewares
 
 import (
-	"github.com/STREAM-BUSTER/stream-buster/models"
+	"net/http"
+
+	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/gin-gonic/gin"
-	"strings"
+	"github.com/golang-jwt/jwt/v4"
 )
 
-func Auth() gin.HandlerFunc {
+func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//authHandler := dependency_injection.InitAuthDependencies()
-		//userService := dependency_injection.InitUserServiceDependencies()
-
-		// Get the Authentication Header
-		authHeader := c.GetHeader("Authorization")
-
-		// Check if the token is missing
-		if authHeader == "" {
-			c.JSON(401, gin.H{"error": "Missing Authorization Header"})
+		tokenString, err := c.Cookie("token")
+		if err != nil || tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "No valid refresh token"})
 			c.Abort()
 			return
 		}
 
-		// Remove the Bearer prefix
-		authHeader = strings.Replace(authHeader, "Bearer ", "", 1)
+		token, err := service.VerifyToken(tokenString)
+		if err != nil || !token.Valid {
+			refreshTokenString, err := c.Cookie("refreshToken")
+			if err != nil {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "No valid refresh token"})
+				c.Abort()
+				return
+			}
 
-		//// Validate the token
-		//token, err := authHandler.ParseAndValidateToken(authHeader)
-		//if err != nil {
-		//	c.JSON(401, gin.H{"error": err.Error()})
-		//	c.Abort()
-		//	return
-		//}
-		//
-		//// If the token is valid, get the external userId from claims
-		//claims := token.Claims.(*auth.TokenClaims)
-		//externalUserId := claims.Oid
+			accessTokenString, err := service.RefreshToken(refreshTokenString)
+			if err != nil {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to refresh token"})
+				c.Abort()
+				return
+			}
 
-		// Get the user from the database
-		//user, err := userService.GetUserByExternalId(externalUserId, false, false)
-		//if err != nil {
-		//	c.JSON(500, gin.H{"error": err.Error()})
-		//	c.Abort()
-		//	return
-		//}
-		user := models.User{}
+			service.SetTokenCookie(c, accessTokenString)
 
-		// Set the user in the context
-		c.Set("user", user)
+			token, err = service.VerifyToken(accessTokenString)
+			if err != nil || !token.Valid {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refreshed token"})
+				c.Abort()
+				return
+			}
+		}
+
+		// Extract claims from the verified token
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			c.Set("user", claims)
+		} else {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			c.Abort()
+			return
+		}
 
 		c.Next()
 	}

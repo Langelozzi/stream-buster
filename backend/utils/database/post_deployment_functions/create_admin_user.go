@@ -3,7 +3,9 @@ package post_deployment_functions
 import (
 	"errors"
 	"fmt"
+
 	"github.com/STREAM-BUSTER/stream-buster/models"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -22,10 +24,21 @@ func CreateAdminUser(db *gorm.DB) {
 	// Allow identity insert for the user table
 	db.Exec("SET IDENTITY_INSERT users ON")
 
+	unHashedPassword := "streambuster"
+	// Generate a hashed password with bcrypt using a cost of bcrypt.DefaultCost
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(unHashedPassword), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Errorf("error hashing password")
+	}
+
+	password := string(hashedPassword)
 	// Create the admin user
 	user := models.User{
 		ID:        1,
-		Username:  "admin",
+		Email:     "Admin@streambuster.com",
+		FirstName: "Admin",
+		LastName:  "LnameAdmin",
+		Password:  password,
 		DeletedAt: nil,
 	}
 	db.Create(&user)
