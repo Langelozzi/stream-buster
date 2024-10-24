@@ -9,8 +9,10 @@ import (
 )
 
 func InitAuthDependencies() controllers.AuthController {
+	var userDao iDao.UserDaoInterface = daos.NewUserDao()
+	var userService iServices.UserServiceInterface = services.NewUserService(userDao)
 	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
 	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao)
-	var authController controllers.AuthController = *controllers.NewAuthController(authService)
+	var authController controllers.AuthController = *controllers.NewAuthController(authService, userService)
 	return authController
 }
