@@ -33,6 +33,7 @@ func (service AuthService) CreateToken(email string) (string, error) {
 	}
 	// Create a new JWT token with claims
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":    user.ID,
 		"email": user.Email,
 		"fname": user.FirstName,
 		"lname": user.LastName,
