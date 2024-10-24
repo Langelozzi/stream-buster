@@ -1,20 +1,8 @@
-import MediaPlayer from "../../components/media-player/MediaPlayer";
-import { Search } from "../../components/search/Search";
-import { useUser } from "../../hooks/useUser";
-
-
-const HomePage = () => {
-    const user = useUser();
-    console.log('user', user);
-
-    const dummyId = 920;
-
+export const HomePage = () => {
     return (
         <>
-            <Search />
-            <MediaPlayer tmdbId={dummyId} />
+            <div>Welcome to stream buster</div>
+            <div>login or sign up</div>
         </>
     )
 }
-
-export default HomePage;

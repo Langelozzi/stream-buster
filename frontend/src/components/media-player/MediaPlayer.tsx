@@ -9,7 +9,7 @@ interface MediaPlayerProps {
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
-const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
+export const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
     const {
         tmdbId,
         seasonNum,
@@ -45,5 +45,3 @@ const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
         </Box>
     );
 };
-
-export default MediaPlayer;

@@ -1,5 +1,5 @@
 import { UserProvider } from './contexts/UserContext';
-import Router from './router/Router';
+import { Router } from './router/Router';
 
 function App() {
   return (

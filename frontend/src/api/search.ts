@@ -13,6 +13,9 @@ export const searchMulti = async (query: string): Promise<(TV | Movie)[]> => {
         });
 
         const data = response.data as any[];
+        if (!data || data.length === 0) {
+            return [];
+        }
 
         return data.map(item => {
             if (item.Media.MediaType.Name === 'tv') {

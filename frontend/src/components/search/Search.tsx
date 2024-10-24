@@ -41,7 +41,28 @@ export const Search = () => {
                     variant="outlined"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    sx={{ mr: 2 }}
+                    sx={{
+                        mr: 2,
+                        input: { color: 'black' }, // Text color inside the input
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                borderColor: 'white', // Default border color
+                            },
+                            '&:hover fieldset': {
+                                borderColor: 'white', // Border color on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                borderColor: 'white', // Border color when focused
+                            },
+                            backgroundColor: 'white', // Background color of the TextField
+                        },
+                        '& .MuiInputLabel-root': {
+                            color: 'black', // Label color when not focused
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                            color: 'black', // Label color when focused
+                        },
+                    }}
                 />
                 <Button type="submit" variant="contained" color="primary">
                     Search
@@ -56,7 +77,7 @@ export const Search = () => {
                 <Box mt={2} width="100%">
                     <Typography variant="h6">Search Results:</Typography>
                     {results.map((media, index) => {
-                        return <MediaCard item={media} key={index} />
+                        return <MediaCard media={media} key={index} />
                     })}
                 </Box>
             )}
