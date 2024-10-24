@@ -13,7 +13,7 @@ func TestLoginUser(t *testing.T) {
 	// Create the form data for the request
 	form := url.Values{}
 	form.Add("email", "Admin@streambuster.com")
-	form.Add("password", "$tre@mBuster")
+	form.Add("password", "streambuster")
 
 	// Create the request, set the content-type to form-encoded
 	req, err := http.NewRequest("POST", "http://localhost:8080/api/v1/auth/login", strings.NewReader(form.Encode()))
