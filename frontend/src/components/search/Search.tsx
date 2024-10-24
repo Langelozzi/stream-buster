@@ -55,8 +55,8 @@ export const Search = () => {
             {!loading && results.length > 0 && (
                 <Box mt={2} width="100%">
                     <Typography variant="h6">Search Results:</Typography>
-                    {results.map((media) => {
-                        return <MediaCard item={media} />
+                    {results.map((media, index) => {
+                        return <MediaCard item={media} key={index} />
                     })}
                 </Box>
             )}
