@@ -14,7 +14,12 @@ const hashPassword = async (password: string): Promise<string> => {
 
 export const sendForm = async (form: FormData) => {
 	const res: AxiosResponse = await axios.post(import.meta.env.VITE_API_URL + "/auth/login", form, { withCredentials: true })
-	return res
+	if (res.status == 401) {
+		return "Wrong username or password. Try again or click Forgot password to reset it."
+	}
+
+
+	return null
 }
 
 export const sendTestRequest = async () => {
