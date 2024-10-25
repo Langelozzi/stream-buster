@@ -2,16 +2,30 @@ import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import { Movie } from "../../models/movie";
 import { TV } from "../../models/tv";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import MediaDetailsModal from "../media-details-modal/MediaDetailsModal";
 
 interface MediaCardProps {
     media: TV | Movie
 }
 
 export const MediaCard: React.FC<MediaCardProps> = ({ media }) => {
+    // Hooks
     const navigate = useNavigate();
 
+    // State
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Functions
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    }
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    }
+
     const handleClick = () => {
-        navigate('/watch', { state: { media } });
+        handleOpenModal();
     }
 
     return (
@@ -33,6 +47,8 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media }) => {
                     </Typography>
                 </CardContent>
             </Card>
+
+            <MediaDetailsModal media={media} isOpen={isModalOpen} onClose={handleCloseModal} />
         </>
     )
 }
