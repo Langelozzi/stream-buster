@@ -30,6 +30,7 @@ func InitializeDb() {
 	}
 
 	post_deployment_functions.CreateAdminUser(database)
+	post_deployment_functions.CreateTestData(database)
 
 	log.Print("Database initialized successfully.")
 }

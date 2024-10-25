@@ -3,10 +3,11 @@ package adapters
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/STREAM-BUSTER/stream-buster/models/api"
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
-	"time"
 )
 
 func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
