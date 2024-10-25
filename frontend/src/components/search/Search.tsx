@@ -3,7 +3,7 @@ import { TextField, Button, Box, CircularProgress, Typography } from '@mui/mater
 import { TV } from '../../models/tv';
 import { Movie } from '../../models/movie';
 import { searchMulti } from '../../api/search'; // Assuming this is the API function you've created
-import { MediaCard } from '../media-item/media-card';
+import { MediaCard } from '../media-card/MediaCard';
 
 export const Search = () => {
     // State for the search query and the results
@@ -76,9 +76,11 @@ export const Search = () => {
             {!loading && results.length > 0 && (
                 <Box mt={2} width="100%">
                     <Typography variant="h6">Search Results:</Typography>
-                    {results.map((media, index) => {
-                        return <MediaCard media={media} key={index} />
-                    })}
+                    <Box display="flex" flexWrap="wrap" justifyContent="flex-start" gap={2} mt={2}>
+                        {results.map((media, index) => (
+                            <MediaCard media={media} key={index} />
+                        ))}
+                    </Box>
                 </Box>
             )}
 
@@ -88,4 +90,5 @@ export const Search = () => {
             )}
         </Box>
     );
+
 };
