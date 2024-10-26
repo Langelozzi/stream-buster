@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import bcrypt from 'bcryptjs';
 
 const hashPassword = async (password: string): Promise<string> => {
@@ -13,13 +13,14 @@ const hashPassword = async (password: string): Promise<string> => {
 };
 
 export const sendForm = async (form: FormData) => {
-	const res: AxiosResponse = await axios.post(import.meta.env.VITE_API_URL + "/auth/login", form, { withCredentials: true })
-	if (res.status == 401) {
-		return "Wrong username or password. Try again or click Forgot password to reset it."
+	try {
+		const res: AxiosResponse = await axios.post(import.meta.env.VITE_API_URL + "/auth/login", form, { withCredentials: true })
+		return res
+	} catch (err: any) {
+		if (err.status == 401) {
+			alert("Wrong username or password. Try again or click Forgot password to reset it.")
+		}
 	}
-
-
-	return null
 }
 
 export const sendTestRequest = async () => {
