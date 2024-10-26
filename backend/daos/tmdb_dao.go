@@ -3,10 +3,12 @@ package daos
 import (
 	"fmt"
 	"github.com/STREAM-BUSTER/stream-buster/adapters"
+	"github.com/STREAM-BUSTER/stream-buster/models/api"
 	"github.com/STREAM-BUSTER/stream-buster/utils"
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type TMDBDao struct{}
@@ -70,4 +72,34 @@ func (dao *TMDBDao) SearchMultiMedia(query string) ([]interface{}, error) {
 
 	return allResults, nil
 
+}
+
+func (dao *TMDBDao) GetTVDetails(id int) (*api.TV, error) {
+	baseUrl := utils.GetEnvVariable("TMDB_API_BASE_URL")
+	apiKey := utils.GetEnvVariable("TMDB_API_KEY")
+	relativeUrl := "/search/multi"
+
+	getUrl := fmt.Sprintf("%s%s/%s?api_key=%s", baseUrl, relativeUrl, strconv.Itoa(id), apiKey)
+
+	response, err := http.Get(getUrl)
+	if err != nil {
+		fmt.Printf("Error fetching from tmdb api: %v\n", err)
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing request body stream: %v\n", err)
+		}
+	}(response.Body)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		fmt.Printf("Error reading response body: %v\n", err)
+		return nil, err
+	}
+
+	fmt.Println(body)
+
+	return &api.TV{}, nil
 }

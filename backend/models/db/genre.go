@@ -1,4 +1,4 @@
-package api
+package db
 
 type Genre struct {
 	ID   int

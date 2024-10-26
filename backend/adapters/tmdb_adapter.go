@@ -31,7 +31,7 @@ func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
 					movie := CastToMovie(itemMap, media)
 					castedResults = append(castedResults, movie)
 				} else if mediaType.Name == "tv" {
-					tv := CastToTV(itemMap, media)
+					tv := CastToTV(itemMap, media, false)
 					castedResults = append(castedResults, tv)
 				}
 			}
@@ -65,6 +65,7 @@ func CastToMediaType(obj map[string]interface{}) *db.MediaType {
 
 func CastToMedia(obj map[string]interface{}, mediaType *db.MediaType) *db.Media {
 	tmdbId := int(obj["id"].(float64))
+	overview := obj["overview"].(string)
 
 	var title string
 	if mediaType.Name == "tv" {
@@ -81,31 +82,39 @@ func CastToMedia(obj map[string]interface{}, mediaType *db.MediaType) *db.Media 
 	return &db.Media{
 		TMDBID:      tmdbId,
 		Title:       title,
+		Overview:    overview,
 		PosterImage: posterPath,
 		MediaType:   mediaType,
 	}
 }
 
 func CastToMovie(obj map[string]interface{}, media *db.Media) *api.Movie {
-	overview := obj["overview"].(string)
 	releaseDate := ConvertStringToDate(obj["release_date"].(string))
 
 	return &api.Movie{
 		Media:       media,
-		Overview:    overview,
 		ReleaseDate: releaseDate,
 	}
 }
 
-func CastToTV(obj map[string]interface{}, media *db.Media) *api.TV {
-	overview := obj["overview"].(string)
+func CastToTV(obj map[string]interface{}, media *db.Media, detailed bool) *api.TV {
 	firstAirDate := ConvertStringToDate(obj["first_air_date"].(string))
 
-	return &api.TV{
+	tv := api.TV{
 		Media:        media,
-		Overview:     overview,
 		FirstAirDate: firstAirDate,
 	}
+
+	if detailed {
+		tv.LastAirDate = ConvertStringToDate(obj["last_air_date"].(string))
+		tv.SeasonCount = int(obj["number_of_seasons"].(float64))
+		tv.EpisodeCount = int(obj["number_of_episodes"].(float64))
+		tv.BackdropImage = GetFullImagePath(obj["backdrop_path"].(string))
+
+		// Iterate through the seasons list and convert to season objects
+	}
+
+	return &tv
 }
 
 func ConvertStringToDate(str string) *time.Time {
