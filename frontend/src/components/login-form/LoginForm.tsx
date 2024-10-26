@@ -2,23 +2,28 @@ import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { sendForm, sendTestRequest } from './loginHanlder';
 import { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm: React.FC = () => {
 	// State for email and password
 	const [email, setEmail] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 
+	const navigate = useNavigate();
 	// Handle form submission
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		const form = new FormData()
-		form.append("email", email)
-		form.append("password", password)
-		const res: AxiosResponse = await sendForm(form)
-		console.log(res)
+		const form = new FormData();
+		form.append("email", email);
+		form.append("password", password);
 
-		const res2: AxiosResponse = await sendTestRequest()
-		console.log(res2)
+		const res = await sendForm(form);
+		if (res) {
+			navigate("/");  // Redirect without reloading the page
+		}
+
+		const res2: AxiosResponse = await sendTestRequest();
+		console.log(res2);
 	};
 
 	return (
