@@ -125,7 +125,7 @@ func createTestMedia(database *gorm.DB) {
 func createCurrentlyWatchingEntry(database *gorm.DB) {
 	currentlyWatching := db.CurrentlyWatching{
 		UserID:        1,
-		MediaId:       "1", // ID of the Media record created earlier
+		MediaID:       1, // ID of the Media record created earlier
 		EpisodeNumber: 1,
 		SeasonNumber:  1,
 		CreatedAt:     timePtr(time.Now()),

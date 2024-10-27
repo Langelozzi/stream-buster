@@ -45,7 +45,7 @@ func (dao *CurrentlyWatchingDao) UpdateCurrentlyWatching(updatedWatch *db.Curren
 	databaseInstance := database.GetInstance()
 
 	var existingWatch db.CurrentlyWatching
-	if err := databaseInstance.Where("user_id = ? AND media_id = ?", updatedWatch.UserID, updatedWatch.MediaId).First(&existingWatch).Error; err != nil {
+	if err := databaseInstance.Where("user_id = ? AND media_id = ?", updatedWatch.UserID, updatedWatch.MediaID).First(&existingWatch).Error; err != nil {
 		return nil, err
 	}
 

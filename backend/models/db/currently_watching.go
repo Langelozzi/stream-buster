@@ -1,15 +1,17 @@
 package db
 
 import (
-	"github.com/STREAM-BUSTER/stream-buster/models"
 	"time"
+
+	"github.com/STREAM-BUSTER/stream-buster/models"
 )
 
 type CurrentlyWatching struct {
-	UserID uint         `gorm:"foreignKey:ID"`
+	// Composite primary keys
+	UserID uint         `gorm:"primaryKey;foreignKey:ID"`
 	User   *models.User `gorm:"constraint:OnDelete:CASCADE;"`
 
-	MediaId string `gorm:"foreignKey:ID"`
+	MediaID uint   `gorm:"primaryKey;foreignKey:ID"`
 	Media   *Media `gorm:"constraint:OnDelete:SET NULL;"`
 
 	EpisodeNumber int
