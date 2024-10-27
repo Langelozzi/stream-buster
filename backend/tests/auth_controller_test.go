@@ -31,8 +31,7 @@ func TestLoginUser(t *testing.T) {
 	}
 	defer resp.Body.Close()
 
-	// Check the response status code
-	assert.Equal(t, http.StatusOK, resp.StatusCode, "Expected status 200 OK")
+	// Check the response status codeutatusCode, "Expected status 200 OK")
 
 	// Optionally, check for the cookie or body content
 	cookies := resp.Cookies()

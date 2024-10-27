@@ -1,20 +1,27 @@
 package auth
 
-import "github.com/golang-jwt/jwt/v4"
+import "time"
 
+// TokenClaims represents the claims in the JWT token
 type TokenClaims struct {
-	Ver      string   `json:"ver"`
-	Iss      string   `json:"iss"`
-	Sub      string   `json:"sub"`
-	Aud      string   `json:"aud"`
-	Exp      int64    `json:"exp"`
-	Iat      int64    `json:"iat"`
-	AuthTime int64    `json:"auth_time"`
-	Oid      string   `json:"oid"`
-	Emails   []string `json:"emails"`
-	NewUser  bool     `json:"newUser"`
-	Name     string   `json:"name"`
-	Tfp      string   `json:"tfp"`
-	Nbf      int64    `json:"nbf"`
-	jwt.RegisteredClaims
+	ID        uint   `json:"id"`
+	Email     string `json:"email"`
+	FirstName string `json:"fname"`
+	LastName  string `json:"lname"`
+	Issuer    string `json:"iss"`
+	ExpiresAt int64  `json:"exp"`
+	IssuedAt  int64  `json:"iat"`
+}
+
+// NewTokenClaims creates a new TokenClaims with given user data and sets issue/expiration times
+func NewTokenClaims(id uint, email, firstName, lastName string) *TokenClaims {
+	return &TokenClaims{
+		ID:        id,
+		Email:     email,
+		FirstName: firstName,
+		LastName:  lastName,
+		Issuer:    "auth-service",
+		ExpiresAt: time.Now().Add(time.Hour).Unix(),
+		IssuedAt:  time.Now().Unix(),
+	}
 }

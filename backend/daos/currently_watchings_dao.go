@@ -23,7 +23,7 @@ func (dao *CurrentlyWatchingDao) CreateCurrentlyWatching(watch *db.CurrentlyWatc
 }
 
 // GetCurrentlyWatchingById retrieves a CurrentlyWatching record by its UserID and MediaId
-func (dao *CurrentlyWatchingDao) GetCurrentlyWatchingById(userID uint, mediaId string, includeDeleted bool) (*db.CurrentlyWatching, error) {
+func (dao *CurrentlyWatchingDao) GetCurrentlyWatchingById(userID uint, mediaId uint, includeDeleted bool) (*db.CurrentlyWatching, error) {
 	databaseInstance := database.GetInstance()
 
 	var currentlyWatching db.CurrentlyWatching
@@ -38,6 +38,23 @@ func (dao *CurrentlyWatchingDao) GetCurrentlyWatchingById(userID uint, mediaId s
 	}
 
 	return &currentlyWatching, nil
+}
+
+func (dao *CurrentlyWatchingDao) GetCurrentlyWatchingByUserId(userID uint, includeDeleted bool) ([]*db.CurrentlyWatching, error) {
+	databaseInstance := database.GetInstance()
+
+	var currentlyWatchingRecords []*db.CurrentlyWatching
+	query := databaseInstance.Model(&db.CurrentlyWatching{}).Where("user_id = ?", userID)
+
+	if !includeDeleted {
+		query = query.Where("deleted_at IS NULL") // Assuming soft delete
+	}
+
+	if err := query.Find(&currentlyWatchingRecords).Error; err != nil {
+		return nil, err
+	}
+
+	return currentlyWatchingRecords, nil
 }
 
 // UpdateCurrentlyWatching updates the details of an existing CurrentlyWatching record

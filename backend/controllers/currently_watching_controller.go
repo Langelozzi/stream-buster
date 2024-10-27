@@ -3,6 +3,7 @@ package controllers
 import (
 	"strconv"
 
+	"github.com/STREAM-BUSTER/stream-buster/models/auth"
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/gin-gonic/gin"
@@ -35,6 +36,26 @@ func (contr *CurrentlyWatchingController) CreateCurrentlyWatchingHandler(c *gin.
 			"message": "Invalid request body. Error: " + err.Error(),
 		})
 		return
+	}
+
+	claims, exists := c.Get("user")
+	if !exists {
+		c.JSON(401, gin.H{
+			"message": "Error: cannot verify user",
+		})
+	}
+
+	user, ok := claims.(*auth.TokenClaims)
+	if !ok {
+		c.JSON(401, gin.H{
+			"message": "Error: cannot verify user",
+		})
+	}
+
+	if user.ID != watch.UserID {
+		c.JSON(401, gin.H{
+			"message": "Error: cannot verify user",
+		})
 	}
 
 	watch, err := contr.service.CreateCurrentlyWatching(watch)
@@ -70,8 +91,6 @@ func (contr *CurrentlyWatchingController) GetCurrentlyWatchingHandler(c *gin.Con
 		return
 	}
 
-	mediaId := c.Param("mediaId")
-
 	includeDeletedStr := c.DefaultQuery("includeDeleted", "false")
 	includeDeleted, err := strconv.ParseBool(includeDeletedStr)
 	if err != nil {
@@ -81,7 +100,7 @@ func (contr *CurrentlyWatchingController) GetCurrentlyWatchingHandler(c *gin.Con
 		return
 	}
 
-	watch, err := contr.service.GetCurrentlyWatchingById(uint(userID), mediaId, includeDeleted)
+	watch, err := contr.service.GetCurrentlyWatchingByUserId(uint(userID), includeDeleted)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "No currently watching records found. Error: " + err.Error(),
@@ -90,6 +109,57 @@ func (contr *CurrentlyWatchingController) GetCurrentlyWatchingHandler(c *gin.Con
 	}
 
 	c.JSON(200, watch)
+}
+
+// GetAllCurrentlyWatchingHandler retrieves all currently watching records for the authenticated user
+// @Summary Retrieve all currently watching records for the authenticated user
+// @Description Get all currently watching records for the authenticated user
+// @Tags currently-watching
+// @Accept  json
+// @Produce  json
+// @Param includeDeleted query bool false "Set to false to exclude soft deleted records" default(false)
+// @Success 200 {array} db.CurrentlyWatching "Successfully retrieved all currently watching records"
+// @Failure 400 {object} map[string]interface{} "Error: Unable to retrieve records"
+// @Failure 401 {object} map[string]interface{} "Error: Unauthorized access"
+// @Router /currently-watching/ [get]
+func (contr *CurrentlyWatchingController) GetAllCurrentlyWatchingHandler(c *gin.Context) {
+	// Retrieve user claims from the context
+	claims, exists := c.Get("user")
+	if !exists {
+		c.JSON(401, gin.H{
+			"message": "Error: cannot verify user",
+		})
+		return
+	}
+
+	user, ok := claims.(*auth.TokenClaims)
+	if !ok {
+		c.JSON(401, gin.H{
+			"message": "Error: cannot verify user",
+		})
+		return
+	}
+
+	// Parse includeDeleted query parameter
+	includeDeletedStr := c.DefaultQuery("includeDeleted", "false")
+	includeDeleted, err := strconv.ParseBool(includeDeletedStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid includeDeleted query. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// Retrieve all currently watching records for the authenticated user
+	watches, err := contr.service.GetCurrentlyWatchingByUserId(uint(user.ID), includeDeleted)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "No currently watching records found. Error: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, watches)
 }
 
 // UpdateCurrentlyWatchingHandler updates a currently watching record
