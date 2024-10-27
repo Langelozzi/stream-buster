@@ -35,6 +35,7 @@ func InitRouter() *gin.Engine {
 	privateRouterGroup.Use(middlewares.Auth(authService))
 	{
 		v1.SetUserRoutes(privateRouterGroup)
+		v1.SetCurrentlyWatchingRoutes(privateRouterGroup)
 	}
 
 	return router
