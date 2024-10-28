@@ -1,13 +1,12 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import { API_BASE_URL } from '../../utils/constants';
 
 interface MediaPlayerProps {
     tmdbId: number;
     seasonNum?: number;
     episodeNum?: number;
 }
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
     const {
@@ -17,9 +16,9 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
     } = props;
 
     const src = seasonNum && episodeNum ?
-        `${BASE_URL}/cdn/tv/${tmdbId}/${seasonNum}/${episodeNum}`
+        `${API_BASE_URL}/cdn/tv/${tmdbId}/${seasonNum}/${episodeNum}`
         :
-        `${BASE_URL}/cdn/movie/${tmdbId}`
+        `${API_BASE_URL}/cdn/movie/${tmdbId}`
 
     return (
         <Box

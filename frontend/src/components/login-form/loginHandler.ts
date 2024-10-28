@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import bcrypt from 'bcryptjs';
+import { API_BASE_URL } from '../../utils/constants';
 
 const hashPassword = async (password: string): Promise<string> => {
 	// Generate a salt (you can adjust the salt rounds for more security)
@@ -14,7 +15,7 @@ const hashPassword = async (password: string): Promise<string> => {
 
 export const sendForm = async (form: FormData) => {
 	try {
-		const res: AxiosResponse = await axios.post(import.meta.env.VITE_API_URL + "/auth/login", form, { withCredentials: true })
+		const res: AxiosResponse = await axios.post(API_BASE_URL + "/auth/login", form, { withCredentials: true })
 		return res
 	} catch (err: any) {
 		if (err.status == 401) {
@@ -24,6 +25,6 @@ export const sendForm = async (form: FormData) => {
 }
 
 export const sendTestRequest = async () => {
-	const res: AxiosResponse = await axios.get(import.meta.env.VITE_API_URL + "/auth/test", { withCredentials: true })
+	const res: AxiosResponse = await axios.get(API_BASE_URL + "/auth/test", { withCredentials: true })
 	return res
 }

@@ -1,12 +1,10 @@
-import axios from 'axios';
-import { Movie } from '../models/movie';
-import { TV } from '../models/tv';
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import axios from '../axios';
+import { Movie } from '../../models/movie';
+import { TV } from '../../models/tv';
 
 export const searchMulti = async (query: string): Promise<(TV | Movie)[]> => {
     try {
-        const response = await axios.get(`${BASE_URL}/search/multi`, {
+        const response = await axios.get(`/search/multi`, {
             params: {
                 query: query,
             },

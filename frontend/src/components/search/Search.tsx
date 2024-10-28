@@ -2,7 +2,7 @@ import { useState, FormEvent } from 'react';
 import { TextField, Button, Box, CircularProgress, Typography } from '@mui/material';
 import { TV } from '../../models/tv';
 import { Movie } from '../../models/movie';
-import { searchMulti } from '../../api/search'; // Assuming this is the API function you've created
+import { searchMulti } from '../../api/services/search'; // Assuming this is the API function you've created
 import { MediaCard } from '../media-card/MediaCard';
 
 export const Search = () => {
