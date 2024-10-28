@@ -1,5 +1,9 @@
-export const LoginPage = () => {
+import LoginForm from "../../components/login-form/LoginForm";
+
+const LoginPage = () => {
     return (
-        <div>Login page</div>
+        <LoginForm></LoginForm>
     )
 }
+
+export default LoginPage;

@@ -21,8 +21,8 @@ func (service *UserService) GetUser(id int, includeDeleted bool, full bool) (*mo
 	return service.dao.GetUserDao(id, includeDeleted, full)
 }
 
-func (service *UserService) GetUserByExternalId(externalId string, includeDeleted bool, full bool) (*models.User, error) {
-	return service.dao.GetUserByExternalIdDao(externalId, includeDeleted, full)
+func (service *UserService) GetUserByEmail(email string, includeDeleted bool, full bool) (*models.User, error) {
+	return service.dao.GetUserByEmailDao(email, includeDeleted, full)
 }
 
 func (service *UserService) CreateUser(user *models.User) (*models.User, error) {
@@ -31,10 +31,6 @@ func (service *UserService) CreateUser(user *models.User) (*models.User, error) 
 
 func (service *UserService) UpdateUser(updatedUser *models.User) (*models.User, error) {
 	return service.dao.UpdateUserDao(updatedUser)
-}
-
-func (service *UserService) UpdateUserByExternalID(externalID string, updatedData *models.User) (*models.User, error) {
-	return service.dao.UpdateUserByExternalID(externalID, updatedData)
 }
 
 func (service *UserService) DeleteUser(id int, softDelete bool) error {
