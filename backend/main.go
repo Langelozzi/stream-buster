@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/STREAM-BUSTER/stream-buster/routes"
 	// "github.com/STREAM-BUSTER/stream-buster/utils/database"
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
@@ -30,7 +29,7 @@ import (
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	// Uncomment the following line to run the db initialization for updates
-	// database.InitializeDb()
+	//database.InitializeDb()
 
 	// Initialize the router
 	router := routes.InitRouter()

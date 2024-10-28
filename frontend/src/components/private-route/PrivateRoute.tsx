@@ -5,7 +5,7 @@ interface PrivateRouteProps {
 	children: JSX.Element;
 }
 
-const PrivateRoute = ({ children }: PrivateRouteProps) => {
+export const PrivateRoute = ({ children }: PrivateRouteProps) => {
 	const { user, loading } = useUser()
 
 	if (loading) {
@@ -15,5 +15,3 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
 	return user ? children : <Navigate to="/login" replace />;
 };
-
-export default PrivateRoute;
