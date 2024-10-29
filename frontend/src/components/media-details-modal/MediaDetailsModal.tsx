@@ -93,8 +93,6 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         onClose
     } = props;
 
-    // Render nothing if modal is not open
-    if (!isOpen) return null;
 
     // Hooks
     const classes = useStyles();
@@ -142,6 +140,11 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
 
     // Effects
     useEffect(() => { // Runs when modal component is opened
+        if (!isOpen) {
+            document.body.style.overflow = 'unset'; // Restore body scroll
+            return;
+        }
+
         // Fetch the details of the media clicked
         if (isTV) {
             fetchDetailedTV();
@@ -157,23 +160,28 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     }, [isOpen, media]);
 
     useEffect(() => {
+        if (!isOpen) return;
         if (isTV && detailedMedia) {
             determineCurrentSeason();
         }
     }, [detailedMedia])
 
     useEffect(() => {
+        if (!isOpen) return;
         if (currentSeason) {
             fetchEpisodesForCurrentSeason();
         }
     }, [currentSeason])
 
     useEffect(() => {
+        if (!isOpen) return;
         if (isTV) {
             determineCurrentEpisode();
         }
     }, [episodes])
 
+    // Render nothing if modal is not open
+    if (!isOpen) return null;
     return (
         <Box onClick={onClose} className={classes.overlay}>
             <Box onClick={(e) => e.stopPropagation()} className={classes.modalContainer}>
