@@ -1,9 +1,10 @@
 import React from "react";
 import { Episode } from "../../../models/episode";
-import { Typography, Divider, List, Avatar, Box, ListItem, ListItemAvatar, ListItemText } from "@mui/material";
+import { Typography, Divider, List, Box, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 import { makeStyles } from '@mui/styles';
 import { EpisodeListItem } from "./EpisodeListItem";
 import { TV } from "../../../models/tv";
+import { Season } from "../../../models/season";
 
 const useStyles = makeStyles({
     episodeList: {
@@ -16,33 +17,75 @@ const useStyles = makeStyles({
     },
     episodeDivider: {
         borderColor: 'grey',
-        marginTop: 24
-    }
+        marginTop: 24,
+    },
+    headerContainer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+    },
+    select: {
+        color: 'white',
+        backgroundColor: '#333', // Dark grey background for selector
+        borderRadius: 4, // Rounded corners for a better visual effect
+        padding: '8px 16px',
+        '& .MuiSelect-icon': {
+            color: 'white',
+        },
+    },
+    menuItem: {
+        color: 'black',
+        backgroundColor: 'white',
+        '&:hover': {
+            backgroundColor: '#f0f0f0',
+        },
+    },
 });
 
 interface MediaDetailsModalEpisodesProps {
-    episodes: Episode[];
     tv: TV;
+    episodes: Episode[];
+    currentSeason: Season;
+    setCurrentSeason: (season: Season) => void;
 }
 
 export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps> = (props) => {
-    // Props
-    const {
-        episodes,
-        tv
-    } = props;
+    const { tv, episodes, currentSeason, setCurrentSeason } = props;
 
-    // Hooks
     const classes = useStyles();
+
+    const handleSeasonChange = (event: SelectChangeEvent<number>) => {
+        const selectedSeasonNumber = event.target.value as number;
+        const selectedSeason = tv.Seasons.find(season => season.SeasonNumber === selectedSeasonNumber);
+        if (selectedSeason) setCurrentSeason(selectedSeason);
+    };
 
     return (
         <>
-            <Typography variant="h5">
-                Episodes
-            </Typography>
+            <Box className={classes.headerContainer}>
+                <Typography variant="h5">Episodes</Typography>
+
+                {/* Right-aligned Season Selector */}
+                <Select
+                    value={currentSeason.SeasonNumber}
+                    onChange={handleSeasonChange}
+                    variant="standard" // No outline variant
+                    className={classes.select}
+                    sx={{ minWidth: 120 }}
+                >
+                    {tv.Seasons?.map((season, index) => (
+                        // Only display actual seasons, not specials (for now)
+                        season.SeasonNumber > 0 && (
+                            <MenuItem key={index} value={season.SeasonNumber} className={classes.menuItem}>
+                                {season.Name}
+                            </MenuItem>
+                        )
+                    ))}
+                </Select>
+            </Box>
 
             <List className={classes.episodeList}>
-                {/* Example for iterating over episodes if media has them */}
                 {episodes?.map((episode) => (
                     <Box key={episode.EpisodeTMDBID}>
                         <Divider className={classes.episodeDivider} />
@@ -51,5 +94,5 @@ export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps>
                 ))}
             </List>
         </>
-    )
-}
+    );
+};

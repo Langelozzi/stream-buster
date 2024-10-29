@@ -12,6 +12,7 @@ import { getEpisodesForSeason, getTVDetails } from '../../api/services/tv';
 import { getMovieDetails } from '../../api/services/movie';
 import { Episode } from '../../models/episode';
 import { MediaDetailsModalEpisodes } from './media-details-modal-episodes/MediaDetailsModalEpisodes';
+import { Season } from '../../models/season';
 
 // Defining styles using makeStyles
 const useStyles = makeStyles({
@@ -108,7 +109,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
 
     // States
     const [detailedMedia, setDetailedMedia] = useState<Movie | TV | null>(null);
-    const [currentSeason, setCurrentSeason] = useState<number>(1);
+    const [currentSeason, setCurrentSeason] = useState<Season | null>(null);
     const [episodes, setEpisodes] = useState<Episode[] | null>(null);
     const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
 
@@ -125,15 +126,20 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         setDetailedMedia(movie);
     }
 
+    const determineCurrentSeason = () => {
+        const currentSeason: Season = (detailedMedia as TV).Seasons[1];
+        setCurrentSeason(currentSeason);
+    }
+
     const fetchEpisodesForCurrentSeason = async () => {
-        const episodes: Episode[] = await getEpisodesForSeason(media.Media?.TMDBID!, currentSeason);
+        const episodes: Episode[] = await getEpisodesForSeason(media.Media?.TMDBID!, currentSeason?.SeasonNumber!);
         console.log('episodes', episodes);
         setEpisodes(episodes);
     }
 
     // Callbacks
     const determineCurrentEpisode = useCallback(() => {
-        if (!episodes) return;
+        if (!episodes || currentEpisode) return;
 
         const currentEpisodeNum: number = 1;
         setCurrentEpisode(episodes[currentEpisodeNum - 1])
@@ -144,7 +150,6 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         // Fetch the details of the media clicked
         if (isTV) {
             fetchDetailedTV();
-            fetchEpisodesForCurrentSeason();
         } else {
             fetchDetailedMovie();
         }
@@ -155,6 +160,18 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
             document.body.style.overflow = 'unset'; // Restore body scroll
         }
     }, [isOpen, media]);
+
+    useEffect(() => {
+        if (isTV && detailedMedia) {
+            determineCurrentSeason();
+        }
+    }, [detailedMedia])
+
+    useEffect(() => {
+        if (currentSeason) {
+            fetchEpisodesForCurrentSeason();
+        }
+    }, [currentSeason])
 
     useEffect(() => {
         if (isTV) {
@@ -179,8 +196,13 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
                     )}
 
                     {/* Episode List Section (should be conditionally rendered if it's a tv show)*/}
-                    {detailedMedia && isTV && episodes && (
-                        <MediaDetailsModalEpisodes tv={detailedMedia as TV} episodes={episodes} />
+                    {detailedMedia && isTV && episodes && currentSeason && (
+                        <MediaDetailsModalEpisodes
+                            tv={detailedMedia as TV}
+                            episodes={episodes}
+                            currentSeason={currentSeason}
+                            setCurrentSeason={setCurrentSeason}
+                        />
                     )}
                 </Box>
             </Box>
