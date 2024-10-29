@@ -17,7 +17,6 @@ const useStyles = makeStyles(() => ({
         position: 'absolute',
         width: '100%',
         height: '100%',
-        backgroundImage: `url(https://image.tmdb.org/t/p/w500/pa4UM9lTaYLhi7RuBuPOejAoNfu.jpg)`,
         backgroundSize: 'cover',
         opacity: 0.4,
     },
@@ -54,9 +53,14 @@ interface MediaDetailsModalHeaderProps {
 }
 
 export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media }) => {
+    // Hooks
     const classes = useStyles();
     const navigate = useNavigate();
 
+    // Constants
+    const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
+
+    // Functions
     const onPlay = () => {
         navigate('/watch', { state: { media } });
     }
@@ -64,7 +68,12 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     return (
         <Box className={classes.modalContainer}>
             {/* Image Overlay */}
-            <Box className={classes.imageOverlay} />
+            <Box
+                className={classes.imageOverlay}
+                sx={{
+                    backgroundImage: `url(${(media as TV).BackdropImage ?? defaultBackdropImage})`
+                }}
+            />
             {/* Title */}
             <Box className={classes.title}>
                 <Typography variant="h4" fontWeight="bold">

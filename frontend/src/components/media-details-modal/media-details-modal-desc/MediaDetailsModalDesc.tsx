@@ -20,8 +20,8 @@ interface MediaDetailsModalDescProps {
 export const MediaDetailsModalDesc: React.FC<MediaDetailsModalDescProps> = ({ media, currentEpisode }) => {
     const classes = useStyles();
 
-    const endYear = 2021;
-    const numSeasons = 8;
+    const endYear = new Date((media as TV).LastAirDate!).getUTCFullYear();
+    const numSeasons = (media as TV).SeasonCount;
 
     const currentSeason = 3;
     const currentEpisodeNum = 31

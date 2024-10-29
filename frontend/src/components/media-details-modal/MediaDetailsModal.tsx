@@ -109,6 +109,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         if (isTV && isOpen) {
             const fetchDetailedTV = async () => {
                 const tv: TV = await getTVDetails(media.Media?.TMDBID!);
+                console.log(tv);
                 setDetailedMedia(tv);
             }
             fetchDetailedTV();
