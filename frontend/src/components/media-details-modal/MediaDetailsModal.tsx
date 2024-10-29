@@ -83,12 +83,7 @@ interface MediaDetailsModalProps {
 
 /*
 NOTES:
-- Need to create backend endpoints for fetching details of movie or show + seasons
-- Use the extra data to dynamically populate modal
-- TV shows don't work to play yet
-- I want to make the modal have it's own url route so that we can copy paste it
 - When user goes back from media player it should remember state of browse page
-- When scrolling with modal open it should scroll modal not background
 */
 const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     // Props
@@ -127,7 +122,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     }
 
     const determineCurrentSeason = () => {
-        const currentSeason: Season = (detailedMedia as TV).Seasons[1];
+        const currentSeason: Season = (detailedMedia as TV).Seasons.filter(season => season.SeasonNumber === 1)[0];
         setCurrentSeason(currentSeason);
     }
 

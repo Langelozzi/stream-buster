@@ -19,11 +19,11 @@ export const LoginForm: React.FC = () => {
 
 		const res = await sendForm(form);
 		if (res) {
-			navigate("/");  // Redirect without reloading the page
+			navigate("/browse");  // Redirect without reloading the page
+		} else {
+			const res2: AxiosResponse = await sendTestRequest();
+			console.log(res2);
 		}
-
-		const res2: AxiosResponse = await sendTestRequest();
-		console.log(res2);
 	};
 
 	return (
