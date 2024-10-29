@@ -2,8 +2,8 @@ import { useState, FormEvent } from 'react';
 import { TextField, Button, Box, CircularProgress, Typography } from '@mui/material';
 import { TV } from '../../models/tv';
 import { Movie } from '../../models/movie';
-import { searchMulti } from '../../api/search'; // Assuming this is the API function you've created
-import { MediaCard } from '../media-item/media-card';
+import { searchMulti } from '../../api/services/search'; // Assuming this is the API function you've created
+import { MediaCard } from '../media-card/MediaCard';
 
 export const Search = () => {
     // State for the search query and the results
@@ -41,7 +41,28 @@ export const Search = () => {
                     variant="outlined"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    sx={{ mr: 2 }}
+                    sx={{
+                        mr: 2,
+                        input: { color: 'black' }, // Text color inside the input
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                borderColor: 'white', // Default border color
+                            },
+                            '&:hover fieldset': {
+                                borderColor: 'white', // Border color on hover
+                            },
+                            '&.Mui-focused fieldset': {
+                                borderColor: 'white', // Border color when focused
+                            },
+                            backgroundColor: 'white', // Background color of the TextField
+                        },
+                        '& .MuiInputLabel-root': {
+                            color: 'black', // Label color when not focused
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                            color: 'black', // Label color when focused
+                        },
+                    }}
                 />
                 <Button type="submit" variant="contained" color="primary">
                     Search
@@ -55,9 +76,11 @@ export const Search = () => {
             {!loading && results.length > 0 && (
                 <Box mt={2} width="100%">
                     <Typography variant="h6">Search Results:</Typography>
-                    {results.map((media, index) => {
-                        return <MediaCard item={media} key={index} />
-                    })}
+                    <Box display="flex" flexWrap="wrap" justifyContent="flex-start" gap={2} mt={2}>
+                        {results.map((media, index) => (
+                            <MediaCard media={media} key={index} />
+                        ))}
+                    </Box>
                 </Box>
             )}
 
@@ -67,4 +90,5 @@ export const Search = () => {
             )}
         </Box>
     );
+
 };

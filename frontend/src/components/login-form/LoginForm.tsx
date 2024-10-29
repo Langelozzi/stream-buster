@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import { sendForm, sendTestRequest } from './loginHanlder';
+import { sendForm, sendTestRequest } from './loginHandler';
 import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const LoginForm: React.FC = () => {
+export const LoginForm: React.FC = () => {
 	// State for email and password
 	const [email, setEmail] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
@@ -19,11 +19,11 @@ const LoginForm: React.FC = () => {
 
 		const res = await sendForm(form);
 		if (res) {
-			navigate("/");  // Redirect without reloading the page
+			navigate("/browse");  // Redirect without reloading the page
+		} else {
+			const res2: AxiosResponse = await sendTestRequest();
+			console.log(res2);
 		}
-
-		const res2: AxiosResponse = await sendTestRequest();
-		console.log(res2);
 	};
 
 	return (
@@ -61,5 +61,3 @@ const LoginForm: React.FC = () => {
 		</Box>
 	);
 };
-
-export default LoginForm;

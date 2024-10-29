@@ -3,7 +3,7 @@ import { createContext, useState, useEffect, ReactNode } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../models/user';
 
-interface UserContextType {
+export interface UserContextType {
     user: User | null;
     loading: boolean;
 }

@@ -22,7 +22,10 @@ func InitRouter() *gin.Engine {
 	v1RouterGroup := router.Group("/api/v1")
 	{
 		v1.SetSearchRoutes(v1RouterGroup)
+		v1.SetCDNRoutes(v1RouterGroup)
 		v1.SetAuthRoutes(v1RouterGroup)
+		v1.SetTVRoutes(v1RouterGroup)
+		v1.SetMovieRoutes(v1RouterGroup)
 	}
 
 	var userDao iDao.UserDaoInterface = daos.NewUserDao()

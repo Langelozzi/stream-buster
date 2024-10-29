@@ -2,11 +2,12 @@ import { Media } from './media';
 import { Season } from './season';  // Assuming a Season interface
 
 export interface TV {
-  mediaID: number;
-  media?: Media;  // Optional field
-  overview: string;
-  seasonCount: number;
-  episodeCount: number;
-  seasons: Season[];  // Array of Seasons
-  firstAirDate?: Date;  // Optional field
+  MediaID: number;
+  Media?: Media;  // Optional field
+  BackdropImage: string;
+  SeasonCount: number;
+  EpisodeCount: number;
+  Seasons: Season[];  // Array of Seasons
+  FirstAirDate?: Date;  // Optional field
+  LastAirDate?: Date;
 }

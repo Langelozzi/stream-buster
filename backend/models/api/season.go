@@ -6,11 +6,12 @@ type Season struct {
 	MediaID uint
 	Media   *dbModels.Media
 
+	SeasonTMDBID int
+	SeasonNumber int
+	EpisodeCount int
+
 	Name     string
 	Overview string
-
-	SeasonTMDBID string
-	SeasonNumber int
 
 	PosterPath string
 	Episodes   []*Episode

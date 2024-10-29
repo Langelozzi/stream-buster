@@ -9,11 +9,12 @@ type TV struct {
 	MediaID uint
 	Media   *dbModels.Media
 
-	Overview string
-
 	SeasonCount  int
 	EpisodeCount int
 
-	Seasons      []*Season
-	FirstAirDate *time.Time
+	FirstAirDate  *time.Time
+	LastAirDate   *time.Time
+	BackdropImage string
+
+	Seasons []*Season
 }
