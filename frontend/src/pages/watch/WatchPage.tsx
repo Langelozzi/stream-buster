@@ -37,7 +37,7 @@ export const WatchPage = () => {
 
     // Functions
     const handleBrowseClick = () => {
-        navigate('/browse');
+        navigate(-1);
     };
 
     // Effects
