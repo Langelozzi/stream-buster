@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     Box,
     Typography,
@@ -110,34 +110,46 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     const [episodes, setEpisodes] = useState<Episode[] | null>(null);
     const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
 
+    // Functions
+    const fetchDetailedTV = async () => {
+        const tv: TV = await getTVDetails(media.Media?.TMDBID!);
+        console.log('tv', tv);
+        setDetailedMedia(tv);
+    }
+
+    const fetchDetailedMovie = async () => {
+        const movie: Movie = await getMovieDetails(media.Media?.TMDBID!);
+        console.log('movie', movie);
+        setDetailedMedia(movie);
+    }
+
+    const fetchEpisodesForCurrentSeason = async () => {
+        const episodes: Episode[] = await getEpisodesForSeason(media.Media?.TMDBID!, currentSeason);
+        console.log('episodes', episodes);
+        setEpisodes(episodes);
+    }
+
+    // Callbacks
+    const determineCurrentEpisode = useCallback(() => {
+        if (!episodes) return;
+
+        const currentEpisodeNum: number = 4;
+        setCurrentEpisode(episodes[currentEpisodeNum - 1])
+    }, [episodes]);
+
     // Effects
     useEffect(() => { // Runs when modal component is opened
         if (!isOpen) return;
 
         // Fetch the details of the media clicked
         if (isTV) {
-            const fetchDetailedTV = async () => {
-                const tv: TV = await getTVDetails(media.Media?.TMDBID!);
-                console.log('tv', tv);
-                setDetailedMedia(tv);
-            }
             fetchDetailedTV();
-
-            const fetchEpisodesForCurrentSeason = async () => {
-                const episodes: Episode[] = await getEpisodesForSeason(media.Media?.TMDBID!, currentSeason);
-                console.log('episodes', episodes);
-                setEpisodes(episodes);
-            }
             fetchEpisodesForCurrentSeason();
+            determineCurrentEpisode();
         } else {
-            const fetchDetailedMovie = async () => {
-                const movie: Movie = await getMovieDetails(media.Media?.TMDBID!);
-                console.log('movie', movie);
-                setDetailedMedia(movie);
-            }
             fetchDetailedMovie();
         }
-    }, [isOpen])
+    }, [isOpen, media, episodes]);
 
     // Render nothing if modal is not open
     if (!isOpen) return null;
@@ -146,13 +158,12 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
             <Box onClick={(e) => e.stopPropagation()} className={classes.modalContainer}>
                 {/* Header Section with Background Image (will need to pass current episode in for tv shows) */}
                 {detailedMedia && (
-                    <MediaDetailsModalHeader media={detailedMedia} />
+                    <MediaDetailsModalHeader media={detailedMedia} currentEpisode={currentEpisode ?? undefined} />
                 )}
 
-
                 <Box p={6}>
-                    {detailedMedia && isTV && (
-                        <MediaDetailsModalDescTV tv={detailedMedia as TV} />
+                    {detailedMedia && isTV && currentEpisode && (
+                        <MediaDetailsModalDescTV tv={detailedMedia as TV} currentEpisode={currentEpisode} />
                     )}
                     {detailedMedia && !isTV && (
                         <MediaDetailsModalDescMovie movie={detailedMedia as Movie} />

@@ -8,7 +8,6 @@ const useStyles = makeStyles(() => ({
     detailsContainer: {
         paddingBottom: '20px',
     },
-
 }));
 
 interface MediaDetailsModalDescTVProps {
@@ -22,12 +21,6 @@ export const MediaDetailsModalDescTV: React.FC<MediaDetailsModalDescTVProps> = (
     const endYear = new Date(tv.LastAirDate!).getUTCFullYear();
     const numSeasons = tv.SeasonCount;
 
-    const currentSeason = 3;
-    const currentEpisodeNum = 31
-    const currentEpisodeName = "Maximum Security"
-    const currentEpisodeOverview = "To root out the crooked FBI agent who targeted Pimento, the team stages an elaborate fake funeral and sends Amy on a risky undercover mission."
-    const genres = tv.Media?.Genres?.map(genre => genre.Name).join(', ');
-
     return (
         <Box className={classes.detailsContainer}>
             <Grid2 container spacing={6}>
@@ -35,12 +28,12 @@ export const MediaDetailsModalDescTV: React.FC<MediaDetailsModalDescTVProps> = (
                     <Box>
                         <Typography>{endYear}&nbsp;&nbsp;{numSeasons} Season{numSeasons > 1 ? 's' : ''}</Typography>
                         <br />
-                        <Typography variant='h5'>S{currentSeason}:E{currentEpisodeNum} "{currentEpisodeName}"</Typography>
-                        <Typography>{currentEpisodeOverview}</Typography>
+                        <Typography variant='h5'>S{currentEpisode?.SeasonNumber}:E{currentEpisode?.EpisodeNumber} "{currentEpisode?.Name}"</Typography>
+                        <Typography>{currentEpisode?.Overview}</Typography>
                     </Box>
                 </Grid2>
                 <Grid2 size={4}>
-                    <Typography>Genres: {genres}</Typography>
+                    <Typography>Genres: {tv.Media?.Genres?.map(genre => genre.Name).join(', ')}</Typography>
                 </Grid2>
             </Grid2>
         </Box>

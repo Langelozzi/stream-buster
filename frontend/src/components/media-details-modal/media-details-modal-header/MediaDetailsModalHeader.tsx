@@ -5,6 +5,7 @@ import { makeStyles } from '@mui/styles';
 import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
+import { Episode } from '../../../models/episode';
 
 const useStyles = makeStyles(() => ({
     modalContainer: {
@@ -50,9 +51,10 @@ const useStyles = makeStyles(() => ({
 
 interface MediaDetailsModalHeaderProps {
     media: Movie | TV;
+    currentEpisode?: Episode
 }
 
-export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media }) => {
+export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode }) => {
     // Hooks
     const classes = useStyles();
     const navigate = useNavigate();
@@ -63,7 +65,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
 
     // Functions
     const onPlay = () => {
-        navigate('/watch', { state: { media } });
+        navigate('/watch', { state: { media, currentEpisode } });
     }
 
     return (

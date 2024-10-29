@@ -15,7 +15,7 @@ export const WatchPage = () => {
     const navigate = useNavigate();
 
     const media = location.state.media as TV | Movie;
-    const episode = location.state.episode as Episode ?? null;
+    const episode = location.state.currentEpisode as Episode ?? null;
     const tmdbId = media.Media?.TMDBID;
 
     const isTV = media.Media?.MediaType?.Name.toLowerCase() === 'tv';
