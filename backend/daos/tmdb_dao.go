@@ -99,8 +99,6 @@ func (dao *TMDBDao) GetTVDetails(id int) (*api.TV, error) {
 		return nil, err
 	}
 
-	fmt.Println(body)
-
 	tvObj, err := adapters.ParseTVDetailsResponse(string(body))
 	if err != nil {
 		fmt.Printf("Error casting response to TV object: %v\n", err)
@@ -108,4 +106,38 @@ func (dao *TMDBDao) GetTVDetails(id int) (*api.TV, error) {
 	}
 
 	return tvObj, nil
+}
+
+func (dao *TMDBDao) GetMovieDetails(id int) (*api.Movie, error) {
+	baseUrl := utils.GetEnvVariable("TMDB_API_BASE_URL")
+	apiKey := utils.GetEnvVariable("TMDB_API_KEY")
+	relativeUrl := "/movie"
+
+	getUrl := fmt.Sprintf("%s%s/%s?api_key=%s", baseUrl, relativeUrl, strconv.Itoa(id), apiKey)
+
+	response, err := http.Get(getUrl)
+	if err != nil {
+		fmt.Printf("Error fetching from tmdb api: %v\n", err)
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing request body stream: %v\n", err)
+		}
+	}(response.Body)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		fmt.Printf("Error reading response body: %v\n", err)
+		return nil, err
+	}
+
+	movieObj, err := adapters.ParseMovieDetailsResponse(string(body))
+	if err != nil {
+		fmt.Printf("Error casting response to Movie object: %v\n", err)
+		return nil, err
+	}
+
+	return movieObj, nil
 }

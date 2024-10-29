@@ -9,8 +9,10 @@ import { makeStyles } from '@mui/styles';
 import { TV } from '../../models/tv';
 import { Movie } from '../../models/movie';
 import { MediaDetailsModalHeader } from './media-details-modal-header/MediaDetailsModalHeader';
-import { MediaDetailsModalDesc } from './media-details-modal-desc/MediaDetailsModalDesc';
+import { MediaDetailsModalDescTV } from './media-details-modal-desc/MediaDetailsModalDescTV';
+import { MediaDetailsModalDescMovie } from './media-details-modal-desc/MediaDetailsModalDescMovie';
 import { getTVDetails } from '../../api/services/tv';
+import { getMovieDetails } from '../../api/services/movie';
 
 // Defining styles using makeStyles
 const useStyles = makeStyles({
@@ -109,12 +111,17 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         if (isTV && isOpen) {
             const fetchDetailedTV = async () => {
                 const tv: TV = await getTVDetails(media.Media?.TMDBID!);
-                console.log(tv);
+                console.log('tv', tv);
                 setDetailedMedia(tv);
             }
             fetchDetailedTV();
-        } else {
-            setDetailedMedia(media);
+        } else if (isOpen) {
+            const fetchDetailedMovie = async () => {
+                const movie: Movie = await getMovieDetails(media.Media?.TMDBID!);
+                console.log('movie', movie);
+                setDetailedMedia(movie);
+            }
+            fetchDetailedMovie();
         }
     }, [isOpen])
 
@@ -130,8 +137,11 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
 
 
                 <Box p={6}>
-                    {detailedMedia && (
-                        <MediaDetailsModalDesc media={detailedMedia} />
+                    {detailedMedia && isTV && (
+                        <MediaDetailsModalDescTV tv={detailedMedia as TV} />
+                    )}
+                    {detailedMedia && !isTV && (
+                        <MediaDetailsModalDescMovie movie={detailedMedia as Movie} />
                     )}
 
                     {/* Episode List Section (should be conditionally rendered if it's a tv show)*/}

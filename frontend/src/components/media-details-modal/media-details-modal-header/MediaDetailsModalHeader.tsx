@@ -59,6 +59,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
 
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
+    const backgroundImage = !!media.BackdropImage ? media.BackdropImage : defaultBackdropImage;
 
     // Functions
     const onPlay = () => {
@@ -71,7 +72,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
             <Box
                 className={classes.imageOverlay}
                 sx={{
-                    backgroundImage: `url(${(media as TV).BackdropImage ?? defaultBackdropImage})`
+                    backgroundImage: `url(${backgroundImage})`
                 }}
             />
             {/* Title */}

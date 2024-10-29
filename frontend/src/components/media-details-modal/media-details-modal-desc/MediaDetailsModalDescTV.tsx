@@ -1,7 +1,6 @@
 import { Box, Grid2, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import React from 'react';
-import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { Episode } from '../../../models/episode';
 
@@ -12,22 +11,22 @@ const useStyles = makeStyles(() => ({
 
 }));
 
-interface MediaDetailsModalDescProps {
-    media: Movie | TV;
+interface MediaDetailsModalDescTVProps {
+    tv: TV;
     currentEpisode?: Episode
 }
 
-export const MediaDetailsModalDesc: React.FC<MediaDetailsModalDescProps> = ({ media, currentEpisode }) => {
+export const MediaDetailsModalDescTV: React.FC<MediaDetailsModalDescTVProps> = ({ tv, currentEpisode }) => {
     const classes = useStyles();
 
-    const endYear = new Date((media as TV).LastAirDate!).getUTCFullYear();
-    const numSeasons = (media as TV).SeasonCount;
+    const endYear = new Date(tv.LastAirDate!).getUTCFullYear();
+    const numSeasons = tv.SeasonCount;
 
     const currentSeason = 3;
     const currentEpisodeNum = 31
     const currentEpisodeName = "Maximum Security"
     const currentEpisodeOverview = "To root out the crooked FBI agent who targeted Pimento, the team stages an elaborate fake funeral and sends Amy on a risky undercover mission."
-    const genres = ["Sitcoms", "TV Comedies", "Crime TV Shows"]
+    const genres = tv.Media?.Genres?.map(genre => genre.Name).join(', ');
 
     return (
         <Box className={classes.detailsContainer}>
@@ -41,7 +40,7 @@ export const MediaDetailsModalDesc: React.FC<MediaDetailsModalDescProps> = ({ me
                     </Box>
                 </Grid2>
                 <Grid2 size={4}>
-                    <Typography>Genres: {genres.join(", ")}</Typography>
+                    <Typography>Genres: {genres}</Typography>
                 </Grid2>
             </Grid2>
         </Box>

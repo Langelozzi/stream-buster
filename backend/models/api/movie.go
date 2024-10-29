@@ -9,7 +9,7 @@ type Movie struct {
 	MediaID uint
 	Media   *dbModels.Media
 
-	PosterPath string
+	BackdropImage string
 
 	ReleaseDate *time.Time
 	Runtime     int

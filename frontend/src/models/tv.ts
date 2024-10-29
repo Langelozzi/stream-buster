@@ -4,6 +4,7 @@ import { Season } from './season';  // Assuming a Season interface
 export interface TV {
   MediaID: number;
   Media?: Media;  // Optional field
+  BackdropImage: string;
   SeasonCount: number;
   EpisodeCount: number;
   Seasons: Season[];  // Array of Seasons

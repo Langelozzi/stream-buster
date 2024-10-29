@@ -5,7 +5,7 @@ export interface Movie {
   MediaID: number;
   Media?: Media;   // Optional field
   Overview: string;
-  PosterPath: string;
+  BackdropImage: string;
   Genres: Genre[];  // Array of Genres
   ReleaseDate?: Date;  // Optional field
   Runtime: number;
