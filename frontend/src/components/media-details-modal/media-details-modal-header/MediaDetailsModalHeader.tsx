@@ -65,7 +65,12 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
 
     // Functions
     const onPlay = () => {
-        navigate('/watch', { state: { media, currentEpisode } });
+        if (currentEpisode) {
+            navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media, currentEpisode } });
+        } else {
+
+            navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
+        }
     }
 
     return (

@@ -30,7 +30,7 @@ export const Router = () => {
                     }
                 />
                 <Route
-                    path='/watch'
+                    path='/watch/:tmdbId/:seasonNum?/:episodeNum?'
                     element={
                         <PrivateRoute>
                             <WatchPage />

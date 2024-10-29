@@ -36,7 +36,7 @@ export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
     const navigate = useNavigate();
 
     const onPlayEpisode = () => {
-        navigate('/watch', { state: { media: tv, currentEpisode: episode } });
+        navigate(`/watch/${tv.Media?.TMDBID}/${episode.SeasonNumber}/${episode.EpisodeNumber}`, { state: { media: tv, currentEpisode: episode } });
     }
 
     return (
