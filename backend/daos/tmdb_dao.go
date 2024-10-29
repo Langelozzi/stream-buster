@@ -77,7 +77,7 @@ func (dao *TMDBDao) SearchMultiMedia(query string) ([]interface{}, error) {
 func (dao *TMDBDao) GetTVDetails(id int) (*api.TV, error) {
 	baseUrl := utils.GetEnvVariable("TMDB_API_BASE_URL")
 	apiKey := utils.GetEnvVariable("TMDB_API_KEY")
-	relativeUrl := "/search/multi"
+	relativeUrl := "/tv"
 
 	getUrl := fmt.Sprintf("%s%s/%s?api_key=%s", baseUrl, relativeUrl, strconv.Itoa(id), apiKey)
 
@@ -101,5 +101,11 @@ func (dao *TMDBDao) GetTVDetails(id int) (*api.TV, error) {
 
 	fmt.Println(body)
 
-	return &api.TV{}, nil
+	tvObj, err := adapters.ParseTVDetailsResponse(string(body))
+	if err != nil {
+		fmt.Printf("Error casting response to TV object: %v\n", err)
+		return nil, err
+	}
+
+	return tvObj, nil
 }

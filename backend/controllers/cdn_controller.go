@@ -17,16 +17,6 @@ func NewCDNController(service interfaces.CDNServiceInterface) *CDNController {
 	}
 }
 
-// GetMultiMediaSearchResults retrieves multimedia search results based on a query.
-// @Summary Retrieve multimedia search results
-// @Description Get multimedia content based on the search query.
-// @Tags media
-// @Accept  json
-// @Produce  json
-// @Param query query string true "Search query for multimedia content"
-// @Success 200 {object} []interface{} "Successfully retrieved multimedia search results"
-// @Failure 400 {object} map[string]interface{} "Error: Invalid or empty query, or no results found"
-// @Router /media/search [get]
 func (contr *CDNController) GetMovieContent(c *gin.Context) {
 	// get the tmdbId from the route params
 	tmdbId := c.Param("tmdbId")
@@ -44,16 +34,6 @@ func (contr *CDNController) GetMovieContent(c *gin.Context) {
 	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(html))
 }
 
-// GetMultiMediaSearchResults retrieves multimedia search results based on a query.
-// @Summary Retrieve multimedia search results
-// @Description Get multimedia content based on the search query.
-// @Tags media
-// @Accept  json
-// @Produce  json
-// @Param query query string true "Search query for multimedia content"
-// @Success 200 {object} []interface{} "Successfully retrieved multimedia search results"
-// @Failure 400 {object} map[string]interface{} "Error: Invalid or empty query, or no results found"
-// @Router /media/search [get]
 func (contr *CDNController) GetTVContent(c *gin.Context) {
 	// get the tmdbId from the route params
 	tmdbId := c.Param("tmdbId")

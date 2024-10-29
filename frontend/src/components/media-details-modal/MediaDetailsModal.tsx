@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Typography,
@@ -10,6 +10,7 @@ import { TV } from '../../models/tv';
 import { Movie } from '../../models/movie';
 import { MediaDetailsModalHeader } from './media-details-modal-header/MediaDetailsModalHeader';
 import { MediaDetailsModalDesc } from './media-details-modal-desc/MediaDetailsModalDesc';
+import { getTVDetails } from '../../api/services/tv';
 
 // Defining styles using makeStyles
 const useStyles = makeStyles({
@@ -86,23 +87,53 @@ NOTES:
 - When user goes back from media player it should remember state of browse page
 - When scrolling with modal open it should scroll modal not background
 */
-const MediaDetailsModal: React.FC<MediaDetailsModalProps> = ({ media, isOpen, onClose }) => {
+const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
+    // Props
+    const {
+        media,
+        isOpen,
+        onClose
+    } = props;
+
+    // Hooks
     const classes = useStyles();
+
+    // Constants
+    const isTV = media.Media?.MediaType?.Name.toLowerCase() === 'tv';
+
+    // States
+    const [detailedMedia, setDetailedMedia] = useState<Movie | TV | null>(null);
+
+    // Effects
+    useEffect(() => { // Runs when component loads the first time
+        if (isTV && isOpen) {
+            const fetchDetailedTV = async () => {
+                const tv: TV = await getTVDetails(media.Media?.TMDBID!);
+                setDetailedMedia(tv);
+            }
+            fetchDetailedTV();
+        } else {
+            setDetailedMedia(media);
+        }
+    }, [isOpen])
 
     // Render nothing if modal is not open
     if (!isOpen) return null;
-
     return (
         <Box onClick={onClose} className={classes.overlay}>
             <Box onClick={(e) => e.stopPropagation()} className={classes.modalContainer}>
                 {/* Header Section with Background Image */}
-                <MediaDetailsModalHeader media={media} />
+                {detailedMedia && (
+                    <MediaDetailsModalHeader media={detailedMedia} />
+                )}
 
 
                 <Box p={6}>
-                    <MediaDetailsModalDesc media={media} />
+                    {detailedMedia && (
+                        <MediaDetailsModalDesc media={detailedMedia} />
+                    )}
 
-                    {/* Episode List Section */}
+                    {/* Episode List Section (should be conditionally rendered if it's a tv show)*/}
                     <Typography variant="h5" mb={2}>
                         Episodes
                     </Typography>

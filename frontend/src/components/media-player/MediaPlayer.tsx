@@ -20,6 +20,8 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
         :
         `${API_BASE_URL}/cdn/movie/${tmdbId}`
 
+    console.log('src', src)
+
     return (
         <Box
             sx={{

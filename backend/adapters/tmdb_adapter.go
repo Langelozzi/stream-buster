@@ -43,6 +43,21 @@ func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
 	return castedResults, nil
 }
 
+func ParseTVDetailsResponse(json string) (*api.TV, error) {
+	jsonMap, err := JSONToMap(json)
+	if err != nil {
+		return nil, err
+	}
+
+	mediaType := &db.MediaType{
+		Name: "tv",
+	}
+	media := CastToMedia(jsonMap, mediaType)
+	tv := CastToTV(jsonMap, media, true)
+
+	return tv, nil
+}
+
 func GetTotalPageCount(json string) (int, error) {
 	jsonMap, err := JSONToMap(json)
 	if err != nil {
@@ -112,9 +127,41 @@ func CastToTV(obj map[string]interface{}, media *db.Media, detailed bool) *api.T
 		tv.BackdropImage = GetFullImagePath(obj["backdrop_path"].(string))
 
 		// Iterate through the seasons list and convert to season objects
+		var castedSeasons []*api.Season
+		if seasons, ok := obj["seasons"].([]interface{}); ok {
+			for _, season := range seasons {
+				if seasonMap, ok := season.(map[string]interface{}); ok {
+					casted := CastToSeason(seasonMap, media)
+					castedSeasons = append(castedSeasons, casted)
+				}
+			}
+		}
+
+		tv.Seasons = castedSeasons
 	}
 
 	return &tv
+}
+
+func CastToSeason(obj map[string]interface{}, media *db.Media) *api.Season {
+	tmdbId := int(obj["id"].(float64))
+	seasonNum := int(obj["season_number"].(float64))
+	episodeCount := int(obj["episode_count"].(float64))
+	name := obj["name"].(string)
+	overview := obj["overview"].(string)
+	posterPath := GetFullImagePath(obj["poster_path"].(string))
+
+	season := api.Season{
+		Media:        media,
+		SeasonTMDBID: tmdbId,
+		SeasonNumber: seasonNum,
+		EpisodeCount: episodeCount,
+		Name:         name,
+		Overview:     overview,
+		PosterPath:   posterPath,
+	}
+
+	return &season
 }
 
 func ConvertStringToDate(str string) *time.Time {

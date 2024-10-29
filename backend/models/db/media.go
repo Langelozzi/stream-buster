@@ -18,5 +18,5 @@ type Media struct {
 	DeletedAt *time.Time `gorm:"index"`
 	CreatedAt *time.Time `gorm:"index"`
 
-	Genres []*Genre
+	Genres []*Genre `gorm:"many2many:media_genres;"`
 }

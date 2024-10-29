@@ -6,7 +6,7 @@ type Season struct {
 	MediaID uint
 	Media   *dbModels.Media
 
-	SeasonTMDBID string
+	SeasonTMDBID int
 	SeasonNumber int
 	EpisodeCount int
 

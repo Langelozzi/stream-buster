@@ -17,43 +17,9 @@ export const searchMulti = async (query: string): Promise<(TV | Movie)[]> => {
 
         return data.map(item => {
             if (item.Media.MediaType.Name === 'tv') {
-                return {
-                    mediaID: item.MediaID,
-                    media: {
-                        id: item.Media.ID,
-                        tmdbID: item.Media.TMDBID,
-                        title: item.Media.Title,
-                        posterImage: item.Media.PosterImage,
-                        mediaTypeId: item.Media.MediaTypeId,
-                        mediaType: item.Media.MediaType,
-                        deletedAt: item.Media.DeletedAt ? new Date(item.Media.DeletedAt) : undefined,
-                        createdAt: item.Media.CreatedAt ? new Date(item.Media.CreatedAt) : undefined,
-                    },
-                    overview: item.Overview,
-                    seasonCount: item.SeasonCount,
-                    episodeCount: item.EpisodeCount,
-                    seasons: item.Seasons,
-                    firstAirDate: item.FirstAirDate ? new Date(item.FirstAirDate) : undefined
-                } as TV;
+                return item as TV;
             } else if (item.Media.MediaType.Name === 'movie') {
-                return {
-                    mediaID: item.MediaID,
-                    media: {
-                        id: item.Media.ID,
-                        tmdbID: item.Media.TMDBID,
-                        title: item.Media.Title,
-                        posterImage: item.Media.PosterImage,
-                        mediaTypeId: item.Media.MediaTypeId,
-                        mediaType: item.Media.MediaType,
-                        deletedAt: item.Media.DeletedAt ? new Date(item.Media.DeletedAt) : undefined,
-                        createdAt: item.Media.CreatedAt ? new Date(item.Media.CreatedAt) : undefined,
-                    },
-                    overview: item.Overview,
-                    posterPath: item.PosterPath,
-                    genres: item.Genres,
-                    releaseDate: item.ReleaseDate ? new Date(item.ReleaseDate) : undefined,
-                    runtime: item.Runtime
-                } as Movie;
+                return item as Movie;
             } else {
                 return item;
             }

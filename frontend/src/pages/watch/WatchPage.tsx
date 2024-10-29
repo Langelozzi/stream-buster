@@ -16,9 +16,9 @@ export const WatchPage = () => {
 
     const media = location.state.media as TV | Movie;
     const episode = location.state.episode as Episode ?? null;
-    const tmdbId = media.media?.tmdbID;
+    const tmdbId = media.Media?.TMDBID;
 
-    const isTV = media.media?.mediaType?.name === 'tv';
+    const isTV = media.Media?.MediaType?.Name.toLowerCase() === 'tv';
 
     const handleBrowseClick = () => {
         navigate('/browse');
@@ -34,7 +34,7 @@ export const WatchPage = () => {
                 </Grid>
                 <Grid size={11} component="div"> {/* Title Section */}
                     <Typography variant="h5" align="left" gutterBottom>
-                        {media.media?.title}
+                        {media.Media?.Title}
                     </Typography>
                 </Grid>
                 <Grid size={12} component="div">
@@ -45,7 +45,7 @@ export const WatchPage = () => {
                     )}
                     {tmdbId && isTV && episode && (
                         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <MediaPlayer tmdbId={tmdbId} seasonNum={episode.seasonNumber} episodeNum={episode.episodeNumber} />
+                            <MediaPlayer tmdbId={tmdbId} seasonNum={episode.SeasonNumber} episodeNum={episode.EpisodeNumber} />
                         </Box>
                     )}
                 </Grid>

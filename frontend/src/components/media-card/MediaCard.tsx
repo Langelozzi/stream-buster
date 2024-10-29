@@ -2,7 +2,7 @@ import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import { Movie } from "../../models/movie";
 import { TV } from "../../models/tv";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MediaDetailsModal from "../media-details-modal/MediaDetailsModal";
 
 interface MediaCardProps {
@@ -34,8 +34,8 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media }) => {
                 {/* Movie Poster */}
                 <CardMedia
                     component="img"
-                    image={media.media?.posterImage}
-                    alt={media.media?.title}
+                    image={media.Media?.PosterImage}
+                    alt={media.Media?.Title}
                     sx={{ height: 450, objectFit: 'cover' }}
                 />
 
@@ -43,12 +43,14 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media }) => {
                 <CardContent sx={{ padding: 2, color: '#ffffff' }}>
                     {/* Title */}
                     <Typography variant="h6" fontWeight="bold" gutterBottom>
-                        {media.media?.title}
+                        {media.Media?.Title}
                     </Typography>
                 </CardContent>
             </Card>
 
-            <MediaDetailsModal media={media} isOpen={isModalOpen} onClose={handleCloseModal} />
+            {media && (
+                <MediaDetailsModal media={media} isOpen={isModalOpen} onClose={handleCloseModal} />
+            )}
         </>
     )
 }

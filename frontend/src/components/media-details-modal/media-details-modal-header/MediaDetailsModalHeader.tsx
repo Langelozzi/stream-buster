@@ -68,7 +68,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
             {/* Title */}
             <Box className={classes.title}>
                 <Typography variant="h4" fontWeight="bold">
-                    {media.media?.title}
+                    {media.Media?.Title}
                 </Typography>
             </Box>
             {/* Controls */}
