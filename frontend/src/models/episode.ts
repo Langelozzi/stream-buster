@@ -5,7 +5,7 @@ export interface Episode {
   Media?: Media;  // Optional field
   Name: string;
   Overview: string;
-  EpisodeTMDBID: string;
+  EpisodeTMDBID: number;
   EpisodeNumber: number;
   StillPath: string;
   Runtime: number;

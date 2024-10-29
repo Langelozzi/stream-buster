@@ -38,4 +38,33 @@ func (contr *TVController) GetTVDetails(c *gin.Context) {
 	c.JSON(200, content)
 }
 
-func (contr *TVController) GetEpisodesInSeason(c *gin.Context) {}
+func (contr *TVController) GetEpisodesInSeason(c *gin.Context) {
+	// Get the series ID
+	seriesId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "No series ID provided. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// Get the season number
+	seasonNum, err := strconv.Atoi(c.Param("seasonNum"))
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "No series ID provided. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// call the service
+	content, err := contr.service.GetEpisodesInSeason(seriesId, seasonNum)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Failed to find episodes for that season. Error: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, content)
+}

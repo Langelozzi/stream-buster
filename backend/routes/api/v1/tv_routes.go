@@ -11,6 +11,6 @@ func SetTVRoutes(router *gin.RouterGroup) {
 	group := router.Group("/tv")
 	{
 		group.GET("/:id", controller.GetTVDetails)
-		group.GET("/:id/:seasonNum", controller.GetEpisodesInSeason)
+		group.GET("/:id/season/:seasonNum/episodes", controller.GetEpisodesInSeason)
 	}
 }

@@ -16,3 +16,7 @@ func NewTVService(dao iDao.MovieDatabaseDaoInterface) *TVService {
 func (service *TVService) GetTVDetails(id int) (*api.TV, error) {
 	return service.dao.GetTVDetails(id)
 }
+
+func (service *TVService) GetEpisodesInSeason(seriesId int, seasonNum int) ([]*api.Episode, error) {
+	return service.dao.GetEpisodesInSeason(seriesId, seasonNum)
+}

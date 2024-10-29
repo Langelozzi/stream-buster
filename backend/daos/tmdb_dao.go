@@ -141,3 +141,36 @@ func (dao *TMDBDao) GetMovieDetails(id int) (*api.Movie, error) {
 
 	return movieObj, nil
 }
+
+func (dao *TMDBDao) GetEpisodesInSeason(seriesId int, seasonNum int) ([]*api.Episode, error) {
+	baseUrl := utils.GetEnvVariable("TMDB_API_BASE_URL")
+	apiKey := utils.GetEnvVariable("TMDB_API_KEY")
+
+	getUrl := fmt.Sprintf("%s/tv/%s/season/%s?api_key=%s", baseUrl, strconv.Itoa(seriesId), strconv.Itoa(seasonNum), apiKey)
+
+	response, err := http.Get(getUrl)
+	if err != nil {
+		fmt.Printf("Error fetching from tmdb api: %v\n", err)
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing request body stream: %v\n", err)
+		}
+	}(response.Body)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		fmt.Printf("Error reading response body: %v\n", err)
+		return nil, err
+	}
+
+	episodes, err := adapters.ParseEpisodeListResponse(string(body))
+	if err != nil {
+		fmt.Printf("Error casting response to Episode objects: %v\n", err)
+		return nil, err
+	}
+
+	return episodes, nil
+}

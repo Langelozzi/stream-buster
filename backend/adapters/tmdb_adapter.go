@@ -73,6 +73,29 @@ func ParseMovieDetailsResponse(json string) (*api.Movie, error) {
 	return movie, nil
 }
 
+func ParseEpisodeListResponse(json string) ([]*api.Episode, error) {
+	jsonMap, err := JSONToMap(json)
+	if err != nil {
+		return nil, err
+	}
+
+	var castedResults []*api.Episode
+	// Access the "results" array
+	if results, ok := jsonMap["episodes"].([]interface{}); ok {
+		// Iterate through the results and cast them to our structs
+		for _, item := range results {
+			if itemMap, ok := item.(map[string]interface{}); ok {
+				episode := CastToEpisode(itemMap, nil)
+				castedResults = append(castedResults, episode)
+			}
+		}
+	} else {
+		fmt.Println("No results found or results is not an array")
+	}
+
+	return castedResults, nil
+}
+
 func GetTotalPageCount(json string) (int, error) {
 	jsonMap, err := JSONToMap(json)
 	if err != nil {
@@ -279,6 +302,74 @@ func CastToSeason(obj map[string]interface{}, media *db.Media) *api.Season {
 	}
 
 	return &season
+}
+
+func CastToEpisode(obj map[string]interface{}, media *db.Media) *api.Episode {
+	var name string
+	var overview string
+	var id int
+	var episodeNum int
+	var stillPath string
+	var runtime int
+	var seasonNum int
+
+	if obj["id"] != nil {
+		if idFloat, ok := obj["id"].(float64); ok {
+			id = int(idFloat)
+		}
+	}
+
+	if obj["name"] != nil {
+		if nameStr, ok := obj["name"].(string); ok {
+			name = nameStr
+		}
+	}
+
+	if obj["overview"] != nil {
+		if overviewStr, ok := obj["overview"].(string); ok {
+			overview = overviewStr
+		}
+	}
+
+	if obj["episode_number"] != nil {
+		if episodeNumFloat, ok := obj["episode_number"].(float64); ok {
+			episodeNum = int(episodeNumFloat)
+		}
+	}
+
+	if obj["still_path"] != nil {
+		if stillPathStr, ok := obj["still_path"].(string); ok {
+			stillPath = GetFullImagePath(stillPathStr)
+		}
+	}
+
+	if obj["runtime"] != nil {
+		if runtimeFloat, ok := obj["runtime"].(float64); ok {
+			runtime = int(runtimeFloat)
+		}
+	}
+
+	if obj["season_number"] != nil {
+		if seasonNumFloat, ok := obj["season_number"].(float64); ok {
+			seasonNum = int(seasonNumFloat)
+		}
+	}
+
+	episode := api.Episode{
+		Name:          name,
+		Overview:      overview,
+		EpisodeTMDBID: id,
+		EpisodeNumber: episodeNum,
+		StillPath:     stillPath,
+		Runtime:       runtime,
+		SeasonNumber:  seasonNum,
+	}
+
+	if media != nil {
+		episode.Media = media
+	}
+
+	return &episode
 }
 
 func CastToGenre(obj map[string]interface{}) *db.Genre {

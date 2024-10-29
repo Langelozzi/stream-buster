@@ -11,8 +11,9 @@ import { Movie } from '../../models/movie';
 import { MediaDetailsModalHeader } from './media-details-modal-header/MediaDetailsModalHeader';
 import { MediaDetailsModalDescTV } from './media-details-modal-desc/MediaDetailsModalDescTV';
 import { MediaDetailsModalDescMovie } from './media-details-modal-desc/MediaDetailsModalDescMovie';
-import { getTVDetails } from '../../api/services/tv';
+import { getEpisodesForSeason, getTVDetails } from '../../api/services/tv';
 import { getMovieDetails } from '../../api/services/movie';
+import { Episode } from '../../models/episode';
 
 // Defining styles using makeStyles
 const useStyles = makeStyles({
@@ -105,17 +106,30 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
 
     // States
     const [detailedMedia, setDetailedMedia] = useState<Movie | TV | null>(null);
+    const [currentSeason, setCurrentSeason] = useState<number>(1);
+    const [episodes, setEpisodes] = useState<Episode[] | null>(null);
+    const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
 
     // Effects
-    useEffect(() => { // Runs when component loads the first time
-        if (isTV && isOpen) {
+    useEffect(() => { // Runs when modal component is opened
+        if (!isOpen) return;
+
+        // Fetch the details of the media clicked
+        if (isTV) {
             const fetchDetailedTV = async () => {
                 const tv: TV = await getTVDetails(media.Media?.TMDBID!);
                 console.log('tv', tv);
                 setDetailedMedia(tv);
             }
             fetchDetailedTV();
-        } else if (isOpen) {
+
+            const fetchEpisodesForCurrentSeason = async () => {
+                const episodes: Episode[] = await getEpisodesForSeason(media.Media?.TMDBID!, currentSeason);
+                console.log('episodes', episodes);
+                setEpisodes(episodes);
+            }
+            fetchEpisodesForCurrentSeason();
+        } else {
             const fetchDetailedMovie = async () => {
                 const movie: Movie = await getMovieDetails(media.Media?.TMDBID!);
                 console.log('movie', movie);
