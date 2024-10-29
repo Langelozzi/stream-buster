@@ -144,7 +144,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     return (
         <Box onClick={onClose} className={classes.overlay}>
             <Box onClick={(e) => e.stopPropagation()} className={classes.modalContainer}>
-                {/* Header Section with Background Image */}
+                {/* Header Section with Background Image (will need to pass current episode in for tv shows) */}
                 {detailedMedia && (
                     <MediaDetailsModalHeader media={detailedMedia} />
                 )}
