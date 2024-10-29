@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
     Box,
-    Typography,
-    Divider,
-    List,
 } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { TV } from '../../models/tv';
@@ -14,6 +11,7 @@ import { MediaDetailsModalDescMovie } from './media-details-modal-desc/MediaDeta
 import { getEpisodesForSeason, getTVDetails } from '../../api/services/tv';
 import { getMovieDetails } from '../../api/services/movie';
 import { Episode } from '../../models/episode';
+import { MediaDetailsModalEpisodes } from './media-details-modal-episodes/MediaDetailsModalEpisodes';
 
 // Defining styles using makeStyles
 const useStyles = makeStyles({
@@ -35,7 +33,8 @@ const useStyles = makeStyles({
         backgroundColor: 'black',
         color: 'white',
         borderRadius: 8,
-        overflow: 'hidden',
+        overflowY: 'auto', // Enable vertical scrolling in the modal
+        maxHeight: '90vh',
         margin: '0 auto',
     },
     header: {
@@ -98,6 +97,9 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         onClose
     } = props;
 
+    // Render nothing if modal is not open
+    if (!isOpen) return null;
+
     // Hooks
     const classes = useStyles();
 
@@ -133,26 +135,33 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     const determineCurrentEpisode = useCallback(() => {
         if (!episodes) return;
 
-        const currentEpisodeNum: number = 4;
+        const currentEpisodeNum: number = 1;
         setCurrentEpisode(episodes[currentEpisodeNum - 1])
     }, [episodes]);
 
     // Effects
     useEffect(() => { // Runs when modal component is opened
-        if (!isOpen) return;
-
         // Fetch the details of the media clicked
         if (isTV) {
             fetchDetailedTV();
             fetchEpisodesForCurrentSeason();
-            determineCurrentEpisode();
         } else {
             fetchDetailedMovie();
         }
-    }, [isOpen, media, episodes]);
 
-    // Render nothing if modal is not open
-    if (!isOpen) return null;
+        // Prevent body from scrolling when modal open
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = 'unset'; // Restore body scroll
+        }
+    }, [isOpen, media]);
+
+    useEffect(() => {
+        if (isTV) {
+            determineCurrentEpisode();
+        }
+    }, [episodes])
+
     return (
         <Box onClick={onClose} className={classes.overlay}>
             <Box onClick={(e) => e.stopPropagation()} className={classes.modalContainer}>
@@ -170,36 +179,9 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
                     )}
 
                     {/* Episode List Section (should be conditionally rendered if it's a tv show)*/}
-                    <Typography variant="h5" mb={2}>
-                        Episodes
-                    </Typography>
-                    <Divider className={classes.divider} />
-
-                    <List className={classes.episodeList}>
-                        {/* Example for iterating over episodes if media has them */}
-                        {/* {media.episodes?.map((episode) => (
-                            <ListItem key={episode.number} className={classes.listItem}>
-                                <ListItemAvatar>
-                                    <Avatar
-                                        variant="square"
-                                        src={episode.thumbnailUrl}
-                                        sx={{ width: 100, height: 60 }}
-                                    />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary={
-                                        <Box className={classes.episodeTitleContainer}>
-                                            <Typography variant="body1" fontWeight="bold">
-                                                {`${episode.number}. ${episode.title}`}
-                                            </Typography>
-                                            <Typography variant="body2">{episode.duration}</Typography>
-                                        </Box>
-                                    }
-                                    secondary={episode.description}
-                                />
-                            </ListItem>
-                        ))} */}
-                    </List>
+                    {detailedMedia && isTV && episodes && (
+                        <MediaDetailsModalEpisodes tv={detailedMedia as TV} episodes={episodes} />
+                    )}
                 </Box>
             </Box>
         </Box>
