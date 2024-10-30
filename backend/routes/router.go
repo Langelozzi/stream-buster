@@ -7,6 +7,7 @@ import (
 	v1 "github.com/STREAM-BUSTER/stream-buster/routes/api/v1"
 	"github.com/STREAM-BUSTER/stream-buster/services"
 	iServices "github.com/STREAM-BUSTER/stream-buster/services/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/utils/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,6 +33,7 @@ func InitRouter() *gin.Engine {
 	// Setup private routes (requires authentication)
 	privateRouterGroup := v1RouterGroup.Group("")
 	privateRouterGroup.Use(middlewares.Auth(authService))
+	privateRouterGroup.Use(middlewares.UsageTrackingMiddleware(database.GetInstance())) // Add usage tracking middleware
 	{
 		v1.SetUserRoutes(privateRouterGroup)
 		v1.SetSearchRoutes(privateRouterGroup)
