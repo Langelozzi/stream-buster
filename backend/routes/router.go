@@ -18,14 +18,10 @@ func InitRouter() *gin.Engine {
 	router.Use(gin.Recovery())
 	router.Use(middlewares.CORS())
 
-	// Setup routes for v1
+	// Setup public routes for v1
 	v1RouterGroup := router.Group("/api/v1")
 	{
-		v1.SetSearchRoutes(v1RouterGroup)
-		v1.SetCDNRoutes(v1RouterGroup)
 		v1.SetAuthRoutes(v1RouterGroup)
-		v1.SetTVRoutes(v1RouterGroup)
-		v1.SetMovieRoutes(v1RouterGroup)
 	}
 
 	var userDao iDao.UserDaoInterface = daos.NewUserDao()
@@ -38,6 +34,10 @@ func InitRouter() *gin.Engine {
 	privateRouterGroup.Use(middlewares.Auth(authService))
 	{
 		v1.SetUserRoutes(privateRouterGroup)
+		v1.SetSearchRoutes(privateRouterGroup)
+		v1.SetCDNRoutes(privateRouterGroup)
+		v1.SetTVRoutes(privateRouterGroup)
+		v1.SetMovieRoutes(privateRouterGroup)
 	}
 
 	return router

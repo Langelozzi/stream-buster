@@ -108,6 +108,34 @@ func (contr *AuthController) CreateUser(c *gin.Context) {
 	c.JSON(201, createdUser)
 }
 
+// LogoutUser removes all authentication tokens from cookies
+func (contr *AuthController) LogoutUser(c *gin.Context) {
+	// Clear the refresh token cookie
+	c.SetCookie(
+		"refreshToken",                 // Name of the cookie
+		"",                             // Clear the value
+		-1,                             // MaxAge = -1 means the cookie expires immediately
+		"/",                            // Path
+		utils.GetEnvVariable("DOMAIN"), // Domain
+		false,                          // Secure flag
+		false,                          // HttpOnly flag
+	)
+
+	// Clear the access token cookie if you are using one
+	c.SetCookie(
+		"token",                        // Name of the cookie
+		"",                             // Clear the value
+		-1,                             // MaxAge = -1 means the cookie expires immediately
+		"/",                            // Path
+		utils.GetEnvVariable("DOMAIN"), // Domain
+		false,                          // Secure flag
+		false,                          // HttpOnly flag
+	)
+
+	// Respond with a success message
+	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
+}
+
 func (contr *AuthController) TestAuthMiddleware(c *gin.Context) {
 	user, exists := c.Get("user")
 	if !exists {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import { sendForm, sendTestRequest } from './loginHandler';
+import { postLogin, sendTestRequest } from '../../api/services/auth';
 import { AxiosResponse } from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,7 +17,7 @@ export const LoginForm: React.FC = () => {
 		form.append("email", email);
 		form.append("password", password);
 
-		const res = await sendForm(form);
+		const res = await postLogin(form);
 		if (res) {
 			navigate("/browse");  // Redirect without reloading the page
 		} else {
