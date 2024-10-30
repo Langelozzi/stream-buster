@@ -19,7 +19,7 @@ func (dao *UserDao) GetAllUsersDao(includeDeleted bool, full bool) ([]models.Use
 	query := db.Model(&models.User{})
 
 	if full {
-		query.Preload("Documents.Document").Preload("Roles.Role").Preload("Configs.Config")
+		query.Preload("Usage").Preload("UserRoles.Role").Preload("Configs.Config")
 	}
 	if !includeDeleted {
 		query.Where("deleted_at IS NULL")
@@ -39,7 +39,7 @@ func (dao *UserDao) GetUserDao(id int, includeDeleted bool, full bool) (*models.
 	query := db.Model(&models.User{})
 
 	if full {
-		query.Preload("Documents.Document").Preload("Roles.Role").Preload("Configs.Config")
+		query.Preload("Usage").Preload("UserRoles.Role").Preload("Configs.Config")
 	}
 	if !includeDeleted {
 		query.Where("deleted_at IS NULL")
@@ -59,7 +59,7 @@ func (dao *UserDao) GetUserByEmailDao(email string, includeDeleted bool, full bo
 	query := db.Model(&models.User{})
 
 	if full {
-		query.Preload("Documents.Document").Preload("Roles.Role").Preload("Configs.Config")
+		query.Preload("Usage").Preload("UserRoles.Role").Preload("Configs.Config")
 	}
 
 	if !includeDeleted {

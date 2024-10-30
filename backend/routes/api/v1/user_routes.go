@@ -13,9 +13,9 @@ func SetUserRoutes(router *gin.RouterGroup) {
 		group.GET("/", controller.GetAllUsersHandler)
 		group.GET("/:id", controller.GetUserHandler)
 		group.GET("/current", controller.GetCurrentUserHandler)
-		group.POST("/", controller.CreateUserHandler)
-		group.PUT("/:id", controller.UpdateUserHandler)
+		//group.POST("/", controller.CreateUserHandler)
+		//group.PUT("/:id", controller.UpdateUserHandler)
 		//group.PUT("/current", controller.UpdateCurrentUserHandler)
-		group.DELETE("/:id", controller.DeleteUserHandler)
+		//group.DELETE("/:id", controller.DeleteUserHandler)
 	}
 }

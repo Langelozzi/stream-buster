@@ -4,6 +4,7 @@ import (
 	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"strconv"
 )
 
@@ -87,7 +88,7 @@ func (contr *UserController) GetUserHandler(c *gin.Context) {
 		return
 	}
 
-	// get the includeDeleted query
+	//get the includeDeleted query
 	includeDeletedStr := c.DefaultQuery("includeDeleted", "false")
 	// convert the includeDeleted query to a boolean
 	includeDeleted, err := strconv.ParseBool(includeDeletedStr)
@@ -132,10 +133,41 @@ func (contr *UserController) GetUserHandler(c *gin.Context) {
 // @Router /user/current/ [get]
 func (contr *UserController) GetCurrentUserHandler(c *gin.Context) {
 	// Get the current user from the context
-	user, exists := c.Get("user")
+	userClaims, exists := c.Get("user")
+	userID := int(userClaims.(jwt.MapClaims)["id"].(float64)) // Assuming "id" is part of the claims
 	if !exists {
 		c.JSON(400, gin.H{
 			"message": "No user records found for the current user",
+		})
+		return
+	}
+
+	//get the includeDeleted query
+	includeDeletedStr := c.DefaultQuery("includeDeleted", "false")
+	// convert the includeDeleted query to a boolean
+	includeDeleted, err := strconv.ParseBool(includeDeletedStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid includeDeleted query. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// get the full query
+	fullStr := c.DefaultQuery("full", "false")
+	// convert the full query to a boolean
+	full, err := strconv.ParseBool(fullStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid full query. Error: " + err.Error(),
+		})
+		return
+	}
+
+	user, err := contr.service.GetUser(userID, includeDeleted, full)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error getting full user record",
 		})
 		return
 	}

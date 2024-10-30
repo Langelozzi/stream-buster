@@ -13,7 +13,7 @@ type User struct {
 	LastName  string       `gorm:"not null: True"`
 	Configs   []UserConfig `gorm:"foreignKey:UserID"`
 	Usage     Usage        `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Roles     []Role       `gorm:"many2many:user_roles;"`
+	UserRoles []UserRole   `gorm:"foreignKey:UserID"`
 	DeletedAt *time.Time   `gorm:"index"`
 	CreatedAt *time.Time   `gorm:"index"`
 }
