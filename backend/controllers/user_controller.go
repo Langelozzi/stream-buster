@@ -51,7 +51,7 @@ func (contr *UserController) GetAllUsersHandler(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	users, err := contr.service.GetAllUsers(includeDeleted, full)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -109,7 +109,7 @@ func (contr *UserController) GetUserHandler(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	user, err := contr.service.GetUser(id, includeDeleted, full)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -163,7 +163,7 @@ func (contr *UserController) CreateUserHandler(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	user, err := contr.service.CreateUser(user)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -210,7 +210,7 @@ func (contr *UserController) UpdateUserHandler(c *gin.Context) {
 	// set the id of the user
 	user.ID = uint(id)
 
-	// call the service
+	// call the Service
 	user, err = contr.service.UpdateUser(user)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -251,7 +251,7 @@ func (contr *UserController) UpdateUserHandler(c *gin.Context) {
 //		return
 //	}
 //
-//	updatedUser, err := contr.service.UpdateUserByExternalID(user.ExternalUserID, &updateData)
+//	updatedUser, err := contr.Service.UpdateUserByExternalID(user.ExternalUserID, &updateData)
 //	if err != nil {
 //		c.JSON(500, gin.H{"error": "Failed to update user: " + err.Error()})
 //		return
@@ -294,7 +294,7 @@ func (contr *UserController) DeleteUserHandler(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	err = contr.service.DeleteUser(id, softDelete)
 	if err != nil {
 		c.JSON(400, gin.H{

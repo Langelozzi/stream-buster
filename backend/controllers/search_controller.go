@@ -35,7 +35,7 @@ func (contr *SearchController) GetMultiMediaSearchResults(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	content, err := contr.service.SearchMultiMedia(query)
 	if err != nil {
 		c.JSON(400, gin.H{

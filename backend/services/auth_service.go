@@ -17,12 +17,24 @@ import (
 var superSecretKey = []byte(utils.GetEnvVariable(utils.GetEnvVariable("JWT_SECRET")))
 
 type AuthService struct {
-	Dao         iDao.AuthDaoInterface
+	dao         iDao.AuthDaoInterface
 	userService iServices.UserServiceInterface
 }
 
 func NewAuthService(dao iDao.AuthDaoInterface, userService iServices.UserServiceInterface) *AuthService {
 	return &AuthService{dao, userService}
+}
+
+func (service AuthService) Register(user models.User) (*models.User, error) {
+	// Generate a hashed password with bcrypt using a cost of bcrypt.DefaultCost
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println("error hashing password:", err)
+		return nil, err
+	}
+	user.Password = string(hashedPassword)
+
+	return service.dao.RegisterUser(user)
 }
 
 // Function to create JWT tokens with claims

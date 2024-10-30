@@ -26,7 +26,7 @@ func (contr *TVController) GetTVDetails(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	content, err := contr.service.GetTVDetails(seriesId)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -57,7 +57,7 @@ func (contr *TVController) GetEpisodesInSeason(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	content, err := contr.service.GetEpisodesInSeason(seriesId, seasonNum)
 	if err != nil {
 		c.JSON(500, gin.H{

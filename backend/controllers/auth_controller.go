@@ -86,11 +86,11 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 	}
 }
 
-func (contr *AuthController) CreateUser(c *gin.Context) {
-	email := c.PostForm("Email")
-	password := c.PostForm("Password")
-	firstName := c.PostForm("FirstName")
-	lastName := c.PostForm("LastName")
+func (contr *AuthController) RegisterUser(c *gin.Context) {
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	firstName := c.PostForm("firstName")
+	lastName := c.PostForm("lastName")
 
 	// Create the user object
 	newUser := models.User{
@@ -100,7 +100,7 @@ func (contr *AuthController) CreateUser(c *gin.Context) {
 		Password:  password,
 	}
 
-	createdUser, err := contr.userService.CreateUser(&newUser)
+	createdUser, err := contr.Service.Register(newUser)
 	if err != nil {
 		c.String(400, "Error Creating user")
 	}

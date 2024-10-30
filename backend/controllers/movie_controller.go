@@ -26,7 +26,7 @@ func (contr *MovieController) GetMovieDetails(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	content, err := contr.service.GetMovieDetails(seriesId)
 	if err != nil {
 		c.JSON(500, gin.H{
