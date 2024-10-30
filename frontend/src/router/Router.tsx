@@ -4,6 +4,7 @@ import { LoginPage } from '../pages/login/LoginPage';
 import { BrowsePage } from '../pages/browse/BrowsePage';
 import { WatchPage } from '../pages/watch/WatchPage';
 import { PrivateRoute } from '../components/private-route/PrivateRoute';
+import { DashboardPage } from '../pages/dashboard/DashboardPage';
 
 export const Router = () => {
     return (
@@ -11,13 +12,14 @@ export const Router = () => {
             <Routes>
                 {/* Public Routes */}
                 <Route path='/login' Component={LoginPage} />
+                <Route path='/' Component={HomePage} />
 
                 {/* Private Routes */}
                 <Route
-                    path="/"
+                    path="/dashboard"
                     element={
                         <PrivateRoute>
-                            <HomePage />
+                            <DashboardPage />
                         </PrivateRoute>
                     }
                 />

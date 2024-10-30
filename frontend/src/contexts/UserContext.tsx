@@ -1,5 +1,4 @@
-
-import { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../models/user';
 import { getCurrentUser } from '../api/services/user.service';
@@ -22,7 +21,10 @@ interface TokenClaims {
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User | null>(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
     const [loading, setLoading] = useState(true);
 
     const getTokenFromCookies = (name: string): string | undefined => {
@@ -42,11 +44,18 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     useEffect(() => {
         const fetchCurrentUserFull = async () => {
-            const user: User = await getCurrentUser(true);
-            setUser(user);
-            // Set loading to false once token is processed
-            setLoading(false);
-        }
+            try {
+                const fetchedUser: User = await getCurrentUser(true);
+                setUser(fetchedUser);
+                localStorage.setItem('user', JSON.stringify(fetchedUser)); // Store in localStorage
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+                setUser(null);
+                localStorage.removeItem('user'); // Remove if fetch fails
+            } finally {
+                setLoading(false);
+            }
+        };
 
         const token = getTokenFromCookies("token");
 
@@ -59,11 +68,18 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             } catch (e) {
                 console.error("Invalid JWT", e);
             }
+        } else {
+            setUser(null);
+            localStorage.removeItem('user');
         }
+        setLoading(false);
     }, []);
 
+    // Memoize context value to avoid unnecessary re-renders
+    const value = useMemo(() => ({ user, loading }), [user, loading]);
+
     return (
-        <UserContext.Provider value={{ user, loading }}>
+        <UserContext.Provider value={value}>
             {children}
         </UserContext.Provider>
     );
