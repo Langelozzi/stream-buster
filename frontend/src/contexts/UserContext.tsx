@@ -2,6 +2,7 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../models/user';
+import { getCurrentUser } from '../api/services/user.service';
 
 export interface UserContextType {
     user: User | null;
@@ -40,24 +41,25 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     useEffect(() => {
+        const fetchCurrentUserFull = async () => {
+            const user: User = await getCurrentUser(true);
+            setUser(user);
+            // Set loading to false once token is processed
+            setLoading(false);
+        }
+
         const token = getTokenFromCookies("token");
 
         if (token) {
             try {
-                const tokenClaims = decodeToken(token);
-                setUser({
-                    email: tokenClaims.email,
-                    firstName: tokenClaims.firstName,
-                    lastName: tokenClaims.lastName,
-                    id: tokenClaims.id,
-                });
+                // const tokenClaims = decodeToken(token);
+                if (!user) {
+                    fetchCurrentUserFull();
+                }
             } catch (e) {
                 console.error("Invalid JWT", e);
             }
         }
-
-        // Set loading to false once token is processed
-        setLoading(false);
     }, []);
 
     return (

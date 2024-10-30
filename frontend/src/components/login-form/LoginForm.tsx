@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
-import { postLogin } from '../../api/services/auth';
+import { postLogin } from '../../api/services/auth.service';
 import { useNavigate } from 'react-router-dom';
 
 export const LoginForm: React.FC = () => {
