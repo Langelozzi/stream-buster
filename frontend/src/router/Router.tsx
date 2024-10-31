@@ -6,6 +6,7 @@ import { WatchPage } from '../pages/watch/WatchPage';
 import { PrivateRoute } from '../components/private-route/PrivateRoute';
 import { DashboardPage } from '../pages/dashboard/DashboardPage';
 import { UserProvider } from '../contexts/UserContext';
+import { RegistrationPage } from '../pages/registration/RegistrationPage';
 
 export const Router = () => {
     return (
@@ -13,8 +14,9 @@ export const Router = () => {
             <UserProvider>
                 <Routes>
                     {/* Public Routes */}
-                    <Route path='/login' Component={LoginPage} />
                     <Route path='/' Component={HomePage} />
+                    <Route path='/login' Component={LoginPage} />
+                    <Route path='/register' Component={RegistrationPage} />
 
                     {/* Private Routes */}
                     <Route

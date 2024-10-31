@@ -75,13 +75,13 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const validateToken = useCallback((): boolean => {
         const token = getTokenFromCookies('token');
         if (!token) {
-            logout();
+            // logout();
             return false;
         }
 
         const tokenClaims = decodeToken(token);
         if (!tokenClaims) {
-            logout();
+            // logout();
             return false;
         }
 

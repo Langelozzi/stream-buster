@@ -10,6 +10,7 @@ export const DashboardPage = () => {
         return user?.UserRoles.some(userRole => userRole.Role.ID === UserType.Admin)
     });
 
+    // Make two dashboards, one for user and one for admin
     return (
         <>
             {isAdmin && (

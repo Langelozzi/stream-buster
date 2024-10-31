@@ -12,6 +12,17 @@ export const postLogin = async (form: FormData) => {
     }
 }
 
+export const postRegister = async (form: FormData) => {
+    try {
+        const res: AxiosResponse = await axios.post("/auth/register", form);
+        return res;
+    } catch (err: any) {
+        if (err.status == 401) {
+            alert("Registration failed");
+        }
+    }
+}
+
 export const sendTestRequest = async () => {
     const res: AxiosResponse = await axios.get("/auth/test");
     return res;
