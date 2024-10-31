@@ -39,13 +39,13 @@ func InitRouter() *gin.Engine {
 		v1.SetUserRoutes(privateRouterGroup)
 
 		// Setup routes that count towards api usage total
-		usageTrackingRoutes := privateRouterGroup.Group("")
-		usageTrackingRoutes.Use(middlewares.UsageTrackingMiddleware(database.GetInstance()))
+		usageTrackingRouterGroup := privateRouterGroup.Group("")
+		usageTrackingRouterGroup.Use(middlewares.UsageTrackingMiddleware(database.GetInstance()))
 		{
-			v1.SetSearchRoutes(privateRouterGroup)
-			v1.SetCDNRoutes(privateRouterGroup)
-			v1.SetTVRoutes(privateRouterGroup)
-			v1.SetMovieRoutes(privateRouterGroup)
+			v1.SetSearchRoutes(usageTrackingRouterGroup)
+			v1.SetCDNRoutes(usageTrackingRouterGroup)
+			v1.SetTVRoutes(usageTrackingRouterGroup)
+			v1.SetMovieRoutes(usageTrackingRouterGroup)
 		}
 	}
 
