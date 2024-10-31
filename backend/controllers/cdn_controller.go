@@ -21,7 +21,7 @@ func (contr *CDNController) GetMovieContent(c *gin.Context) {
 	// get the tmdbId from the route params
 	tmdbId := c.Param("tmdbId")
 
-	// call the service
+	// call the Service
 	html, err := contr.service.GetMovieContent(tmdbId)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -56,7 +56,7 @@ func (contr *CDNController) GetTVContent(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	html, err := contr.service.GetTVContent(tmdbId, seasonNum, episodeNum)
 	if err != nil {
 		c.JSON(400, gin.H{

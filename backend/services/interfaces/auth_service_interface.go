@@ -7,6 +7,7 @@ import (
 )
 
 type AuthServiceInterface interface {
+	Register(user models.User) (*models.User, error)
 	CreateToken(username string) (string, error)
 	CreateRefreshToken(username string) (string, error)
 	// authenticateMiddleware(c *gin.Context)

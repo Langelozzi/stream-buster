@@ -4,6 +4,7 @@ import (
 	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"strconv"
 )
 
@@ -51,7 +52,7 @@ func (contr *UserController) GetAllUsersHandler(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	users, err := contr.service.GetAllUsers(includeDeleted, full)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -87,7 +88,7 @@ func (contr *UserController) GetUserHandler(c *gin.Context) {
 		return
 	}
 
-	// get the includeDeleted query
+	//get the includeDeleted query
 	includeDeletedStr := c.DefaultQuery("includeDeleted", "false")
 	// convert the includeDeleted query to a boolean
 	includeDeleted, err := strconv.ParseBool(includeDeletedStr)
@@ -109,7 +110,7 @@ func (contr *UserController) GetUserHandler(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	user, err := contr.service.GetUser(id, includeDeleted, full)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -132,10 +133,41 @@ func (contr *UserController) GetUserHandler(c *gin.Context) {
 // @Router /user/current/ [get]
 func (contr *UserController) GetCurrentUserHandler(c *gin.Context) {
 	// Get the current user from the context
-	user, exists := c.Get("user")
+	userClaims, exists := c.Get("user")
+	userID := int(userClaims.(jwt.MapClaims)["id"].(float64)) // Assuming "id" is part of the claims
 	if !exists {
 		c.JSON(400, gin.H{
 			"message": "No user records found for the current user",
+		})
+		return
+	}
+
+	//get the includeDeleted query
+	includeDeletedStr := c.DefaultQuery("includeDeleted", "false")
+	// convert the includeDeleted query to a boolean
+	includeDeleted, err := strconv.ParseBool(includeDeletedStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid includeDeleted query. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// get the full query
+	fullStr := c.DefaultQuery("full", "false")
+	// convert the full query to a boolean
+	full, err := strconv.ParseBool(fullStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid full query. Error: " + err.Error(),
+		})
+		return
+	}
+
+	user, err := contr.service.GetUser(userID, includeDeleted, full)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error getting full user record",
 		})
 		return
 	}
@@ -163,7 +195,7 @@ func (contr *UserController) CreateUserHandler(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	user, err := contr.service.CreateUser(user)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -210,7 +242,7 @@ func (contr *UserController) UpdateUserHandler(c *gin.Context) {
 	// set the id of the user
 	user.ID = uint(id)
 
-	// call the service
+	// call the Service
 	user, err = contr.service.UpdateUser(user)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -251,7 +283,7 @@ func (contr *UserController) UpdateUserHandler(c *gin.Context) {
 //		return
 //	}
 //
-//	updatedUser, err := contr.service.UpdateUserByExternalID(user.ExternalUserID, &updateData)
+//	updatedUser, err := contr.Service.UpdateUserByExternalID(user.ExternalUserID, &updateData)
 //	if err != nil {
 //		c.JSON(500, gin.H{"error": "Failed to update user: " + err.Error()})
 //		return
@@ -294,7 +326,7 @@ func (contr *UserController) DeleteUserHandler(c *gin.Context) {
 		return
 	}
 
-	// call the service
+	// call the Service
 	err = contr.service.DeleteUser(id, softDelete)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -306,4 +338,36 @@ func (contr *UserController) DeleteUserHandler(c *gin.Context) {
 	c.JSON(204, gin.H{
 		"message": "Successfully deleted the user",
 	})
+}
+
+// GetUserUsageHandler retrieves the current user
+// @Summary Retrieve the current user
+// @Description get the current user record
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.User "Successfully retrieved the current user"
+// @Failure 400 {object} map[string]interface{} "Error: No user records found"
+// @Router /user/current/ [get]
+func (contr *UserController) GetUserUsageHandler(c *gin.Context) {
+	// get the user id from the request
+	idStr := c.Param("id")
+	// convert the id to an integer
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid user ID. Error: " + err.Error(),
+		})
+		return
+	}
+
+	usage, err := contr.service.GetUserUsageByUserId(id)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "Error getting full usage record",
+		})
+		return
+	}
+
+	c.JSON(200, usage)
 }

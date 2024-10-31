@@ -6,11 +6,12 @@ import (
 )
 
 type UserService struct {
-	dao interfaces.UserDaoInterface
+	dao      interfaces.UserDaoInterface
+	usageDao interfaces.UsageDaoInterface
 }
 
-func NewUserService(dao interfaces.UserDaoInterface) *UserService {
-	return &UserService{dao: dao}
+func NewUserService(dao interfaces.UserDaoInterface, usageDao interfaces.UsageDaoInterface) *UserService {
+	return &UserService{dao: dao, usageDao: usageDao}
 }
 
 func (service *UserService) GetAllUsers(includeDeleted bool, full bool) ([]models.User, error) {
@@ -38,4 +39,8 @@ func (service *UserService) DeleteUser(id int, softDelete bool) error {
 		return service.dao.SoftDeleteUserDao(id)
 	}
 	return service.dao.DeleteUserDao(id)
+}
+
+func (service *UserService) GetUserUsageByUserId(userId int) (*models.Usage, error) {
+	return service.usageDao.GetUsageByUserId(userId)
 }

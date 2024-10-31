@@ -7,6 +7,7 @@ import (
 	v1 "github.com/STREAM-BUSTER/stream-buster/routes/api/v1"
 	"github.com/STREAM-BUSTER/stream-buster/services"
 	iServices "github.com/STREAM-BUSTER/stream-buster/services/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/utils/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,26 +19,34 @@ func InitRouter() *gin.Engine {
 	router.Use(gin.Recovery())
 	router.Use(middlewares.CORS())
 
-	// Setup routes for v1
+	// Setup public routes for v1
 	v1RouterGroup := router.Group("/api/v1")
 	{
-		v1.SetSearchRoutes(v1RouterGroup)
-		v1.SetCDNRoutes(v1RouterGroup)
 		v1.SetAuthRoutes(v1RouterGroup)
-		v1.SetTVRoutes(v1RouterGroup)
-		v1.SetMovieRoutes(v1RouterGroup)
 	}
 
 	var userDao iDao.UserDaoInterface = daos.NewUserDao()
-	var userService iServices.UserServiceInterface = services.NewUserService(userDao)
+	var usageDao iDao.UsageDaoInterface = daos.NewUsageDao()
+	var userService iServices.UserServiceInterface = services.NewUserService(userDao, usageDao)
 	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
 	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
 	// Setup private routes (requires authentication)
 	privateRouterGroup := v1RouterGroup.Group("")
 	privateRouterGroup.Use(middlewares.Auth(authService))
+	privateRouterGroup.Use() // Add usage tracking middleware
 	{
 		v1.SetUserRoutes(privateRouterGroup)
+
+		// Setup routes that count towards api usage total
+		usageTrackingRouterGroup := privateRouterGroup.Group("")
+		usageTrackingRouterGroup.Use(middlewares.UsageTrackingMiddleware(database.GetInstance()))
+		{
+			v1.SetSearchRoutes(usageTrackingRouterGroup)
+			v1.SetCDNRoutes(usageTrackingRouterGroup)
+			v1.SetTVRoutes(usageTrackingRouterGroup)
+			v1.SetMovieRoutes(usageTrackingRouterGroup)
+		}
 	}
 
 	return router
