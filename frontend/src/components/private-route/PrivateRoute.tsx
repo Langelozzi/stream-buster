@@ -5,13 +5,12 @@ interface PrivateRouteProps {
 	children: JSX.Element;
 }
 
-export const PrivateRoute = ({ children }: PrivateRouteProps) => {
-	const { user, loading } = useUser()
+export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+	const { validateToken } = useUser();
 
-	if (loading) {
-		// Render nothing or a loading indicator while waiting
-		return <div>Loading...</div>;
+	if (!validateToken()) {
+		return <Navigate to="/login" />;
 	}
 
-	return user ? children : <Navigate to="/login" replace />;
+	return children;
 };

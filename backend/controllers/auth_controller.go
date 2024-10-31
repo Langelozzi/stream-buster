@@ -37,7 +37,7 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 
-	user, err := contr.userService.GetUserByEmail(email, false, false)
+	user, err := contr.userService.GetUserByEmail(email, false, true)
 
 	if err != nil || user == nil {
 		c.String(400, "User does not not exist")
@@ -79,7 +79,10 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 
 		contr.Service.SetTokenCookie(c, tokenString)
 
-		c.String(http.StatusOK, "Authorized")
+		c.JSON(200, gin.H{
+			"user":  user,
+			"token": tokenString,
+		})
 
 	} else {
 		c.String(http.StatusUnauthorized, "Invalid Credentials")

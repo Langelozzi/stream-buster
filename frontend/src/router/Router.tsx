@@ -5,41 +5,44 @@ import { BrowsePage } from '../pages/browse/BrowsePage';
 import { WatchPage } from '../pages/watch/WatchPage';
 import { PrivateRoute } from '../components/private-route/PrivateRoute';
 import { DashboardPage } from '../pages/dashboard/DashboardPage';
+import { UserProvider } from '../contexts/UserContext';
 
 export const Router = () => {
     return (
         <BrowserRouter>
-            <Routes>
-                {/* Public Routes */}
-                <Route path='/login' Component={LoginPage} />
-                <Route path='/' Component={HomePage} />
+            <UserProvider>
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path='/login' Component={LoginPage} />
+                    <Route path='/' Component={HomePage} />
 
-                {/* Private Routes */}
-                <Route
-                    path="/dashboard"
-                    element={
-                        <PrivateRoute>
-                            <DashboardPage />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path='/browse'
-                    element={
-                        <PrivateRoute>
-                            <BrowsePage />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path='/watch/:tmdbId/:seasonNum?/:episodeNum?'
-                    element={
-                        <PrivateRoute>
-                            <WatchPage />
-                        </PrivateRoute>
-                    }
-                />
-            </Routes>
+                    {/* Private Routes */}
+                    <Route
+                        path="/dashboard"
+                        element={
+                            <PrivateRoute>
+                                <DashboardPage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path='/browse'
+                        element={
+                            <PrivateRoute>
+                                <BrowsePage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path='/watch/:tmdbId/:seasonNum?/:episodeNum?'
+                        element={
+                            <PrivateRoute>
+                                <WatchPage />
+                            </PrivateRoute>
+                        }
+                    />
+                </Routes>
+            </UserProvider>
         </BrowserRouter>
     )
 }
