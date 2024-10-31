@@ -57,7 +57,7 @@ export const UsageStats: React.FC<UsageStatsProps> = (props) => {
     }, [usage])
 
     return (
-        <Box display="flex" flexDirection="column" mt={2}>
+        <Box display="flex" flexDirection="column">
             <Typography variant="body1">
                 Requests used: {usage?.RequestCount || 0} / {!isAdmin ? (maxRequestCount || 0) : (<span>&infin;</span>)}
             </Typography>

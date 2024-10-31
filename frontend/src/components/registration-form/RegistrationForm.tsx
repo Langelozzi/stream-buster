@@ -10,13 +10,6 @@ import { postRegister } from '../../api/services/auth.service';
 import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles(() => ({
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#2c2c2c', // Dark grey background
-    },
     paper: {
         padding: 16,
         maxWidth: 400,
@@ -24,6 +17,7 @@ const useStyles = makeStyles(() => ({
         color: '#ffffff',
         borderRadius: 8,
         boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.5)',
+        margin: '0 auto',
     },
     form: {
         display: 'flex',
