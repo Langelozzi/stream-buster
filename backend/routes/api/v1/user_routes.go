@@ -13,6 +13,7 @@ func SetUserRoutes(router *gin.RouterGroup) {
 		group.GET("/", controller.GetAllUsersHandler)
 		group.GET("/:id", controller.GetUserHandler)
 		group.GET("/current", controller.GetCurrentUserHandler)
+		group.GET("/:id/usage", controller.GetUserUsageHandler)
 		//group.POST("/", controller.CreateUserHandler)
 		//group.PUT("/:id", controller.UpdateUserHandler)
 		//group.PUT("/current", controller.UpdateCurrentUserHandler)

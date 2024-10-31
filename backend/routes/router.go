@@ -26,20 +26,27 @@ func InitRouter() *gin.Engine {
 	}
 
 	var userDao iDao.UserDaoInterface = daos.NewUserDao()
-	var userService iServices.UserServiceInterface = services.NewUserService(userDao)
+	var usageDao iDao.UsageDaoInterface = daos.NewUsageDao()
+	var userService iServices.UserServiceInterface = services.NewUserService(userDao, usageDao)
 	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
 	var authService iServices.AuthServiceInterface = services.NewAuthService(authDao, userService)
 
 	// Setup private routes (requires authentication)
 	privateRouterGroup := v1RouterGroup.Group("")
 	privateRouterGroup.Use(middlewares.Auth(authService))
-	privateRouterGroup.Use(middlewares.UsageTrackingMiddleware(database.GetInstance())) // Add usage tracking middleware
+	privateRouterGroup.Use() // Add usage tracking middleware
 	{
 		v1.SetUserRoutes(privateRouterGroup)
-		v1.SetSearchRoutes(privateRouterGroup)
-		v1.SetCDNRoutes(privateRouterGroup)
-		v1.SetTVRoutes(privateRouterGroup)
-		v1.SetMovieRoutes(privateRouterGroup)
+
+		// Setup routes that count towards api usage total
+		usageTrackingRoutes := privateRouterGroup.Group("")
+		usageTrackingRoutes.Use(middlewares.UsageTrackingMiddleware(database.GetInstance()))
+		{
+			v1.SetSearchRoutes(privateRouterGroup)
+			v1.SetCDNRoutes(privateRouterGroup)
+			v1.SetTVRoutes(privateRouterGroup)
+			v1.SetMovieRoutes(privateRouterGroup)
+		}
 	}
 
 	return router
