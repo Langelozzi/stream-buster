@@ -1,12 +1,15 @@
+import { Genre } from './genre';
 import { MediaType } from './media-type';
 
 export interface Media {
-  id: number;
-  tmdbID: number;
-  title: string;
-  posterImage: string;
-  mediaTypeId: number;
-  mediaType?: MediaType;  // Optional field
-  deletedAt?: Date;       // Optional field
-  createdAt?: Date;       // Optional field
+  ID: number;
+  TMDBID: number;
+  Title: string;
+  Overview: string;
+  PosterImage: string;
+  MediaTypeId: number;
+  MediaType?: MediaType;  // Optional field
+  Genres?: Genre[];
+  DeletedAt?: Date;       // Optional field
+  CreatedAt?: Date;       // Optional field
 }

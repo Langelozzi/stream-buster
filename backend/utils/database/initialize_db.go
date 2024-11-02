@@ -4,17 +4,27 @@ import (
 	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/utils/database/post_deployment_functions"
+	"gorm.io/gorm"
 	"log"
 )
 
 func InitializeDb() {
 	database := GetInstance()
 
+	// Ensure the database connection is valid
+	if database == nil {
+		log.Fatal("Database connection is not established.")
+		return
+	}
+
 	// List of all models
 	modelsToMigrate := []interface{}{
 		&models.User{},
 		&models.Config{},
 		&models.UserConfig{},
+		&models.Role{},
+		&models.UserRole{},
+		&models.Usage{},
 		&db.CurrentlyWatching{},
 		&db.Media{},
 		&db.MediaType{},
@@ -29,8 +39,18 @@ func InitializeDb() {
 		log.Printf("Successfully migrated model %T", model)
 	}
 
-	post_deployment_functions.CreateAdminUser(database)
-	post_deployment_functions.CreateTestData(database)
+	// Post deployment scripts to populate some data in db
+	if err := runPostDeploymentScripts(database); err != nil {
+		log.Printf("Post-deployment script error: %v", err)
+	}
 
 	log.Print("Database initialized successfully.")
+}
+
+func runPostDeploymentScripts(database *gorm.DB) error {
+	post_deployment_functions.InsertRoles(database)
+
+	post_deployment_functions.CreateAdminUser(database)
+
+	return nil
 }

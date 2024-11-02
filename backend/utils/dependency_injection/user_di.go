@@ -10,11 +10,7 @@ import (
 
 func InitUserDependencies() *controllers.UserController {
 	var dao daoInterfaces.UserDaoInterface = daos.NewUserDao()
-	var service servInterfaces.UserServiceInterface = services.NewUserService(dao)
+	var usageDao daoInterfaces.UsageDaoInterface = daos.NewUsageDao()
+	var service servInterfaces.UserServiceInterface = services.NewUserService(dao, usageDao)
 	return controllers.NewUserController(service)
-}
-
-func InitUserServiceDependencies() servInterfaces.UserServiceInterface {
-	var dao daoInterfaces.UserDaoInterface = daos.NewUserDao()
-	return services.NewUserService(dao)
 }

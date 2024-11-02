@@ -9,7 +9,7 @@ type Episode struct {
 	Name     string
 	Overview string
 
-	EpisodeTMDBID string
+	EpisodeTMDBID int
 	EpisodeNumber int
 
 	StillPath string

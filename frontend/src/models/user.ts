@@ -1,6 +1,13 @@
+import { Usage } from "./usage";
+import { UserRole } from "./user_role";
+
 export interface User {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
+    ID: number;
+    Email: string;
+    FirstName: string;
+    LastName: string;
+    Usage: Usage;
+    UserRoles: UserRole[];
+    DeletedAt: string;
+    CreatedAt: string;
 }

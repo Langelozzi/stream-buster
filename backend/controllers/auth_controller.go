@@ -37,7 +37,7 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 
-	user, err := contr.userService.GetUserByEmail(email, false, false)
+	user, err := contr.userService.GetUserByEmail(email, false, true)
 
 	if err != nil || user == nil {
 		c.String(400, "User does not not exist")
@@ -79,18 +79,21 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 
 		contr.Service.SetTokenCookie(c, tokenString)
 
-		c.String(http.StatusOK, "Authorized")
+		c.JSON(200, gin.H{
+			"user":  user,
+			"token": tokenString,
+		})
 
 	} else {
 		c.String(http.StatusUnauthorized, "Invalid Credentials")
 	}
 }
 
-func (contr *AuthController) CreateUser(c *gin.Context) {
-	email := c.PostForm("Email")
-	password := c.PostForm("Password")
-	firstName := c.PostForm("FirstName")
-	lastName := c.PostForm("LastName")
+func (contr *AuthController) RegisterUser(c *gin.Context) {
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+	firstName := c.PostForm("firstName")
+	lastName := c.PostForm("lastName")
 
 	// Create the user object
 	newUser := models.User{
@@ -100,12 +103,40 @@ func (contr *AuthController) CreateUser(c *gin.Context) {
 		Password:  password,
 	}
 
-	createdUser, err := contr.userService.CreateUser(&newUser)
+	createdUser, err := contr.Service.Register(newUser)
 	if err != nil {
 		c.String(400, "Error Creating user")
 	}
 
 	c.JSON(201, createdUser)
+}
+
+// LogoutUser removes all authentication tokens from cookies
+func (contr *AuthController) LogoutUser(c *gin.Context) {
+	// Clear the refresh token cookie
+	c.SetCookie(
+		"refreshToken",                 // Name of the cookie
+		"",                             // Clear the value
+		-1,                             // MaxAge = -1 means the cookie expires immediately
+		"/",                            // Path
+		utils.GetEnvVariable("DOMAIN"), // Domain
+		false,                          // Secure flag
+		false,                          // HttpOnly flag
+	)
+
+	// Clear the access token cookie if you are using one
+	c.SetCookie(
+		"token",                        // Name of the cookie
+		"",                             // Clear the value
+		-1,                             // MaxAge = -1 means the cookie expires immediately
+		"/",                            // Path
+		utils.GetEnvVariable("DOMAIN"), // Domain
+		false,                          // Secure flag
+		false,                          // HttpOnly flag
+	)
+
+	// Respond with a success message
+	c.JSON(http.StatusOK, gin.H{"message": "Logged out successfully"})
 }
 
 func (contr *AuthController) TestAuthMiddleware(c *gin.Context) {

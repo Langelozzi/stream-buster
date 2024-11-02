@@ -13,7 +13,7 @@ func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("token")
 		if err != nil || tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "No valid refresh token"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "No valid access token"})
 			c.Abort()
 			return
 		}

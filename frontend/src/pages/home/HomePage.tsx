@@ -1,15 +1,15 @@
-import { Search } from "../../components/search/Search";
-import { useUser } from "../../hooks/useUser";
+import { useUser } from "../../hooks/useUser"
+import AskQuery from "../../components/chat/AskQuery";
 
-const HomePage = () => {
+export const HomePage = () => {
     const user = useUser();
     console.log('user', user);
 
     return (
         <>
-            <Search />
+            <div>Welcome to stream buster</div>
+            <div>login or sign up</div>
+            <AskQuery></AskQuery>
         </>
     )
 }
-
-export default HomePage;
