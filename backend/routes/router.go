@@ -46,6 +46,7 @@ func InitRouter() *gin.Engine {
 			v1.SetCDNRoutes(usageTrackingRouterGroup)
 			v1.SetTVRoutes(usageTrackingRouterGroup)
 			v1.SetMovieRoutes(usageTrackingRouterGroup)
+			v1.SetLLMRoutes(usageTrackingRouterGroup)
 		}
 	}
 
