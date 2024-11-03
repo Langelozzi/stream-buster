@@ -1,10 +1,8 @@
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MediaPlayer } from "../../components/media-player/MediaPlayer";
-import { useUser } from "../../hooks/useUser";
 import { TV } from "../../models/tv";
 import { Movie } from '../../models/movie';
-import { Episode } from "../../models/episode";
 import { Box, IconButton, Typography } from "@mui/material";
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Grid from "@mui/material/Grid2"
@@ -12,7 +10,6 @@ import { useState } from "react";
 
 export const WatchPage = () => {
     // Hooks
-    const user = useUser();
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -27,8 +24,8 @@ export const WatchPage = () => {
     const episodeNum: number = Number(episodeNumStr);
 
     // State
-    const [media, setMedia] = useState<Movie | TV | undefined>(location.state?.media);
-    const [episode, setEpisode] = useState<Episode | undefined>(location.state?.currentEpisode);
+    const [media] = useState<Movie | TV | undefined>(location.state?.media);
+    // const [episode, setEpisode] = useState<Episode | undefined>(location.state?.currentEpisode);
     // const media = location.state.media as TV | Movie ?? null;
     // const episode = location.state.currentEpisode as Episode ?? null;
 

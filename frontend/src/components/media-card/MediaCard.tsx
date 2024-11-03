@@ -1,8 +1,7 @@
 import { Card, CardContent, CardMedia, Typography } from "@mui/material";
 import { Movie } from "../../models/movie";
 import { TV } from "../../models/tv";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MediaDetailsModal from "../media-details-modal/MediaDetailsModal";
 
 interface MediaCardProps {
@@ -10,9 +9,6 @@ interface MediaCardProps {
 }
 
 export const MediaCard: React.FC<MediaCardProps> = ({ media }) => {
-    // Hooks
-    const navigate = useNavigate();
-
     // State
     const [isModalOpen, setIsModalOpen] = useState(false);
 

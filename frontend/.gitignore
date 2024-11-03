@@ -8,9 +8,6 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
-dist-ssr
-*.local
 
 # Editor directories and files
 .vscode
@@ -26,3 +23,9 @@ dist-ssr
 
 # Ignore env files
 .env
+
+# Build files
+dist
+dist-ssr
+*.local
+*.tsbuildinfo
