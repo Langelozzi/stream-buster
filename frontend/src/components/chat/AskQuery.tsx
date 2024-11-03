@@ -20,13 +20,13 @@ const styles = {
 		'& label': {
 			color: '#bdbdbd', // Light grey labels
 		},
-		'& label.Mui-focused': {
+		'& label.MuiFocused': {
 			color: '#ffffff',
 		},
-		'& .MuiInputBase-root': {
+		'& .MuiInputBaseRoot': {
 			color: '#ffffff',
 		},
-		'& .MuiOutlinedInput-root': {
+		'& .MuiOutlinedInputRoot': {
 			'& fieldset': {
 				borderColor: '#757575', // Grey border
 			},
