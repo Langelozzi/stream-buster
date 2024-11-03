@@ -136,6 +136,10 @@ export const RegistrationForm: React.FC = () => {
         }
     };
 
+    const goToLogin = () => {
+        navigate('/login');
+    }
+
     return (
         <Box className={classes.paper}>
             <Typography variant="h5" align="center" gutterBottom>
@@ -211,6 +215,23 @@ export const RegistrationForm: React.FC = () => {
                     Register
                 </Button>
             </form>
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+                <Typography sx={{ display: 'inline' }}>
+                    Already have an account? Click&nbsp;
+                </Typography>
+                <Typography
+                    variant="body1"
+                    color="primary"
+                    sx={{ cursor: 'pointer', textDecoration: 'underline', display: 'inline' }}
+                    onClick={goToLogin}
+                >
+                    here
+                </Typography>
+                <Typography sx={{ display: 'inline' }}>
+                    &nbsp;to login
+                </Typography>
+            </Box>
         </Box>
     );
 };

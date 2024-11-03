@@ -7,11 +7,13 @@ import { PrivateRoute } from '../components/private-route/PrivateRoute';
 import { DashboardPage } from '../pages/dashboard/DashboardPage';
 import { UserProvider } from '../contexts/UserContext';
 import { RegistrationPage } from '../pages/registration/RegistrationPage';
+import { Navbar } from '../components/navbar/Navbar';
 
 export const Router = () => {
     return (
         <BrowserRouter>
             <UserProvider>
+                <Navbar />
                 <Routes>
                     {/* Public Routes */}
                     <Route path='/' Component={HomePage} />
