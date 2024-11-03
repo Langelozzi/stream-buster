@@ -34,6 +34,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Helper function to get token from cookies
     const getTokenFromCookies = (name: string): string | undefined => {
         const cookies = document.cookie.split('; ');
+        console.log('cookies', cookies);
         for (const cookie of cookies) {
             const [key, value] = cookie.split('=');
             if (key === name) {
