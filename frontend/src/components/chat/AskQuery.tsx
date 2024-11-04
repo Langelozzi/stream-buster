@@ -52,7 +52,7 @@ export const AskQuery: React.FC = () => {
 	const [query, setQuery] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string>('');
-	const [history, setHistory] = useState<{ query: string; reply: string; }[]>([]);
+	const [history, setHistory] = useState<{ query: string; reply: AskQueryResponse; }[]>([]);
 
 	const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setQuery(event.target.value);
