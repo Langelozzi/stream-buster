@@ -65,9 +65,9 @@ export const AskQuery: React.FC = () => {
 
 		try {
 			const res = await instance.post<AskQueryResponse>('/llm/ask-query',
-				[{ role: "user", content: query }, { role: "user", content: query }],
+				[{ role: "user", content: query }],
 			);
-			setHistory([...history, { query, reply: res.data.reply }]);
+			setHistory([...history, { query, reply: res.data }]);
 			setQuery('');
 		} catch (err) {
 			setError('An error occurred while fetching the response.');
