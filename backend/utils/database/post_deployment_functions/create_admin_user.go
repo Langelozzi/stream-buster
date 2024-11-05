@@ -20,7 +20,7 @@ func CreateAdminUser(db *gorm.DB) error {
 		panic(result.Error)
 	}
 
-	unHashedPassword := "streambuster"
+	unHashedPassword := "111"
 	// Generate a hashed password with bcrypt using a cost of bcrypt.DefaultCost
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(unHashedPassword), bcrypt.DefaultCost)
 	if err != nil {
@@ -32,7 +32,7 @@ func CreateAdminUser(db *gorm.DB) error {
 	// Create the admin user
 	user := models.User{
 		ID:        1,
-		Email:     "Admin@streambuster.com",
+		Email:     "admin@admin.com",
 		FirstName: "Admin",
 		LastName:  "LnameAdmin",
 		Password:  password,

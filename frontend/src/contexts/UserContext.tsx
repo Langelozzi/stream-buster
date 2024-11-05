@@ -34,6 +34,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Helper function to get token from cookies
     const getTokenFromCookies = (name: string): string | undefined => {
         const cookies = document.cookie.split('; ');
+        console.log('cookies', cookies);
         for (const cookie of cookies) {
             const [key, value] = cookie.split('=');
             if (key === name) {
@@ -74,12 +75,14 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Validate token and user state
     const validateToken = useCallback((): boolean => {
         const token = getTokenFromCookies('token');
+        console.log('token', token);
         if (!token) {
             // logout();
             return false;
         }
 
         const tokenClaims = decodeToken(token);
+        console.log('tokenClaims', tokenClaims);
         if (!tokenClaims) {
             // logout();
             return false;
