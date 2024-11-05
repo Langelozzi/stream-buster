@@ -1,20 +1,12 @@
 package auth
 
-import "github.com/golang-jwt/jwt/v4"
-
-type TokenClaims struct {
-	Ver      string   `json:"ver"`
-	Iss      string   `json:"iss"`
-	Sub      string   `json:"sub"`
-	Aud      string   `json:"aud"`
-	Exp      int64    `json:"exp"`
-	Iat      int64    `json:"iat"`
-	AuthTime int64    `json:"auth_time"`
-	Oid      string   `json:"oid"`
-	Emails   []string `json:"emails"`
-	NewUser  bool     `json:"newUser"`
-	Name     string   `json:"name"`
-	Tfp      string   `json:"tfp"`
-	Nbf      int64    `json:"nbf"`
-	jwt.RegisteredClaims
+// Define the struct for your claims
+type UserClaims struct {
+	ID        int    `mapstructure:"id"`
+	Email     string `mapstructure:"email"`
+	FirstName string `mapstructure:"fname"`
+	LastName  string `mapstructure:"lname"`
+	Issuer    string `mapstructure:"iss"`
+	Exp       int64  `mapstructure:"exp"`
+	Iat       int64  `mapstructure:"iat"`
 }

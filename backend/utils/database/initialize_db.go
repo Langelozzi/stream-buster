@@ -52,5 +52,7 @@ func runPostDeploymentScripts(database *gorm.DB) error {
 
 	post_deployment_functions.CreateAdminUser(database)
 
+	post_deployment_functions.CreateTestData(database)
+
 	return nil
 }
