@@ -9,7 +9,7 @@ type CurrentlyWatching struct {
 	UserID uint         `gorm:"foreignKey:ID"`
 	User   *models.User `gorm:"constraint:OnDelete:CASCADE;"`
 
-	MediaId string `gorm:"foreignKey:ID"`
+	MediaId uint   `gorm:"foreignKey:ID"`
 	Media   *Media `gorm:"constraint:OnDelete:SET NULL;"`
 
 	EpisodeNumber int
