@@ -8,8 +8,9 @@ import (
 func SetMediaRoutes(router *gin.RouterGroup) {
 	controller := dependency_injection.InitMediaDependencies()
 
-	group := router.Group("/Media")
+	group := router.Group("/media")
 	{
+		group.GET("/", controller.GetMediaById)
 		group.POST("/create", controller.CreateMedia)
 	}
 }

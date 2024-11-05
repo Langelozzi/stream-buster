@@ -1,7 +1,8 @@
 package controllers
 
 import (
-	"fmt"
+	"net/http"
+	"strconv"
 
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
@@ -26,33 +27,16 @@ func (contr MediaController) CreateMedia(c *gin.Context) {
 		})
 	}
 
-	createdMedia, err := contr.service.CreateMedia(media)
+	err = contr.service.CreateMedia(media)
 
-	if createdMedia.ID != media.ID {
-		c.JSON(400, gin.H{
-			"message": fmt.Sprintf("Failed to create a currently watching record. Expected ID %v, but got %v", createdMedia.ID, media.ID),
-		})
-		return
-	}
-	if createdMedia.TMDBID != media.TMDBID {
-		c.JSON(400, gin.H{
-			"message": fmt.Sprintf("Expected TMDBID %v, but got %v", createdMedia.TMDBID, media.TMDBID),
-		})
-		return
-	}
-	if createdMedia.Title != media.Title {
-		c.JSON(400, gin.H{
-			"message": fmt.Sprintf("Expected Title %v, but got %v", createdMedia.Title, media.Title),
-		})
-		return
-	}
+	c.String(http.StatusOK, "Media Created Successfully")
+
+}
+func (contr MediaController) GetMediaById(c *gin.Context) {
+	mediaId, err := strconv.ParseInt(c.Query("id"), 10, 32)
 	if err != nil {
-		c.JSON(400, gin.H{
-			"message": "Failed to create a currently watching record. Error: " + err.Error(),
-		})
-		return
+		c.String(400, "Error parsing mediaId")
 	}
-
-	c.JSON(201, createdMedia)
-
+	media, err := contr.service.GetMediaById(mediaId)
+	c.JSON(200, media)
 }
