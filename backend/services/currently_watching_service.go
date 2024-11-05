@@ -29,6 +29,11 @@ func (service *CurrentlyWatchingService) GetCurrentlyWatchingByUserId(userID uin
 	return service.dao.GetCurrentlyWatchingByUserId(userID, includeDeleted)
 }
 
+// Method to retrieve a CurrentlyWatching entry by userID and mediaId
+func (service *CurrentlyWatchingService) GetWatchlist(userID uint) ([]db.CurrentlyWatching, error) {
+	return service.dao.GetWatchlist(userID)
+}
+
 // Method to update an existing CurrentlyWatching entry
 func (service *CurrentlyWatchingService) UpdateCurrentlyWatching(updatedWatch *db.CurrentlyWatching) (*db.CurrentlyWatching, error) {
 	return service.dao.UpdateCurrentlyWatching(updatedWatch)

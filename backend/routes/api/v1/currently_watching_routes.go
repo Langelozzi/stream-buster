@@ -11,5 +11,6 @@ func SetCurrentlyWatchingRoutes(router *gin.RouterGroup) {
 	group := router.Group("/currently-watching")
 	{
 		group.GET("/getall", controller.GetAllCurrentlyWatchingHandler)
+		group.GET("/watchlist", controller.GetWatchlist)
 	}
 }

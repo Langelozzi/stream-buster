@@ -51,7 +51,7 @@ func (contr *CurrentlyWatchingController) CreateCurrentlyWatchingHandler(c *gin.
 		})
 	}
 
-	user, ok := claims.(*auth.TokenClaims)
+	user, ok := claims.(*auth.UserClaims)
 	if !ok {
 		c.JSON(401, gin.H{
 			"message": "Error: cannot verify user",
@@ -175,6 +175,32 @@ func (contr *CurrentlyWatchingController) GetAllCurrentlyWatchingHandler(c *gin.
 
 	// Retrieve all currently watching records for the authenticated user
 	watches, err := contr.service.GetCurrentlyWatchingByUserId(uint(id), includeDeleted)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "No currently watching records found. Error: " + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, watches)
+}
+func (contr *CurrentlyWatchingController) GetWatchlist(c *gin.Context) {
+	claims, exists := c.Get("user")
+	if !exists {
+		c.JSON(401, gin.H{
+			"message": "Error: cannot verify user",
+		})
+		return
+	}
+
+	user, ok := claims.(auth.UserClaims)
+	if !ok {
+		c.String(http.StatusBadRequest, "err parsing userclaims")
+		return
+	}
+
+	// Retrieve all currently watching records for the authenticated user
+	watches, err := contr.service.GetWatchlist(uint(user.ID))
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "No currently watching records found. Error: " + err.Error(),

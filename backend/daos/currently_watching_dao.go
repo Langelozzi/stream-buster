@@ -57,6 +57,23 @@ func (dao *CurrentlyWatchingDao) GetCurrentlyWatchingByUserId(userID uint, inclu
 	return currentlyWatchingRecords, nil
 }
 
+func (dao *CurrentlyWatchingDao) GetWatchlist(userId uint) ([]db.CurrentlyWatching, error) {
+	databaseInstance := database.GetInstance()
+
+	var watchingList []db.CurrentlyWatching
+	userID := 1 // Replace with the actual UserID you want to filter by
+
+	// Query CurrentlyWatching records with related Media records for the specified UserID
+	err := databaseInstance.Preload("Media").Where("user_id = ?", userID).Find(&watchingList).Error
+	if err != nil {
+		// Handle error
+		return nil, err
+	}
+
+	// watchingList now contains all CurrentlyWatching records with the related Media populated
+	return watchingList, nil
+}
+
 // UpdateCurrentlyWatching updates the details of an existing CurrentlyWatching record
 func (dao *CurrentlyWatchingDao) UpdateCurrentlyWatching(updatedWatch *db.CurrentlyWatching) (*db.CurrentlyWatching, error) {
 	databaseInstance := database.GetInstance()

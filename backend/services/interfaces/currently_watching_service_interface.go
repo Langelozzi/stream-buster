@@ -7,4 +7,5 @@ type CurrentlyWatchingServiceInterface interface {
 	GetCurrentlyWatchingById(userID uint, mediaId uint, includeDeleted bool) (*db.CurrentlyWatching, error)
 	GetCurrentlyWatchingByUserId(userID uint, includeDeleted bool) ([]*db.CurrentlyWatching, error)
 	UpdateCurrentlyWatching(updatedWatch *db.CurrentlyWatching) (*db.CurrentlyWatching, error)
+	GetWatchlist(userID uint) ([]db.CurrentlyWatching, error)
 }
