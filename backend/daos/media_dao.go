@@ -3,6 +3,7 @@ package daos
 import (
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/utils/database"
+	"gorm.io/gorm/clause"
 )
 
 type MediaDao struct{}
@@ -32,9 +33,15 @@ func (dao MediaDao) GetMediaById(id int64) (*db.Media, error) {
 func (dao MediaDao) CreateMedia(media *db.Media) error {
 	databaseInstance := database.GetInstance()
 
-	if err := databaseInstance.Create(media).Error; err != nil {
+	if err := databaseInstance.Clauses(clause.OnConflict{
+		Columns: []clause.Column{
+			{Name: "Title"},
+			{Name: "Overview"},
+			{Name: "PosterImage"},
+		},
+		DoUpdates: clause.AssignmentColumns([]string{}), // Specify columns for update if needed
+	}).Create(media).Error; err != nil {
 		return err
-
 	}
 	return nil
 }
