@@ -240,7 +240,7 @@ func (contr *UserController) UpdateUserHandler(c *gin.Context) {
 	}
 
 	// set the id of the user
-	user.ID = uint(id)
+	user.ID = uint64(id)
 
 	// call the Service
 	user, err = contr.service.UpdateUser(user)
