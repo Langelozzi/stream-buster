@@ -3,7 +3,6 @@ package middlewares
 import (
 	"net/http"
 
-	"github.com/STREAM-BUSTER/stream-buster/models/auth"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -44,19 +43,13 @@ func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 			}
 		}
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			// Manually map claims to the UserClaims struct
-			userClaims := auth.UserClaims{
-				ID:        int(claims["id"].(float64)),
-				Email:     claims["email"].(string),
-				FirstName: claims["fname"].(string),
-				LastName:  claims["lname"].(string),
-				Issuer:    claims["iss"].(string),
-				Exp:       int64(claims["exp"].(float64)), // JWT encodes numbers as float64
-				Iat:       int64(claims["iat"].(float64)),
-			}
-
-			// Store the user claims in the context
-			c.Set("user", userClaims)
+			c.Set("ID", claims["id"])
+			c.Set("Email", claims["email"])
+			c.Set("FirstName", claims["fname"])
+			c.Set("LastName", claims["lname"])
+			c.Set("Issuer", claims["iss"])
+			c.Set("Exp", claims["exp"])
+			c.Set("Iat", claims["iat"])
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 			c.Abort()

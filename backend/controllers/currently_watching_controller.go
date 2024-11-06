@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/STREAM-BUSTER/stream-buster/models/auth"
+	authModels "github.com/STREAM-BUSTER/stream-buster/models/auth"
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/utils/auth"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -51,7 +52,7 @@ func (contr *CurrentlyWatchingController) CreateCurrentlyWatchingHandler(c *gin.
 		})
 	}
 
-	user, ok := claims.(*auth.UserClaims)
+	user, ok := claims.(*authModels.UserClaims)
 	if !ok {
 		c.JSON(401, gin.H{
 			"message": "Error: cannot verify user",
@@ -185,19 +186,7 @@ func (contr *CurrentlyWatchingController) GetAllCurrentlyWatchingHandler(c *gin.
 	c.JSON(200, watches)
 }
 func (contr *CurrentlyWatchingController) GetWatchlist(c *gin.Context) {
-	claims, exists := c.Get("user")
-	if !exists {
-		c.JSON(401, gin.H{
-			"message": "Error: cannot verify user",
-		})
-		return
-	}
-
-	user, ok := claims.(auth.UserClaims)
-	if !ok {
-		c.String(http.StatusBadRequest, "err parsing userclaims")
-		return
-	}
+	user, err := auth.GetUserFromContext(c)
 
 	// Retrieve all currently watching records for the authenticated user
 	watches, err := contr.service.GetWatchlist(uint(user.ID))

@@ -21,7 +21,7 @@ func (dao AuthDao) RegisterUser(user models.User) (*models.User, error) {
 
 	// Create a userRole record to make basic user
 	userRole := models.UserRole{
-		UserID: user.ID,
+		UserID: uint(user.ID),
 		RoleID: 2,
 	}
 	if err := db.Create(&userRole).Error; err != nil {
@@ -30,7 +30,7 @@ func (dao AuthDao) RegisterUser(user models.User) (*models.User, error) {
 
 	// Create a usage record for tracking usage
 	usage := models.Usage{
-		UserID:       user.ID,
+		UserID:       uint(user.ID),
 		RequestCount: 0,
 	}
 	if err := db.Create(&usage).Error; err != nil {

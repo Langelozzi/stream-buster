@@ -41,7 +41,7 @@ func CreateAdminUser(db *gorm.DB) error {
 
 	// Create usage record
 	usage := models.Usage{
-		UserID:       user.ID,
+		UserID:       uint(user.ID),
 		RequestCount: 0,
 	}
 
@@ -54,7 +54,7 @@ func CreateAdminUser(db *gorm.DB) error {
 
 		// Create the userRole record
 		userRole := models.UserRole{
-			UserID: user.ID,
+			UserID: uint(user.ID),
 			RoleID: 1, // Assuming the role ID for admin is 1
 		}
 
