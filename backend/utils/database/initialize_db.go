@@ -24,7 +24,9 @@ func InitializeDb() {
 		&models.UserConfig{},
 		&models.Role{},
 		&models.UserRole{},
-		&models.Usage{},
+		//&models.Usage{},
+		&models.Endpoint{},
+		&models.UserEndpointUsage{},
 		&db.CurrentlyWatching{},
 		&db.Media{},
 		&db.MediaType{},
@@ -48,6 +50,8 @@ func InitializeDb() {
 }
 
 func runPostDeploymentScripts(database *gorm.DB) error {
+	post_deployment_functions.CreateUserTotalRequestCountView(database)
+
 	post_deployment_functions.InsertRoles(database)
 
 	post_deployment_functions.CreateAdminUser(database)

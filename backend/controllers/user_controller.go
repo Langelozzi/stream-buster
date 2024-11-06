@@ -351,23 +351,23 @@ func (contr *UserController) DeleteUserHandler(c *gin.Context) {
 // @Router /user/current/ [get]
 func (contr *UserController) GetUserUsageHandler(c *gin.Context) {
 	// get the user id from the request
-	idStr := c.Param("id")
-	// convert the id to an integer
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"message": "Invalid user ID. Error: " + err.Error(),
-		})
-		return
-	}
+	//idStr := c.Param("id")
+	//// convert the id to an integer
+	//id, err := strconv.Atoi(idStr)
+	//if err != nil {
+	//	c.JSON(400, gin.H{
+	//		"message": "Invalid user ID. Error: " + err.Error(),
+	//	})
+	//	return
+	//}
+	//
+	////usage, err := contr.service.GetUserUsageByUserId(id)
+	//if err != nil {
+	//	c.JSON(500, gin.H{
+	//		"message": "Error getting full usage record",
+	//	})
+	//	return
+	//}
 
-	usage, err := contr.service.GetUserUsageByUserId(id)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"message": "Error getting full usage record",
-		})
-		return
-	}
-
-	c.JSON(200, usage)
+	//c.JSON(200, usage)
 }

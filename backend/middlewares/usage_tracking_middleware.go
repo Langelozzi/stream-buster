@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/STREAM-BUSTER/stream-buster/models"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"gorm.io/gorm"
@@ -19,15 +19,16 @@ func UsageTrackingMiddleware(db *gorm.DB) gin.HandlerFunc {
 
 		userID := uint(userClaims.(jwt.MapClaims)["id"].(float64)) // Assuming "id" is part of the claims
 
+		fmt.Println(userID)
 		// Increment the request count for the user
-		var usage models.Usage
-		if err := db.First(&usage, "user_id = ?", userID).Error; err == nil {
-			usage.RequestCount++
-			db.Save(&usage)
-		} else {
-			// Handle the case where Usage record does not exist (if needed)
-			// This can happen if Usage record is not created for a user yet
-		}
+		//var usage models.Usage
+		//if err := db.First(&usage, "user_id = ?", userID).Error; err == nil {
+		//	usage.RequestCount++
+		//	db.Save(&usage)
+		//} else {
+		//	// Handle the case where Usage record does not exist (if needed)
+		//	// This can happen if Usage record is not created for a user yet
+		//}
 
 		c.Next() // Call the next handler
 	}

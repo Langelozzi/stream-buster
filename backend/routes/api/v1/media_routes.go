@@ -10,7 +10,7 @@ func SetMediaRoutes(router *gin.RouterGroup) {
 
 	group := router.Group("/media")
 	{
-		group.GET("/", controller.GetMediaById)
+		group.GET("", controller.GetMediaById)
 		group.POST("/create", controller.CreateMedia)
 	}
 }
