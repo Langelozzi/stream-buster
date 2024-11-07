@@ -20,27 +20,6 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
         :
         `${API_BASE_URL}/cdn/movie/${tmdbId}`
 
-    useEffect(() => {
-        // Save the original window.open function
-        const originalWindowOpen = window.open;
-
-        // Override window.open to block new tabs for external URLs
-        window.open = function (url, ...args) {
-            const isExternal = new URL(url as any, window.location.origin).origin !== window.location.origin;
-            if (isExternal) {
-                console.log('Blocked external popup:', url);
-                return null; // Block the popup
-            }
-            // Allow internal links
-            return originalWindowOpen.call(window, url, ...args);
-        };
-
-        // Clean up and restore the original window.open function on component unmount
-        return () => {
-            window.open = originalWindowOpen;
-        };
-    }, []);
-
     return (
         <Box
             sx={{
