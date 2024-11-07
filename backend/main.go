@@ -32,7 +32,7 @@ import (
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	// Uncomment the following line to run the db initialization for updates
-	database.InitializeDb()
+	//database.InitializeDb()
 
 	// Initialize the router
 	router := routes.InitRouter()
