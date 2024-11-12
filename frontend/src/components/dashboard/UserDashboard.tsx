@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 import { User } from "../../models/user";
-import { UsageStats } from "./usage-stats/UsageStats";
+import { UsageStats } from "../usage-stats/UsageStats";
 
 const styles = {
     card: {

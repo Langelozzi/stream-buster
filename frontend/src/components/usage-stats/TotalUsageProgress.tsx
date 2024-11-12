@@ -1,34 +1,21 @@
-import { Box, Typography, LinearProgress } from "@mui/material";
+import { Box, LinearProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Usage } from "../../../models/usage";
-import { getUserUsage } from "../../../api/services/user.service";
 
-interface UsageStatsProps {
-    userId: number;
+interface TotalUsageProgressProps {
+    requestCount: number;
+    maxRequests: number;
     isAdmin: boolean;
-    maxRequestCount: number;
 }
 
-export const UsageStats: React.FC<UsageStatsProps> = (props) => {
+export const TotalUsageProgress: React.FC<TotalUsageProgressProps> = (props) => {
     const {
-        userId,
-        maxRequestCount,
+        requestCount,
+        maxRequests,
         isAdmin
     } = props;
 
-    const [usage, setUsage] = useState<Usage | undefined>();
     const [progressValue, setProgressValue] = useState<number>(0);
     const [progressColor, setProgressColor] = useState<string>("primary");
-
-    // We need to refetch the usage for the user everytime this component reloads
-    const fetchUsage = async () => {
-        try {
-            const fetchedUsage = await getUserUsage(userId);
-            setUsage(fetchedUsage);
-        } catch (e) {
-            setUsage(undefined);
-        }
-    };
 
     const updateProgress = () => {
         if (isAdmin) {
@@ -37,7 +24,7 @@ export const UsageStats: React.FC<UsageStatsProps> = (props) => {
             return;
         }
 
-        let value = ((usage?.RequestCount || 0) / maxRequestCount) * 100;
+        let value = ((requestCount || 0) / maxRequests) * 100;
         if (value > 100) {
             value = 100;
             setProgressColor("error")
@@ -49,17 +36,13 @@ export const UsageStats: React.FC<UsageStatsProps> = (props) => {
     };
 
     useEffect(() => {
-        fetchUsage();
-    }, [userId, maxRequestCount])
-
-    useEffect(() => {
         updateProgress();
-    }, [usage])
+    }, [requestCount, maxRequests, isAdmin])
 
     return (
         <Box display="flex" flexDirection="column">
             <Typography variant="body1">
-                Requests used: {usage?.RequestCount || 0} / {!isAdmin ? (maxRequestCount || 0) : (<span>&infin;</span>)}
+                Requests used: {requestCount || 0} / {!isAdmin ? (maxRequests || 0) : (<span>&infin;</span>)}
             </Typography>
             <LinearProgress
                 variant="determinate"

@@ -9,5 +9,5 @@ type UserServiceInterface interface {
 	CreateUser(user *models.User) (*models.User, error)
 	UpdateUser(updatedUser *models.User) (*models.User, error)
 	DeleteUser(id int, softDelete bool) error
-	//GetUserUsageByUserId(userId int) (*models.Usage, error)
+	GetUserUsageByUserId(userId int) ([]models.UserEndpointUsage, error)
 }

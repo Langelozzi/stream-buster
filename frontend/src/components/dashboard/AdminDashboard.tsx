@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, List } from "@mui/material";
 import { User } from "../../models/user";  // Adjust the path as necessary
-import { UsageStats } from "./usage-stats/UsageStats";  // Adjust the path as necessary
 import { getAllUsers } from "../../api/services/user.service";
-import { UserType } from "../../enums/userType.enum";
+import { UserUsageInfo } from "../usage-stats/UserUsageInfo";
 
 const styles = {
     card: {
@@ -24,8 +23,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
-        // Placeholder for fetching users from the API
-        // Replace with actual fetch logic
         const fetchUsers = async () => {
             const allUsers = await getAllUsers(true);
             setUsers(allUsers);
@@ -40,11 +37,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                 <CardContent>
                     <Typography variant="h5">Welcome back, {user.FirstName}</Typography>
                     <br />
-                    <UsageStats
-                        userId={user.ID}
-                        maxRequestCount={user.UserRoles[0]?.Role.MaxRequestCount}
-                        isAdmin={true}
-                    />
+                    <UserUsageInfo user={user} isAdmin={true} />
                 </CardContent>
             </Card>
 
@@ -52,32 +45,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             <Card sx={styles.card}>
                 <CardContent>
                     <Typography variant="h6" gutterBottom>User Usage</Typography>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="User Usage Table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>User</TableCell>
-                                    <TableCell>Request Usage</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {users.filter(otherUser => otherUser.ID !== user.ID).map((user) => (
-                                    <TableRow key={user.ID}>
-                                        <TableCell>
-                                            {user.FirstName} {user.LastName}
-                                        </TableCell>
-                                        <TableCell>
-                                            <UsageStats
-                                                userId={user.ID}
-                                                maxRequestCount={user.UserRoles[0]?.Role.MaxRequestCount}
-                                                isAdmin={user.UserRoles[0]?.RoleID === UserType.Admin}
-                                            />
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <List>
+                        {users.filter(otherUser => otherUser.ID !== user.ID).map((user) => (
+                            <UserUsageInfo user={user} isAdmin />
+                        ))}
+                    </List>
                 </CardContent>
             </Card>
         </>
