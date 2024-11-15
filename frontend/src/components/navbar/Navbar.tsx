@@ -3,10 +3,13 @@ import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Box } 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useUser } from '../../hooks/useUser'; // Adjust path as needed
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const Navbar: React.FC = () => {
     const { user, logout } = useUser();
     const navigate = useNavigate();
+    const { t } = useTranslation();
+
     const [anchorEl, setAnchorEl] = useState<HTMLAnchorElement | null>(null);
     const open = Boolean(anchorEl);
 
@@ -28,18 +31,18 @@ export const Navbar: React.FC = () => {
             <Toolbar>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
                     <Typography variant="h6" sx={{ mr: 2, cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
-                        Streambuster
+                        {t('dictionary.streambuster')}
                     </Typography>
                     {user && (
                         <Button color="inherit" onClick={() => navigate('/browse')}>
-                            Browse
+                            {t('button.browse')}
                         </Button>
                     )}
                 </Box>
 
                 {!user ? (
                     <Button color="inherit" onClick={() => navigate('/login')}>
-                        Login
+                        {t('button.login')}
                     </Button>
                 ) : (
                     <>
@@ -63,8 +66,8 @@ export const Navbar: React.FC = () => {
                                 horizontal: 'right',
                             }}
                         >
-                            <MenuItem onClick={() => { handleMenuClose(); navigate('/dashboard'); }}>Dashboard</MenuItem>
-                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                            <MenuItem onClick={() => { handleMenuClose(); navigate('/dashboard'); }}>{t('button.dashboard')}</MenuItem>
+                            <MenuItem onClick={handleLogout}>{t('button.logout')}</MenuItem>
                         </Menu>
                     </>
                 )}

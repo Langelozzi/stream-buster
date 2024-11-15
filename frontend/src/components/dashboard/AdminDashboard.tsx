@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, List } from "@mui/material";
+import { Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { User } from "../../models/user";  // Adjust the path as necessary
 import { getAllUsers } from "../../api/services/user.service";
 import { UserUsageInfo } from "../usage-stats/UserUsageInfo";
 import { isAdminUser } from "../../utils/user.helpers";
+import { useTranslation } from "react-i18next";
 
 const styles = {
     card: {
@@ -21,6 +22,8 @@ interface AdminDashboardProps {
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
+    const { t } = useTranslation();
+
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -36,7 +39,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             {/* Welcome Card */}
             <Card sx={styles.card}>
                 <CardContent>
-                    <Typography variant="h5">Welcome back, {user.FirstName}</Typography>
+                    <Typography variant="h5">{t('dictionary.welcomeBack', { name: user.FirstName })}</Typography>
                     <br />
                     <UserUsageInfo user={user} isAdmin={true} />
                 </CardContent>
@@ -45,33 +48,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             {/* User Usage Card */}
             <Card sx={styles.card}>
                 <CardContent>
-                    <Typography variant="h6" gutterBottom>User Usage</Typography>
-                    <List>
-                        <TableContainer component={Paper}>
-                            <Table aria-label="User Usage Table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>User</TableCell>
-                                        <TableCell>Usage</TableCell>
+                    <Typography variant="h6" gutterBottom>{t('dictionary.userUsage')}</Typography>
+                    <TableContainer component={Paper}>
+                        <Table aria-label="User Usage Table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>{t('columnHeader.user')}</TableCell>
+                                    <TableCell>{t('columnHeader.usage')}</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {users.filter(otherUser => otherUser.ID !== user.ID).map((user) => (
+                                    <TableRow key={user.ID}>
+                                        <TableCell sx={{ verticalAlign: 'top', width: '150px' }}>
+                                            <Typography variant="body1">
+                                                {`${user.FirstName} ${user.LastName}`}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell>
+                                            <UserUsageInfo user={user} isAdmin={isAdminUser(user)} />
+                                        </TableCell>
                                     </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {users.filter(otherUser => otherUser.ID !== user.ID).map((user) => (
-                                        <TableRow key={user.ID}>
-                                            <TableCell sx={{ verticalAlign: 'top', width: '150px' }}>
-                                                <Typography variant="body1">
-                                                    {`${user.FirstName} ${user.LastName}`}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell>
-                                                <UserUsageInfo user={user} isAdmin={isAdminUser(user)} />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </List>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </CardContent>
             </Card>
         </>

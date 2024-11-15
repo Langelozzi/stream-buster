@@ -1,5 +1,6 @@
 import { Box, LinearProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface TotalUsageProgressProps {
     requestCount: number;
@@ -13,6 +14,8 @@ export const TotalUsageProgress: React.FC<TotalUsageProgressProps> = (props) => 
         maxRequests,
         isAdmin
     } = props;
+
+    const { t } = useTranslation();
 
     const [progressValue, setProgressValue] = useState<number>(0);
     const [progressColor, setProgressColor] = useState<string>("primary");
@@ -42,17 +45,19 @@ export const TotalUsageProgress: React.FC<TotalUsageProgressProps> = (props) => 
     return (
         <Box display="flex" flexDirection="column">
             <Typography variant="body1">
-                Requests used: {requestCount || 0} / {!isAdmin ? (maxRequests || 0) : (<span>&infin;</span>)}
-            </Typography>
+                {t('dictionary.requestsUsed')}: {requestCount || 0} / {!isAdmin ? (maxRequests || 0) : (<span>&infin;</span>)}
+            </Typography >
             <LinearProgress
                 variant="determinate"
                 color={progressColor as any}
                 value={progressValue}
                 sx={{ mt: 1, height: 10, borderRadius: 5 }}
             />
-            {progressValue === 100 && (
-                <Typography variant="body2" color="error">You have exceeded your free credits</Typography>
-            )}
-        </Box>
+            {
+                progressValue === 100 && (
+                    <Typography variant="body2" color="error">{t('error.exceededRequestCount')}</Typography>
+                )
+            }
+        </Box >
     )
 }
