@@ -1,17 +1,19 @@
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
 import React, { useState } from 'react';
 import { UserEndpointUsage } from '../../models/user_endpoint_usage';
+import { Endpoint } from '../../models/endpoint';
 
 interface UsageStatsProps {
     usage: UserEndpointUsage[];
+    endpoints: Endpoint[];
 }
 
-export const UsageStats: React.FC<UsageStatsProps> = ({ usage }) => {
+export const UsageStats: React.FC<UsageStatsProps> = ({ usage, endpoints }) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     // Handle page change
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
     };
 
@@ -22,7 +24,7 @@ export const UsageStats: React.FC<UsageStatsProps> = ({ usage }) => {
     };
 
     // Calculate rows to display on the current page
-    const rowsToDisplay = usage.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    const rowsToDisplay = endpoints.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
         <Box>
@@ -36,21 +38,21 @@ export const UsageStats: React.FC<UsageStatsProps> = ({ usage }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rowsToDisplay.map((endpointUsage: UserEndpointUsage) => (
-                            <TableRow key={endpointUsage.ID}>
+                        {rowsToDisplay.map((endpoint: Endpoint) => (
+                            <TableRow key={endpoint.ID}>
                                 <TableCell>
                                     <Typography variant="body1">
-                                        {endpointUsage.Endpoint.Method}
+                                        {endpoint.Method}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
                                     <Typography>
-                                        {endpointUsage.Endpoint.Path}
+                                        {endpoint.Path}
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
                                     <Typography>
-                                        {endpointUsage.RequestCount}
+                                        {usage.find(endpointUsage => endpointUsage.EndpointID === endpoint.ID)?.RequestCount ?? 0}
                                     </Typography>
                                 </TableCell>
                             </TableRow>
@@ -60,7 +62,7 @@ export const UsageStats: React.FC<UsageStatsProps> = ({ usage }) => {
             </TableContainer>
             <TablePagination
                 component="div"
-                count={usage.length}
+                count={endpoints.length}
                 page={page}
                 onPageChange={handleChangePage}
                 rowsPerPage={rowsPerPage}
