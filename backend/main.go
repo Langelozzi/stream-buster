@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/STREAM-BUSTER/stream-buster/routes"
+	"github.com/STREAM-BUSTER/stream-buster/utils/database"
+	"github.com/STREAM-BUSTER/stream-buster/utils/database/post_deployment_functions"
+
 	// "github.com/STREAM-BUSTER/stream-buster/utils/database"
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
@@ -35,6 +38,8 @@ func main() {
 	router := routes.InitRouter()
 	// Set the route for accessing the Swagger UI
 	router.GET("api/v1/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	post_deployment_functions.CreateEndpointRecords(database.GetInstance(), router)
 
 	err := router.Run(":8080")
 	if err != nil {

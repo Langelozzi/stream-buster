@@ -1,4 +1,4 @@
-import { Usage } from "./usage";
+import { UserEndpointUsage } from "./user_endpoint_usage";
 import { UserRole } from "./user_role";
 
 export interface User {
@@ -6,7 +6,7 @@ export interface User {
     Email: string;
     FirstName: string;
     LastName: string;
-    Usage: Usage;
+    Usage: UserEndpointUsage;
     UserRoles: UserRole[];
     DeletedAt: string;
     CreatedAt: string;

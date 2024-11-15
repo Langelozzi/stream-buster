@@ -39,12 +39,6 @@ func CreateAdminUser(db *gorm.DB) error {
 		DeletedAt: nil,
 	}
 
-	// Create usage record
-	usage := models.Usage{
-		UserID:       user.ID,
-		RequestCount: 0,
-	}
-
 	// Use a transaction to ensure both user and userRole are inserted atomically
 	err = db.Transaction(func(tx *gorm.DB) error {
 		// Create the user
@@ -54,17 +48,12 @@ func CreateAdminUser(db *gorm.DB) error {
 
 		// Create the userRole record
 		userRole := models.UserRole{
-			UserID: user.ID,
+			UserID: uint(user.ID),
 			RoleID: 1, // Assuming the role ID for admin is 1
 		}
 
 		if err := tx.Create(&userRole).Error; err != nil {
 			return err // Rollback if userRole creation fails
-		}
-
-		// Create the usage record
-		if err := tx.Create(&usage).Error; err != nil {
-			return err // Rollback if usage creation fails
 		}
 
 		return nil // Commit the transaction

@@ -11,15 +11,17 @@ func NewUsageDao() *UsageDao {
 	return &UsageDao{}
 }
 
-func (dao *UsageDao) GetUsageByUserId(userId int) (*models.Usage, error) {
+func (dao *UsageDao) GetUsageByUserId(userId int) ([]models.UserEndpointUsage, error) {
 	db := database.GetInstance()
 
-	var usage models.Usage
-	query := db.Model(&models.Usage{})
+	var usage []models.UserEndpointUsage
+	query := db.Model(&models.UserEndpointUsage{})
 
-	if err := query.Where("user_id = ?", userId).First(&usage).Error; err != nil {
+	query.Preload("Endpoint")
+
+	if err := query.Where("user_id = ?", userId).Find(&usage).Error; err != nil {
 		return nil, err
 	}
 
-	return &usage, nil
+	return usage, nil
 }

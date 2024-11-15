@@ -1,4 +1,3 @@
-import { Navigate } from "react-router-dom";
 import { useUser } from "../../hooks/useUser";
 
 interface PrivateRouteProps {
@@ -6,10 +5,10 @@ interface PrivateRouteProps {
 }
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
-	const { validateToken } = useUser();
+	const { validateToken, logout } = useUser();
 
 	if (!validateToken()) {
-		return <Navigate to="/login" />;
+		logout();
 	}
 
 	return children;

@@ -240,7 +240,7 @@ func (contr *UserController) UpdateUserHandler(c *gin.Context) {
 	}
 
 	// set the id of the user
-	user.ID = uint(id)
+	user.ID = uint64(id)
 
 	// call the Service
 	user, err = contr.service.UpdateUser(user)
@@ -348,9 +348,9 @@ func (contr *UserController) DeleteUserHandler(c *gin.Context) {
 // @Produce  json
 // @Success 200 {object} models.User "Successfully retrieved the current user"
 // @Failure 400 {object} map[string]interface{} "Error: No user records found"
-// @Router /user/current/ [get]
+// @Router /user/current [get]
 func (contr *UserController) GetUserUsageHandler(c *gin.Context) {
-	// get the user id from the request
+	//get the user id from the request
 	idStr := c.Param("id")
 	// convert the id to an integer
 	id, err := strconv.Atoi(idStr)

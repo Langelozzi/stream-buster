@@ -34,6 +34,7 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
             <iframe
                 src={src}
                 allowFullScreen
+                sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" // Don't add allow-popups to prevent
                 style={{
                     border: 'none',
                     width: '80%', // Set width to 80% of the parent

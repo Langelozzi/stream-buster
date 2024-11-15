@@ -42,16 +42,19 @@ func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 				return
 			}
 		}
-
-		// Extract claims from the verified token
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			c.Set("user", claims)
+			c.Set("ID", claims["id"])
+			c.Set("Email", claims["email"])
+			c.Set("FirstName", claims["fname"])
+			c.Set("LastName", claims["lname"])
+			c.Set("Issuer", claims["iss"])
+			c.Set("Exp", claims["exp"])
+			c.Set("Iat", claims["iat"])
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 			c.Abort()
 			return
 		}
-
 		c.Next()
 	}
 }

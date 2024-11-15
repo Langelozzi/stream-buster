@@ -5,10 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/STREAM-BUSTER/stream-buster/daos"
-	iDao "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
-	"github.com/STREAM-BUSTER/stream-buster/services"
-	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/utils/dependency_injection"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,10 +15,8 @@ func TestMiddleware(t *testing.T) {
 		fmt.Println("Error creating request:", err)
 		return
 	}
-	var userDao iDao.UserDaoInterface = daos.NewUserDao()
-	var userService interfaces.UserServiceInterface = services.NewUserService(userDao)
-	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
-	var authService interfaces.AuthServiceInterface = services.NewAuthService(authDao, userService)
+	authController := dependency_injection.InitAuthDependencies()
+	authService := authController.Service
 
 	accessTokenString, err := authService.CreateToken("Admin@streambuster.com")
 
@@ -51,10 +46,8 @@ func TestMiddleware_refreshToken(t *testing.T) {
 		return
 	}
 
-	var userDao iDao.UserDaoInterface = daos.NewUserDao()
-	var userService interfaces.UserServiceInterface = services.NewUserService(userDao)
-	var authDao iDao.AuthDaoInterface = daos.NewAuthDao()
-	var authService interfaces.AuthServiceInterface = services.NewAuthService(authDao, userService)
+	authController := dependency_injection.InitAuthDependencies()
+	authService := authController.Service
 
 	accessTokenString, err := authService.CreateToken("Admin@streambuster.com")
 
