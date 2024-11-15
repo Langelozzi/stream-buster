@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { User } from "../../models/user";
-import { CollapsibleListItem } from "../collapsible-list-item/CollapsibleListItem";
+import { ExpandableCard } from "../explandable-card/ExpandableCard";
 import { UsageStats } from "./UsageStats";
 import { UserEndpointUsage } from "../../models/user_endpoint_usage";
 import { getUserUsage } from "../../api/services/user.service";
@@ -15,19 +15,13 @@ interface UserUsageInfoProps {
 export const UserUsageInfo: React.FC<UserUsageInfoProps> = ({ user, isAdmin }) => {
     const maxRequests: number = user.UserRoles[0].Role.MaxRequestCount;
 
-    const [open, setOpen] = useState<boolean>(false);
     const [usage, setUsage] = useState<UserEndpointUsage[] | undefined>();
     const [requestCount, setRequestCount] = useState<number>(0);
-
-    const handleToggle = () => {
-        setOpen(prevOpen => !prevOpen);
-    }
 
     // We need to refetch the usage for the user everytime this component reloads
     const fetchUsage = async () => {
         try {
             const fetchedUsage = await getUserUsage(user.ID);
-            console.log(fetchedUsage);
             setUsage(fetchedUsage);
         } catch (e) {
             setUsage(undefined);
@@ -54,13 +48,13 @@ export const UserUsageInfo: React.FC<UserUsageInfoProps> = ({ user, isAdmin }) =
     }, [calculateRequestCount]);
 
     return (
-        <CollapsibleListItem
-            label={`${user.FirstName} ${user.LastName}`}
-            open={open}
-            onToggle={handleToggle}
-        >
-            {requestCount && <TotalUsageProgress maxRequests={maxRequests} requestCount={requestCount} isAdmin={isAdmin} />}
-            {usage && <UsageStats usage={usage} />}
-        </CollapsibleListItem>
+        <ExpandableCard
+            headerContent={
+                <TotalUsageProgress maxRequests={maxRequests} requestCount={requestCount} isAdmin={isAdmin} />
+            }
+            expandedContent={
+                usage && <UsageStats usage={usage} />
+            }
+        />
     )
 }

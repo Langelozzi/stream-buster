@@ -3,6 +3,7 @@ import { Card, CardContent, Typography, Table, TableBody, TableCell, TableContai
 import { User } from "../../models/user";  // Adjust the path as necessary
 import { getAllUsers } from "../../api/services/user.service";
 import { UserUsageInfo } from "../usage-stats/UserUsageInfo";
+import { isAdminUser } from "../../utils/user.helpers";
 
 const styles = {
     card: {
@@ -46,9 +47,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                 <CardContent>
                     <Typography variant="h6" gutterBottom>User Usage</Typography>
                     <List>
-                        {users.filter(otherUser => otherUser.ID !== user.ID).map((user) => (
-                            <UserUsageInfo user={user} isAdmin />
-                        ))}
+                        <TableContainer component={Paper}>
+                            <Table aria-label="User Usage Table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>User</TableCell>
+                                        <TableCell>Usage</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {users.filter(otherUser => otherUser.ID !== user.ID).map((user) => (
+                                        <TableRow key={user.ID}>
+                                            <TableCell sx={{ verticalAlign: 'top', width: '150px' }}>
+                                                <Typography variant="body1">
+                                                    {`${user.FirstName} ${user.LastName}`}
+                                                </Typography>
+                                            </TableCell>
+                                            <TableCell>
+                                                <UserUsageInfo user={user} isAdmin={isAdminUser(user)} />
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </List>
                 </CardContent>
             </Card>
