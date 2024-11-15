@@ -4,6 +4,7 @@ import { makeStyles } from '@mui/styles';
 import { postLogin } from '../../api/services/auth.service';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../hooks/useUser';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles(() => ({
 	paper: {
@@ -53,6 +54,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const LoginForm: React.FC = () => {
+	const { t } = useTranslation();
+
 	const classes = useStyles();
 	const [email, setEmail] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
@@ -82,7 +85,7 @@ export const LoginForm: React.FC = () => {
 	return (
 		<Box className={classes.paper}>
 			<Typography variant="h5" align="center" gutterBottom>
-				Login
+				{t('dictionary.login')}
 			</Typography>
 			<form onSubmit={handleSubmit} className={classes.form}>
 				<TextField
@@ -106,13 +109,13 @@ export const LoginForm: React.FC = () => {
 					required
 				/>
 				<Button type="submit" variant="contained" fullWidth className={classes.button}>
-					Login
+					{t('button.login')}
 				</Button>
 			</form>
 
 			<Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
 				<Typography sx={{ display: 'inline' }}>
-					Don't have an account yet? Click&nbsp;
+					{t('dictionary.dontHaveAccount')}&nbsp;
 				</Typography>
 				<Typography
 					variant="body1"
@@ -120,10 +123,10 @@ export const LoginForm: React.FC = () => {
 					sx={{ cursor: 'pointer', textDecoration: 'underline', display: 'inline' }}
 					onClick={goToRegister}
 				>
-					here
+					{t('dictionary.here')}
 				</Typography>
 				<Typography sx={{ display: 'inline' }}>
-					&nbsp;to register
+					&nbsp;{t('dictionary.toRegister')}
 				</Typography>
 			</Box>
 		</Box>

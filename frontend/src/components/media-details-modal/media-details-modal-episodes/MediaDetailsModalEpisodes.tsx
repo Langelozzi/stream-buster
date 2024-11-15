@@ -5,6 +5,7 @@ import { makeStyles } from '@mui/styles';
 import { EpisodeListItem } from "./EpisodeListItem";
 import { TV } from "../../../models/tv";
 import { Season } from "../../../models/season";
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles({
     episodeList: {
@@ -53,6 +54,7 @@ interface MediaDetailsModalEpisodesProps {
 export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps> = (props) => {
     const { tv, episodes, currentSeason, setCurrentSeason } = props;
 
+    const { t } = useTranslation();
     const classes = useStyles();
 
     const handleSeasonChange = (event: SelectChangeEvent<number>) => {
@@ -64,7 +66,7 @@ export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps>
     return (
         <>
             <Box className={classes.headerContainer}>
-                <Typography variant="h5">Episodes</Typography>
+                <Typography variant="h5">{t('dictionary.episodes')}</Typography>
 
                 {/* Right-aligned Season Selector */}
                 <Select

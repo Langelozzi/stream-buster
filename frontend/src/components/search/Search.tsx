@@ -4,8 +4,11 @@ import { TV } from '../../models/tv';
 import { Movie } from '../../models/movie';
 import { searchMulti } from '../../api/services/search.service'; // Assuming this is the API function you've created
 import { MediaCard } from '../media-card/MediaCard';
+import { useTranslation } from 'react-i18next';
 
 export const Search = () => {
+    const { t } = useTranslation();
+
     // State for the search query and the results
     const [query, setQuery] = useState<string>('');
     const [results, setResults] = useState<(TV | Movie)[]>([]);
@@ -37,7 +40,7 @@ export const Search = () => {
             {/* Search form */}
             <Box component="form" onSubmit={handleSubmit} display="flex" mb={2}>
                 <TextField
-                    label="Search"
+                    label={t('dictionary.search')}
                     variant="outlined"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -65,7 +68,7 @@ export const Search = () => {
                     }}
                 />
                 <Button type="submit" variant="contained" color="primary">
-                    Search
+                    {t('button.search')}
                 </Button>
             </Box>
 
@@ -75,7 +78,7 @@ export const Search = () => {
             {/* Search results */}
             {!loading && results.length > 0 && (
                 <Box mt={2} width="100%">
-                    <Typography variant="h6">Search Results:</Typography>
+                    <Typography variant="h6">{t('dictionary.searchResults')}:</Typography>
                     <Box display="flex" flexWrap="wrap" justifyContent="flex-start" gap={2} mt={2}>
                         {results.map((media, index) => (
                             <MediaCard media={media} key={index} />
@@ -86,7 +89,7 @@ export const Search = () => {
 
             {/* Message when no results */}
             {!loading && results.length === 0 && (
-                <Typography variant="body1">No results found</Typography>
+                <Typography variant="body1">{t('dictionary.noResultsFound')}</Typography>
             )}
         </Box>
     );

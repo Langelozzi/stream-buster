@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { getCurrentlyWatching } from "../../api/services/currentlyWatching.service";
+import { useTranslation } from "react-i18next";
 // interface Media {
 // 	id: string,
 // 	tmdb_id: string,
@@ -16,8 +17,10 @@ import { getCurrentlyWatching } from "../../api/services/currentlyWatching.servi
 // }
 
 export const WatchList = () => {
+	const { t } = useTranslation();
+
 	useEffect(() => {
 		getCurrentlyWatching()
 	}, [])
-	return (<>Watch List </>)
+	return (<>{t('dictionary.watchList')}</>)
 }

@@ -6,6 +6,7 @@ import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
 import { Episode } from '../../../models/episode';
+import { useTranslation } from 'react-i18next';
 
 const useStyles = makeStyles(() => ({
     modalContainer: {
@@ -56,6 +57,7 @@ interface MediaDetailsModalHeaderProps {
 
 export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode }) => {
     // Hooks
+    const { t } = useTranslation();
     const classes = useStyles();
     const navigate = useNavigate();
 
@@ -97,12 +99,12 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                     startIcon={<PlayArrow />}
                     onClick={onPlay}
                 >
-                    Play
+                    {t('button.play')}
                 </Button>
-                <IconButton className={`${classes.roundButton}`} aria-label="Add to My List">
+                <IconButton className={`${classes.roundButton}`} aria-label={t('dictionary.addToMyList')}>
                     <Add />
                 </IconButton>
-                <IconButton className={`${classes.roundButton}`} aria-label="Rate">
+                <IconButton className={`${classes.roundButton}`} aria-label={t('dictionary.rate')}>
                     <ThumbUp />
                 </IconButton>
             </Box>

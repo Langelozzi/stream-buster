@@ -5,6 +5,7 @@ import { makeStyles } from "@mui/styles";
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleOutline';
 import { TV } from "../../../models/tv";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles({
     listItem: {
@@ -32,6 +33,7 @@ interface EpisodeListItemProps {
 export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
     const { episode, tv } = props;
 
+    const { t } = useTranslation();
     const classes = useStyles();
     const navigate = useNavigate();
 
@@ -60,7 +62,7 @@ export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
                             {`${episode.EpisodeNumber}. ${episode.Name}`}
                         </Typography>
                         <Typography variant="body2">{episode.Overview}</Typography>
-                        <Typography variant="body2" color="grey">{episode.Runtime}m</Typography>
+                        <Typography variant="body2" color="grey">{episode.Runtime}{t('dictionary.minuteLetter')}</Typography>
                     </Box>
                 }
             />
