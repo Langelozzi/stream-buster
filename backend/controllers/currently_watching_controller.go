@@ -4,12 +4,12 @@ import (
 	"net/http"
 	"strconv"
 
-	authModels "github.com/STREAM-BUSTER/stream-buster/models/auth"
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
 	"github.com/STREAM-BUSTER/stream-buster/utils/auth"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type CurrentlyWatchingController struct {
@@ -45,33 +45,36 @@ func (contr *CurrentlyWatchingController) CreateCurrentlyWatchingHandler(c *gin.
 		return
 	}
 
-	claims, exists := c.Get("user")
-	if !exists {
-		c.JSON(401, gin.H{
-			"message": "Error: cannot verify user",
-		})
-	}
+	user, err := auth.GetUserFromContext(c)
 
-	user, ok := claims.(*authModels.UserClaims)
-	if !ok {
-		c.JSON(401, gin.H{
-			"message": "Error: cannot verify user",
-		})
-	}
 	if uint64(user.ID) != uint64(watch.UserID) {
 		c.JSON(401, gin.H{
 			"message": "Error: cannot verify user",
 		})
 	}
 
-	watch, err := contr.service.CreateCurrentlyWatching(watch)
-	if err != nil {
+	watch, err = contr.service.CreateCurrentlyWatching(watch)
+	if pgError, ok := err.(*pgconn.PgError); ok {
+		if pgError.Code == "23505" {
+			c.JSON(400, gin.H{
+				"duplicateKey": true,
+				"message":      "Cannot Create Record; already exists",
+			})
+			return
+		} else {
+			c.JSON(400, gin.H{
+				"message": "Failed to create a currently watching record. PostgreSQL Error Code: " + pgError.Code,
+			})
+			return
+		}
+
+	} else if err != nil {
+
 		c.JSON(400, gin.H{
 			"message": "Failed to create a currently watching record. Error: " + err.Error(),
 		})
 		return
 	}
-
 	c.JSON(201, watch)
 }
 
@@ -188,6 +191,12 @@ func (contr *CurrentlyWatchingController) GetAllCurrentlyWatchingHandler(c *gin.
 func (contr *CurrentlyWatchingController) GetWatchlist(c *gin.Context) {
 	user, err := auth.GetUserFromContext(c)
 
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Error getting user information. Error: " + err.Error(),
+		})
+		return
+	}
 	// Retrieve all currently watching records for the authenticated user
 	watches, err := contr.service.GetWatchlist(uint(user.ID))
 	if err != nil {

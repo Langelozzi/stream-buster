@@ -28,6 +28,12 @@ func (contr MediaController) CreateMedia(c *gin.Context) {
 	}
 
 	err = contr.service.CreateMedia(media)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"meesge": "Invalid request body. Error: " + err.Error(),
+		})
+		return
+	}
 
 	c.String(http.StatusOK, "Media Created Successfully")
 
