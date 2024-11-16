@@ -30,16 +30,15 @@ func (dao MediaDao) GetMediaById(id int64) (*db.Media, error) {
 
 	return &media, nil
 }
+
 func (dao MediaDao) CreateMedia(media *db.Media) error {
 	databaseInstance := database.GetInstance()
 
 	if err := databaseInstance.Clauses(clause.OnConflict{
 		Columns: []clause.Column{
-			{Name: "Title"},
-			{Name: "Overview"},
-			{Name: "PosterImage"},
+			{Name: "id"}, // Define the unique constraint causing the conflict
 		},
-		DoUpdates: clause.AssignmentColumns([]string{}), // Specify columns for update if needed
+		DoUpdates: clause.AssignmentColumns([]string{"overview", "poster_image"}), // Specify columns to update
 	}).Create(media).Error; err != nil {
 		return err
 	}
