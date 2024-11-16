@@ -64,7 +64,7 @@ func (dao *CurrentlyWatchingDao) GetWatchlist(userId uint) ([]db.CurrentlyWatchi
 	userID := 1 // Replace with the actual UserID you want to filter by
 
 	// Query CurrentlyWatching records with related Media records for the specified UserID
-	err := databaseInstance.Preload("Media").Where("user_id = ?", userID).Find(&watchingList).Error
+	err := databaseInstance.Preload("Media.MediaType").Preload("Media").Where("user_id = ?", userID).Find(&watchingList).Error
 	if err != nil {
 		// Handle error
 		return nil, err
