@@ -51,6 +51,7 @@ func (contr *CurrentlyWatchingController) CreateCurrentlyWatchingHandler(c *gin.
 		c.JSON(401, gin.H{
 			"message": "Error: cannot verify user",
 		})
+		return
 	}
 
 	watch, err = contr.service.CreateCurrentlyWatching(watch)
