@@ -5,8 +5,8 @@ import (
 )
 
 type Media struct {
-	ID     uint `gorm:"primaryKey"`
-	TMDBID int
+	ID     uint `gorm:"primaryKey;autoIncrement"`
+	TMDBID int  `gorm:"unique"`
 
 	Title       string
 	Overview    string

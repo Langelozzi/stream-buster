@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/STREAM-BUSTER/stream-buster/docs"
 	"github.com/STREAM-BUSTER/stream-buster/routes"
+
 	// "github.com/STREAM-BUSTER/stream-buster/utils/database"
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
@@ -33,6 +36,7 @@ func main() {
 
 	// Initialize the router
 	router := routes.InitRouter()
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 	// Set the route for accessing the Swagger UI
 	router.GET("api/v1/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
