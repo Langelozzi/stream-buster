@@ -1,4 +1,4 @@
-import { Snackbar } from '@mui/material';
+import { Slide, Snackbar } from '@mui/material';
 import { useState, useCallback } from 'react';
 
 interface UseSnackbarProps {
@@ -37,6 +37,7 @@ export const useSnackbar = ({
     const SnackbarComponent = (
         <Snackbar
             open={open}
+            TransitionComponent={Slide}
             autoHideDuration={autoClose ? autoHideDuration : null}
             message={children || message}
             onClose={handleClose}

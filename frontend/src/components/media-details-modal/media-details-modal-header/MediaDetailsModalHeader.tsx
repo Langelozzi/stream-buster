@@ -1,11 +1,16 @@
 import React from 'react';
-import { Box, IconButton, Button, Typography } from '@mui/material';
+import { Box, IconButton, Button, Typography, Tooltip } from '@mui/material';
 import { PlayArrow, Add, ThumbUp } from '@mui/icons-material';
 import { makeStyles } from '@mui/styles';
 import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
 import { Episode } from '../../../models/episode';
+import { createCurrentlyWatching } from '../../../api/services/currentlyWatching.service';
+import { CurrentlyWatching } from '../../../models/currently_watching';
+import { createMedia } from '../../../api/services/media.service';
+import { castToTvOrMovie } from '../../../api/services/search.service';
+import { useUser } from '../../../hooks/useUser';
 
 const useStyles = makeStyles(() => ({
     modalContainer: {
@@ -58,6 +63,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     // Hooks
     const classes = useStyles();
     const navigate = useNavigate();
+    const user = useUser();
 
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
@@ -71,6 +77,30 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
 
             navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
         }
+    }
+
+    const onAddToList = async () => {
+        try {
+            let mediaResponse;
+            try {
+                mediaResponse = await createMedia(media.Media!)
+                console.log('mediaResponse', mediaResponse);
+
+            } catch (error) {
+
+            }
+
+            const currentlyWatching: CurrentlyWatching = {
+                MediaId: mediaResponse?.ID,
+                UserID: user.user?.ID
+            }
+
+            const response = await createCurrentlyWatching(currentlyWatching)
+            console.log('response', response);
+        } catch (error) {
+            console.error("Error addign to list")
+        }
+
     }
 
     return (
@@ -99,12 +129,16 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 >
                     Play
                 </Button>
-                <IconButton className={`${classes.roundButton}`} aria-label="Add to My List">
-                    <Add />
-                </IconButton>
-                <IconButton className={`${classes.roundButton}`} aria-label="Rate">
-                    <ThumbUp />
-                </IconButton>
+                <Tooltip title="Add to List" arrow>
+                    <IconButton onClick={onAddToList} className={`${classes.roundButton}`} aria-label="Add to My List">
+                        <Add />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title="Like" arrow>
+                    <IconButton className={`${classes.roundButton}`} aria-label="Rate">
+                        <ThumbUp />
+                    </IconButton>
+                </Tooltip>
             </Box>
         </Box>
     );

@@ -1,17 +1,33 @@
 import { CurrentlyWatching } from "../../models/currently_watching";
-import axios from "../axios";
+import instance from "../axios";
 
 export const getCurrentlyWatching = async () => {
-    const result = await axios.get("/currently-watching/getall");
-    console.log('result', result);
+    try {
+        const result = await instance.get("/currently-watching/getall");
+        console.log('result', result);
+        return result.data;
+    } catch (error) {
+        console.error('Error fetching currently watching:', error);
+        throw error;
+    }
 }
 
-export const createCurrentlyWatching = async (data: any) => {
-    const result = await axios.post("/currently-watching/", data)
-    return result
+export const createCurrentlyWatching = async (data: CurrentlyWatching) => {
+    try {
+        const result = await instance.post("/currently-watching/", data);
+        return result.data;
+    } catch (error) {
+        console.error('Error creating currently watching:', error);
+        throw error;
+    }
 }
 
 export const getWatchList = async (): Promise<CurrentlyWatching[]> => {
-    const result = await axios.get("/currently-watching/watchlist");
-    return result.data;
+    try {
+        const result = await instance.get("/currently-watching/watchlist");
+        return result.data;
+    } catch (error) {
+        console.error('Error fetching watch list:', error);
+        throw error;
+    }
 }

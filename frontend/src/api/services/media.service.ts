@@ -1,4 +1,6 @@
 import { Media } from "../../models/media";
+import { Movie } from "../../models/movie";
+import { TV } from "../../models/tv";
 import instance from "../axios";
 
 export const getMedia = (id: number) => {
@@ -11,12 +13,12 @@ export const getMedia = (id: number) => {
     }
 }
 
-export const createMedia = async (media: Media) => {
+export const createMedia = async (media: Media | Movie | TV): Promise<Media> => {
     try {
-        const res = instance.post("/media/create", media);
-        console.log('res', res);
-        return res
+        const mediaResponse = await instance.post("/media/create", media);
+        return mediaResponse.data
     } catch (error) {
-        throw error
+        console.error('Error Creating Media', error);
+        throw error;
     }
-}
+} 
