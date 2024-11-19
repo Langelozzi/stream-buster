@@ -25,13 +25,25 @@ func (dao MediaDao) GetMediaById(id int64) (*db.Media, error) {
 	// }
 	if err := query.First(&media, id).Error; err != nil {
 		return nil, err
-
 	}
 
 	return &media, nil
 }
 
-func (dao MediaDao) CreateMedia(media *db.Media) error {
+func (dao MediaDao) GetMediaByTMDBId(id int64) (*db.Media, error) {
+	databaseInstance := database.GetInstance()
+	var media db.Media
+
+	query := databaseInstance.Model(&media)
+
+	if err := query.First(&media, "tmdb_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return &media, nil
+}
+
+func (dao MediaDao) CreateMedia(media *db.Media) (*db.Media, error) {
 	databaseInstance := database.GetInstance()
 
 	if err := databaseInstance.Clauses(clause.OnConflict{
@@ -40,7 +52,7 @@ func (dao MediaDao) CreateMedia(media *db.Media) error {
 		},
 		DoUpdates: clause.AssignmentColumns([]string{"overview", "poster_image"}), // Specify columns to update
 	}).Create(media).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return media, nil
 }
