@@ -3,6 +3,7 @@ package daos
 import (
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/utils/database"
+	"gorm.io/gorm/clause"
 )
 
 type CurrentlyWatchingDao struct{}
@@ -15,9 +16,10 @@ func NewCurrentlyWatchingDao() *CurrentlyWatchingDao {
 func (dao *CurrentlyWatchingDao) CreateCurrentlyWatching(watch *db.CurrentlyWatching) (*db.CurrentlyWatching, error) {
 	db := database.GetInstance()
 
-	if err := db.Create(watch).Error; err != nil {
-		return nil, err
-	}
+	db.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "user_id"}, {Name: "media_id"}},
+		DoUpdates: clause.AssignmentColumns([]string{"episode_number", "season_number"}),
+	}).Create(watch)
 
 	return watch, nil
 }
