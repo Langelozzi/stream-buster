@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box, Typography, ImageList, ImageListItem } from '@mui/material';
-import { CurrentlyWatching } from '../../models/currently_watching';
+import { Box } from '@mui/material';
 import { MediaCard } from '../media-card/MediaCard';
 import { Media } from '../../models/media';
 import { castToTvOrMovie } from '../../api/services/search.service';

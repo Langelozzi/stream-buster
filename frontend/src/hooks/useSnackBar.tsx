@@ -5,7 +5,7 @@ interface UseSnackbarProps {
     autoClose?: boolean;
     autoHideDuration?: number;
     children?: React.ReactNode;
-    onClose?: (event: Event, reason: string) => void
+    onClose?: (event: React.SyntheticEvent | Event | undefined, reason: string | undefined) => void
 }
 
 export const useSnackbar = ({
