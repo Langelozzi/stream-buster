@@ -22,6 +22,16 @@ export const createCurrentlyWatching = async (data: CurrentlyWatching) => {
     }
 }
 
+export const updateCurrentlyWatching = async (data: CurrentlyWatching) => {
+    try {
+        const result = await instance.put("/currently-watching/update", data);
+        return result.data;
+    } catch (error) {
+        console.error('Error creating currently watching:', error);
+        throw error;
+    }
+}
+
 export const getWatchList = async (): Promise<CurrentlyWatching[]> => {
     try {
         const result = await instance.get("/currently-watching/watchlist");

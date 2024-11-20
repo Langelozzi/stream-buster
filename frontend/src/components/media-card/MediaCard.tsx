@@ -3,12 +3,14 @@ import { Movie } from "../../models/movie";
 import { TV } from "../../models/tv";
 import { useState } from "react";
 import MediaDetailsModal from "../media-details-modal/MediaDetailsModal";
+import { CurrentlyWatching } from "../../models/currently_watching";
 
 interface MediaCardProps {
     media: TV | Movie
+    currentlyWatching?: CurrentlyWatching | undefined
 }
 
-export const MediaCard: React.FC<MediaCardProps> = ({ media }) => {
+export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching }) => {
     // State
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -45,7 +47,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media }) => {
             </Card>
 
             {media && (
-                <MediaDetailsModal media={media} isOpen={isModalOpen} onClose={handleCloseModal} />
+                <MediaDetailsModal currentSeasonNumber={currentlyWatching?.SeasonNumber} currentEpisodeNumber={currentlyWatching?.EpisodeNumber} media={media} isOpen={isModalOpen} onClose={handleCloseModal} />
             )}
         </>
     )

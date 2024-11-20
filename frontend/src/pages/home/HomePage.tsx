@@ -3,10 +3,11 @@ import { getWatchList } from "../../api/services/currentlyWatching.service";
 import MediaList from "../../components/media-list/medialist";
 import { castToTvOrMovie } from "../../api/services/search.service";
 import { useUser } from "../../hooks/useUser";
+import { updateCurrentlyWatching } from "../../api/services/currentlyWatching.service";
 
 export const HomePage = () => {
     const user = useUser()
-    const [media, setMedia] = useState<any[]>([])
+    const [currentlyWatchings, setCurrentlyWatchings] = useState<any[]>([])
     useEffect(() => {
         // const test = async () => {
         //     const res = await searchMulti("How to train your dragon")
@@ -21,31 +22,9 @@ export const HomePage = () => {
         //     test()
         // }
 
-
-        // createCurrentlyWatching({
-        //     UserID: 1,
-        //     MediaId: 1,
-        //     EpisodeNumber: 0,
-        //     SeasonNumber: 0,
-        // })
-        //
         const getMediaList = async () => {
             const currentlyWatchingList = await getWatchList()
-            const mediaList = currentlyWatchingList.map((currentlyWatching) => {
-                try {
-                    if (!currentlyWatching.Media || !currentlyWatching.Media.MediaType) {
-                        return
-                    } else if (currentlyWatching.Media?.MediaType.Name === 'tv') {
-                        return castToTvOrMovie(currentlyWatching.Media);
-                    } else if (currentlyWatching.Media?.MediaType.Name === 'movie') {
-                        return castToTvOrMovie(currentlyWatching.Media);
-                    } else {
-                        return currentlyWatching.Media;
-                    }
-                } catch (error) {
-                }
-            })
-            setMedia(mediaList)
+            setCurrentlyWatchings(currentlyWatchingList)
         }
         getMediaList()
 
@@ -56,7 +35,7 @@ export const HomePage = () => {
             {user ? (
                 <>
                     <h1>Continue Watching</h1>
-                    <MediaList media={media} ></MediaList>
+                    <MediaList currentlyWatchings={currentlyWatchings}></MediaList>
                 </>
             ) : (
                 <>
