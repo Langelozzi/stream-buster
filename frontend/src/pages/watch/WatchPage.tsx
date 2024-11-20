@@ -7,11 +7,16 @@ import { Box, IconButton, Typography } from "@mui/material";
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Grid from "@mui/material/Grid2"
 import { useState } from "react";
+import ControlBar from "./ControlBar";
+import { updateCurrentlyWatching } from "../../api/services/currentlyWatching.service";
+import { CurrentlyWatching } from "../../models/currently_watching";
+import { useUser } from "../../hooks/useUser";
 
 export const WatchPage = () => {
     // Hooks
     const location = useLocation();
     const navigate = useNavigate();
+    const user = useUser();
 
     // Params
     const {
@@ -25,6 +30,7 @@ export const WatchPage = () => {
 
     // State
     const [media] = useState<Movie | TV | undefined>(location.state?.media);
+    console.log('media', media);
     // const [episode, setEpisode] = useState<Episode | undefined>(location.state?.currentEpisode);
     // const media = location.state.media as TV | Movie ?? null;
     // const episode = location.state.currentEpisode as Episode ?? null;
@@ -36,6 +42,27 @@ export const WatchPage = () => {
     const handleBrowseClick = () => {
         navigate(-1);
     };
+
+    const goToNext = () => {
+        const currentlyWatching: CurrentlyWatching = {
+            MediaId: media?.MediaID,
+            UserID: user.user?.ID,
+            SeasonNumber: seasonNum,
+            EpisodeNumber: episodeNum + 1
+        }
+        updateCurrentlyWatching(currentlyWatching)
+        navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum + 1}`)
+    }
+    const goToPrev = () => {
+        const currentlyWatching: CurrentlyWatching = {
+            MediaId: media?.MediaID,
+            UserID: user.user?.ID,
+            SeasonNumber: seasonNum,
+            EpisodeNumber: episodeNum - 1
+        }
+        updateCurrentlyWatching(currentlyWatching)
+        navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum - 1}`)
+    }
 
     // Effects
     // Write an effect to fetch the media and episode information from api if not passed as router state
@@ -62,11 +89,14 @@ export const WatchPage = () => {
                         </Box>
                     )}
                     {tmdbId && isTV && episodeNum && seasonNum && (
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: "column" }}>
                             <MediaPlayer tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
+                            <ControlBar goToNext={goToNext} goToPrev={goToPrev}></ControlBar>
                         </Box>
+
                     )}
                 </Grid>
+
             </Grid>
         </Box>
     );

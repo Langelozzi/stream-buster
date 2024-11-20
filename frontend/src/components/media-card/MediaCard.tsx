@@ -1,4 +1,4 @@
-import { Card, CardContent, CardMedia, IconButton, Typography } from "@mui/material";
+import { Card, CardContent, CardMedia, IconButton } from "@mui/material";
 import { Movie } from "../../models/movie";
 import { TV } from "../../models/tv";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 interface MediaCardProps {
     media: TV | Movie
     currentlyWatching?: CurrentlyWatching | undefined,
-    search: boolean
+    search?: boolean
 }
 
 export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, search = true }) => {

@@ -7,7 +7,6 @@ import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
 import { Episode } from '../../../models/episode';
 import { useUser } from '../../../hooks/useUser';
-import { useSnackbar } from '../../../hooks/useSnackBar';
 import { onAddToList } from '../../../api/services/currentlyWatching.service';
 
 const useStyles = makeStyles(() => ({
@@ -62,7 +61,6 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     const classes = useStyles();
     const navigate = useNavigate();
     const user = useUser();
-    const { showSnackbar, SnackbarComponent } = useSnackbar();
 
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
@@ -106,8 +104,9 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 >
                     Play
                 </Button>
+
                 <Tooltip title="Add to List" arrow>
-                    <IconButton onClick={onAddToList} className={`${classes.roundButton}`} aria-label="Add to My List">
+                    <IconButton onClick={() => { onAddToList(media, user, currentEpisode) }} className={`${classes.roundButton}`} aria-label="Add to My List">
                         <Add />
                     </IconButton>
                 </Tooltip>
@@ -117,7 +116,6 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                     </IconButton>
                 </Tooltip>
             </Box>
-            {SnackbarComponent}
         </Box>
     );
 };

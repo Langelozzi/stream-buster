@@ -2,7 +2,6 @@ import { CurrentlyWatching } from "../../models/currently_watching";
 import { Episode } from "../../models/episode";
 import { createMedia } from "./media.service";
 import instance from "../axios";
-import { User } from "../../models/user";
 import { UserContextType } from "../../contexts/UserContext";
 import { Movie } from "../../models/movie";
 import { TV } from "../../models/tv";
@@ -65,7 +64,7 @@ export const onAddToList = async (media: Movie | TV, user: UserContextType, curr
             EpisodeNumber: currentEpisode ? currentEpisode?.EpisodeNumber : 0,
         }
 
-        const response = await createCurrentlyWatching(currentlyWatching)
+        await createCurrentlyWatching(currentlyWatching)
 
     } catch (error) {
         console.error("Error addign to list")

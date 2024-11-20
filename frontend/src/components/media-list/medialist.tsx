@@ -5,12 +5,13 @@ import { castToTvOrMovie } from '../../api/services/search.service';
 import { CurrentlyWatching } from '../../models/currently_watching';
 import { Movie } from '../../models/movie';
 import { TV } from '../../models/tv';
+import { Media } from '../../models/media';
 interface MediaCarouselProps {
 	currentlyWatchings: CurrentlyWatching[];
 }
 
 const MediaList: React.FC<MediaCarouselProps> = ({ currentlyWatchings }) => {
-	const [media, setMedia] = useState<TV[] | Movie[] | undefined>()
+	const [media, setMedia] = useState<(TV | Movie | Mediaa | undefined)[]>();
 
 	useEffect(() => {
 		if (!currentlyWatchings) {

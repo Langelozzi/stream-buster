@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { getWatchList } from "../../api/services/currentlyWatching.service";
 import MediaList from "../../components/media-list/medialist";
-import { castToTvOrMovie } from "../../api/services/search.service";
 import { useUser } from "../../hooks/useUser";
-import { updateCurrentlyWatching } from "../../api/services/currentlyWatching.service";
 
 export const HomePage = () => {
     const user = useUser()

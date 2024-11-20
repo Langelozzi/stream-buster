@@ -27,7 +27,7 @@ export const Navbar: React.FC = () => {
         <AppBar position="static" sx={{ marginBottom: 2 }}>
             <Toolbar>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                    <Typography variant="h6" sx={{ mr: 2, cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
+                    <Typography variant="h6" sx={{ mr: 2, cursor: 'pointer' }} onClick={() => navigate('/')}>
                         Streambuster
                     </Typography>
                     {user && (
