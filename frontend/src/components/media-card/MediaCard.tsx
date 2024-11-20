@@ -6,14 +6,14 @@ import MediaDetailsModal from "../media-details-modal/MediaDetailsModal";
 import { CurrentlyWatching } from "../../models/currently_watching";
 import { Info, PlayArrow } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { Episode } from "../../models/episode";
 
 interface MediaCardProps {
     media: TV | Movie
-    currentlyWatching?: CurrentlyWatching | undefined
+    currentlyWatching?: CurrentlyWatching | undefined,
+    search: boolean
 }
 
-export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching }) => {
+export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, search = true }) => {
     // State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
@@ -34,7 +34,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching }
         if (currentlyWatching?.EpisodeNumber! > 0) {
             navigate(`/watch/${media.Media?.TMDBID}/${currentlyWatching?.SeasonNumber}/${currentlyWatching?.EpisodeNumber}`,
                 // todo get the media
-                // { state: { media, currentEpisode } } 
+                { state: { media } }
             );
         } else {
             navigate(`/watch/${media.Media?.TMDBID}`,
@@ -71,36 +71,41 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching }
                     sx={{ objectFit: 'cover' }}
                 />
 
-                {/* Sliding Card Content */}
-                <CardContent
-                    sx={{
-                        padding: 1,
-                        color: '#ffffff',
-                        position: 'absolute', // Keeps it at the bottom
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        height: 0, // Starts hidden
-                        opacity: 0, // Fully transparent
-                        backgroundColor: '#121212', // Background for the sliding content
-                        transition: 'height 0.3s ease, opacity 0.3s ease', // Smooth animation
-                        '&:hover': {
-                            height: '20px', // Expands to reveal content
-                            opacity: .7, // Becomes visible
-                        },
-                    }}
-                >
-                    <IconButton onClick={handlePlayClick} sx={{ position: 'absolute', left: 8, bottom: 8, color: '#fff' }}>
-                        <PlayArrow />
-                    </IconButton>
-                    <IconButton onClick={handleClick} sx={{ position: 'absolute', right: 8, bottom: 8, color: '#fff' }}>
-                        <Info />
-                    </IconButton>
-                </CardContent>
-            </Card>
+                {!search && (
+                    <>
+                        {/* Sliding Card Content */}
+                        < CardContent
+                            sx={{
+                                padding: 1,
+                                color: '#ffffff',
+                                position: 'absolute', // Keeps it at the bottom
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height: 0, // Starts hidden
+                                opacity: 0, // Fully transparent
+                                backgroundColor: '#121212', // Background for the sliding content
+                                transition: 'height 0.3s ease, opacity 0.3s ease', // Smooth animation
+                                '&:hover': {
+                                    height: '20px', // Expands to reveal content
+                                    opacity: .7, // Becomes visible
+                                },
+                            }}
+                        >
+                            <IconButton onClick={handlePlayClick} sx={{ position: 'absolute', left: 8, bottom: 8, color: '#fff' }}>
+                                <PlayArrow />
+                            </IconButton>
+                            <IconButton onClick={handleClick} sx={{ position: 'absolute', right: 8, bottom: 8, color: '#fff' }}>
+                                <Info />
+                            </IconButton>
+                        </CardContent>
+                    </>
+                )}
+            </Card >
             {media && (
                 <MediaDetailsModal currentSeasonNumber={currentlyWatching?.SeasonNumber} currentEpisodeNumber={currentlyWatching?.EpisodeNumber} media={media} isOpen={isModalOpen} onClose={handleCloseModal} />
-            )}
+            )
+            }
         </>
     )
 }

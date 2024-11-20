@@ -37,7 +37,7 @@ const MediaList: React.FC<MediaCarouselProps> = ({ currentlyWatchings }) => {
 		<Box sx={{ padding: 2, display: "flex", gap: "10px", flexWrap: "wrap" }}>
 			{media && media.map((mediaObj, index) => {
 				const tvOrMovie = castToTvOrMovie({ Media: mediaObj })
-				return <MediaCard currentlyWatching={currentlyWatchings[index]} key={index} media={tvOrMovie}></MediaCard>
+				return <MediaCard search={false} currentlyWatching={currentlyWatchings[index]} key={index} media={tvOrMovie}></MediaCard>
 			})}
 		</Box>
 	);
