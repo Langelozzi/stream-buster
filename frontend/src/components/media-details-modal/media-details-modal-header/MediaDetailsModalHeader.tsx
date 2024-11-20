@@ -6,10 +6,9 @@ import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
 import { Episode } from '../../../models/episode';
-import { createCurrentlyWatching } from '../../../api/services/currentlyWatching.service';
-import { CurrentlyWatching } from '../../../models/currently_watching';
-import { createMedia } from '../../../api/services/media.service';
 import { useUser } from '../../../hooks/useUser';
+import { useSnackbar } from '../../../hooks/useSnackBar';
+import { onAddToList } from '../../../api/services/currentlyWatching.service';
 
 const useStyles = makeStyles(() => ({
     modalContainer: {
@@ -63,6 +62,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     const classes = useStyles();
     const navigate = useNavigate();
     const user = useUser();
+    const { showSnackbar, SnackbarComponent } = useSnackbar();
 
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
@@ -71,36 +71,14 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     // Functions
     const onPlay = () => {
         if (currentEpisode) {
+            onAddToList(media, user, currentEpisode)
             navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media, currentEpisode } });
         } else {
-
+            onAddToList(media, user)
             navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
         }
     }
 
-    const onAddToList = async () => {
-        try {
-            let mediaResponse;
-            try {
-                mediaResponse = await createMedia(media.Media!)
-                console.log('mediaResponse', mediaResponse);
-
-            } catch (error) {
-
-            }
-
-            const currentlyWatching: CurrentlyWatching = {
-                MediaId: mediaResponse?.ID,
-                UserID: user.user?.ID
-            }
-
-            const response = await createCurrentlyWatching(currentlyWatching)
-            console.log('response', response);
-        } catch (error) {
-            console.error("Error addign to list")
-        }
-
-    }
 
     return (
         <Box className={classes.modalContainer}>
@@ -139,6 +117,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                     </IconButton>
                 </Tooltip>
             </Box>
+            {SnackbarComponent}
         </Box>
     );
 };

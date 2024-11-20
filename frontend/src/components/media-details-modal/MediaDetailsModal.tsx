@@ -113,13 +113,13 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     // Functions
     const fetchDetailedTV = async () => {
         const tv: TV = await getTVDetails(media.Media?.TMDBID!);
-        console.log('tv', tv);
+        
         setDetailedMedia(tv);
     }
 
     const fetchDetailedMovie = async () => {
         const movie: Movie = await getMovieDetails(media.Media?.TMDBID!);
-        console.log('movie', movie);
+        
         setDetailedMedia(movie);
     }
 
@@ -130,7 +130,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
 
     const fetchEpisodesForCurrentSeason = async () => {
         const episodes: Episode[] = await getEpisodesForSeason(media.Media?.TMDBID!, currentSeason?.SeasonNumber!);
-        console.log('episodes', episodes);
+        
         setEpisodes(episodes);
     }
 

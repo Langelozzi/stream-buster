@@ -1,10 +1,16 @@
 import { CurrentlyWatching } from "../../models/currently_watching";
+import { Episode } from "../../models/episode";
+import { createMedia } from "./media.service";
 import instance from "../axios";
+import { User } from "../../models/user";
+import { UserContextType } from "../../contexts/UserContext";
+import { Movie } from "../../models/movie";
+import { TV } from "../../models/tv";
 
 export const getCurrentlyWatching = async () => {
     try {
         const result = await instance.get("/currently-watching/getall");
-        console.log('result', result);
+
         return result.data;
     } catch (error) {
         console.error('Error fetching currently watching:', error);
@@ -40,4 +46,29 @@ export const getWatchList = async (): Promise<CurrentlyWatching[]> => {
         console.error('Error fetching watch list:', error);
         throw error;
     }
+}
+export const onAddToList = async (media: Movie | TV, user: UserContextType, currentEpisode: Episode | null = null) => {
+    try {
+        let mediaResponse;
+        try {
+            mediaResponse = await createMedia(media.Media!)
+            console.log(mediaResponse)
+        } catch (error) {
+            console.error(error);
+
+        }
+
+        const currentlyWatching: CurrentlyWatching = {
+            MediaId: mediaResponse?.ID,
+            UserID: user.user?.ID,
+            SeasonNumber: currentEpisode ? currentEpisode?.SeasonNumber : 0,
+            EpisodeNumber: currentEpisode ? currentEpisode?.EpisodeNumber : 0,
+        }
+
+        const response = await createCurrentlyWatching(currentlyWatching)
+
+    } catch (error) {
+        console.error("Error addign to list")
+    }
+
 }

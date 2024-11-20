@@ -11,9 +11,9 @@ export const HomePage = () => {
     useEffect(() => {
         // const test = async () => {
         //     const res = await searchMulti("How to train your dragon")
-        //     console.log('res', res);
+        //     
         //     const himym = res[0]
-        //     console.log('himym', himym);
+        //     
         //     const createdMedia = await createMedia(himym.Media!)
         // }
         //

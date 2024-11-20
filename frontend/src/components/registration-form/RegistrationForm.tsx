@@ -121,7 +121,7 @@ export const RegistrationForm: React.FC = () => {
         } else {
             setErrors({});
             // Submit the form data here
-            console.log(formValues);
+            
 
             const formData: FormData = new FormData();
             formData.append("firstName", formValues.firstName);
