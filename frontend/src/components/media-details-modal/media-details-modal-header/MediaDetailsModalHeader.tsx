@@ -9,7 +9,6 @@ import { Episode } from '../../../models/episode';
 import { createCurrentlyWatching } from '../../../api/services/currentlyWatching.service';
 import { CurrentlyWatching } from '../../../models/currently_watching';
 import { createMedia } from '../../../api/services/media.service';
-import { castToTvOrMovie } from '../../../api/services/search.service';
 import { useUser } from '../../../hooks/useUser';
 
 const useStyles = makeStyles(() => ({

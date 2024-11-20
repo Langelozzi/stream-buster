@@ -3,9 +3,9 @@ import { Movie } from '../../models/movie';
 import { TV } from '../../models/tv';
 
 export const castToTvOrMovie = (item: any): (TV | Movie) => {
-    if (item.Media.MediaType.Name === 'tv') {
+    if (item.Media?.MediaType.Name === 'tv') {
         return item as TV;
-    } else if (item.Media.MediaType.Name === 'movie') {
+    } else if (item?.Media?.MediaType.Name === 'movie') {
         return item as Movie;
     } else {
         return item;
