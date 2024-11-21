@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getWatchList } from "../../api/services/currentlyWatching.service";
 import MediaList from "../../components/media-list/medialist";
 import { useUser } from "../../hooks/useUser";
+import { Box, Typography } from "@mui/material";
 
 export const HomePage = () => {
     const user = useUser()
@@ -32,8 +33,11 @@ export const HomePage = () => {
         <>
             {user ? (
                 <>
-                    <h1>Continue Watching</h1>
-                    <MediaList currentlyWatchings={currentlyWatchings}></MediaList>
+                    <Box padding={2}>
+
+                        <Typography>Continue Watching</Typography>
+                        <MediaList currentlyWatchings={currentlyWatchings}></MediaList>
+                    </Box>
                 </>
             ) : (
                 <>

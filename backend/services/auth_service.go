@@ -116,7 +116,7 @@ func (service AuthService) RefreshToken(refreshTokenString string) (string, erro
 	if ok {
 
 		// create new token
-		email, ok := claims["sub"].(string)
+		email, ok := claims["email"].(string)
 		if !ok {
 			return "", fmt.Errorf("Error parsing username from claims")
 		}
