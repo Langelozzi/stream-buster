@@ -8,6 +8,7 @@ import {
 import { makeStyles } from '@mui/styles';
 import { postRegister } from '../../api/services/auth.service';
 import { useNavigate } from 'react-router-dom';
+import { routes } from '../../router/Routes';
 
 const useStyles = makeStyles(() => ({
     paper: {
@@ -131,13 +132,13 @@ export const RegistrationForm: React.FC = () => {
 
             const res = await postRegister(formData);
             if (res?.status === 201) {
-                navigate('/login');
+                navigate(routes.login);
             }
         }
     };
 
     const goToLogin = () => {
-        navigate('/login');
+        navigate(routes.login);
     }
 
     return (
