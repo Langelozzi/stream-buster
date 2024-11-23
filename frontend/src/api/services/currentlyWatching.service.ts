@@ -38,15 +38,6 @@ export const updateCurrentlyWatching = async (data: CurrentlyWatching) => {
     }
 }
 
-export const deleteCurrentlyWatching = async (id: number) => {
-    try {
-        const result = await instance.put("/currently-watching/update", data);
-        return result.data;
-    } catch (error) {
-        console.error('Error creating currently watching:', error);
-        throw error;
-    }
-}
 
 export const getWatchList = async (): Promise<CurrentlyWatching[]> => {
     try {
@@ -80,5 +71,15 @@ export const onAddToList = async (media: Movie | TV, user: UserContextType, seas
     } catch (error) {
         console.error("Error addign to list")
     }
+}
 
+export const deleteCurrentlyWatching = async (mediaId: number) => {
+    try {
+        const result = instance.delete(`/currently-watching/delete/${mediaId}`);
+
+        return result;
+    } catch (error) {
+        console.error("error deleting currently watchign", error)
+        throw error;
+    }
 }
