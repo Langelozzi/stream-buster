@@ -11,7 +11,7 @@ interface MediaCarouselProps {
 }
 
 const MediaList: React.FC<MediaCarouselProps> = ({ currentlyWatchings }) => {
-	const [media, setMedia] = useState<(TV | Movie | Mediaa | undefined)[]>();
+	const [media, setMedia] = useState<(TV | Movie | Media | undefined)[]>();
 
 	useEffect(() => {
 		if (!currentlyWatchings) {
@@ -38,9 +38,9 @@ const MediaList: React.FC<MediaCarouselProps> = ({ currentlyWatchings }) => {
 		<Box sx={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
 			{media && media.map((mediaObj, index) => {
 				const tvOrMovie = castToTvOrMovie({ Media: mediaObj })
-				return <MediaCard search={false} currentlyWatching={currentlyWatchings[index]} key={index} media={tvOrMovie}></MediaCard>
+				return < MediaCard search={false} currentlyWatching={currentlyWatchings[index]} key={index} media={tvOrMovie}></MediaCard >
 			})}
-		</Box>
+		</Box >
 	);
 };
 

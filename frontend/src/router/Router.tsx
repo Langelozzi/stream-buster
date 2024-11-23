@@ -19,7 +19,14 @@ export const Router = () => {
                 <Routes>
                     {/* Public Routes */}
                     <Route path={routes.root} Component={HomePage} />
-                    <Route path={routes.home} Component={HomePage} />
+                    <Route
+                        path={routes.home}
+                        element={
+                            <PrivateRoute>
+                                <HomePage />
+                            </PrivateRoute>
+                        }
+                    />
                     <Route path={routes.login} Component={LoginPage} />
                     <Route path={routes.register} Component={RegistrationPage} />
 

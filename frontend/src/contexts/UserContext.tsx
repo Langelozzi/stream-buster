@@ -102,7 +102,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 })
                 .catch((error) => {
                     console.error('Failed to fetch user:', error);
-                    logout();
                 });
         }
     }, [validateToken, user]);

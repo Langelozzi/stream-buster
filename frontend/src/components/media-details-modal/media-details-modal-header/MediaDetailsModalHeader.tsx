@@ -69,9 +69,16 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     // Functions
     const onPlay = () => {
         if (currentEpisode) {
-            onAddToList(media, user, currentEpisode)
+            onAddToList(media, user, currentEpisode.SeasonNumber, currentEpisode.EpisodeNumber)
             navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media, currentEpisode } });
+        } else if (media.Media?.MediaType?.Name == "TV") {
+            onAddToList(media, user, 1, 1)
+            navigate(`/watch/${media.Media?.TMDBID}/1/1`,
+                // todo get the media
+                { state: { media } }
+            );
         } else {
+
             onAddToList(media, user)
             navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
         }
@@ -106,7 +113,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 </Button>
 
                 <Tooltip title="Add to List" arrow>
-                    <IconButton onClick={() => { onAddToList(media, user, currentEpisode) }} className={`${classes.roundButton}`} aria-label="Add to My List">
+                    <IconButton onClick={() => { onAddToList(media, user, currentEpisode?.SeasonNumber, currentEpisode?.EpisodeNumber) }} className={`${classes.roundButton}`} aria-label="Add to My List">
                         <Add />
                     </IconButton>
                 </Tooltip>

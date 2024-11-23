@@ -11,6 +11,7 @@ import ControlBar from "./ControlBar";
 import { updateCurrentlyWatching } from "../../api/services/currentlyWatching.service";
 import { CurrentlyWatching } from "../../models/currently_watching";
 import { useUser } from "../../hooks/useUser";
+import { getFormattedDate } from "../../utils/date.helpter";
 
 export const WatchPage = () => {
     // Hooks
@@ -30,10 +31,6 @@ export const WatchPage = () => {
 
     // State
     const [media] = useState<Movie | TV | undefined>(location.state?.media);
-    console.log('media', media);
-    // const [episode, setEpisode] = useState<Episode | undefined>(location.state?.currentEpisode);
-    // const media = location.state.media as TV | Movie ?? null;
-    // const episode = location.state.currentEpisode as Episode ?? null;
 
     // Constants
     const isTV = seasonNum && episodeNum;
@@ -48,17 +45,20 @@ export const WatchPage = () => {
             MediaId: media?.MediaID,
             UserID: user.user?.ID,
             SeasonNumber: seasonNum,
-            EpisodeNumber: episodeNum + 1
+            EpisodeNumber: episodeNum + 1,
+            UpdatedAt: getFormattedDate()
         }
         updateCurrentlyWatching(currentlyWatching)
         navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum + 1}`)
     }
+
     const goToPrev = () => {
         const currentlyWatching: CurrentlyWatching = {
             MediaId: media?.MediaID,
             UserID: user.user?.ID,
             SeasonNumber: seasonNum,
-            EpisodeNumber: episodeNum - 1
+            EpisodeNumber: episodeNum - 1,
+            UpdatedAt: getFormattedDate()
         }
         updateCurrentlyWatching(currentlyWatching)
         navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum - 1}`)

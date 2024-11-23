@@ -5,6 +5,7 @@ import { useState } from "react";
 import MediaDetailsModal from "../media-details-modal/MediaDetailsModal";
 import { CurrentlyWatching } from "../../models/currently_watching";
 import { Info, PlayArrow } from "@mui/icons-material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom";
 
 interface MediaCardProps {
@@ -76,6 +77,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
                         {/* Sliding Card Content */}
                         < CardContent
                             sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+
                                 padding: 1,
                                 color: '#ffffff',
                                 position: 'absolute', // Keeps it at the bottom
@@ -92,11 +96,15 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
                                 },
                             }}
                         >
-                            <IconButton onClick={handlePlayClick} sx={{ position: 'absolute', left: 8, bottom: 8, color: '#fff' }}>
+
+                            <IconButton onClick={handlePlayClick} sx={{ color: '#fff' }}>
                                 <PlayArrow />
                             </IconButton>
-                            <IconButton onClick={handleClick} sx={{ position: 'absolute', right: 8, bottom: 8, color: '#fff' }}>
+                            <IconButton onClick={handleClick} sx={{ color: '#fff' }}>
                                 <Info />
+                            </IconButton>
+                            <IconButton onClick={handlePlayClick} sx={{ color: '#fff' }}>
+                                <DeleteIcon />
                             </IconButton>
                         </CardContent>
                     </>
