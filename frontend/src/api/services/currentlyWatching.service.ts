@@ -1,5 +1,4 @@
 import { CurrentlyWatching } from "../../models/currently_watching";
-import { Episode } from "../../models/episode";
 import { createMedia } from "./media.service";
 import instance from "../axios";
 import { UserContextType } from "../../contexts/UserContext";

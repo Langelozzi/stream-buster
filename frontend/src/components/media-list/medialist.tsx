@@ -3,36 +3,23 @@ import { Box } from '@mui/material';
 import { MediaCard } from '../media-card/MediaCard';
 import { castToTvOrMovie } from '../../api/services/search.service';
 import { CurrentlyWatching } from '../../models/currently_watching';
-import { Movie } from '../../models/movie';
-import { TV } from '../../models/tv';
-import { Media } from '../../models/media';
-import _ from 'lodash';
 import { deleteCurrentlyWatching } from '../../api/services/currentlyWatching.service';
+import { Media } from '../../models/media';
 interface MediaCarouselProps {
 	currentlyWatchings: CurrentlyWatching[];
 }
 
 const MediaList: React.FC<MediaCarouselProps> = ({ currentlyWatchings }) => {
-	const [media, setMedia] = useState<(TV | Movie | Media | undefined)[]>();
+	const [media, setMedia] = useState<(Media)[]>();
 
 	useEffect(() => {
 		if (!currentlyWatchings) {
 			return
 		}
 		const mediaList = currentlyWatchings.map((currentlyWatching) => {
-			try {
-				if (!currentlyWatching.Media || !currentlyWatching.Media.MediaType) {
-					return
-				} else if (currentlyWatching.Media?.MediaType.Name === 'tv') {
-					return castToTvOrMovie(currentlyWatching.Media);
-				} else if (currentlyWatching.Media?.MediaType.Name === 'movie') {
-					return castToTvOrMovie(currentlyWatching.Media);
-				} else {
-					return currentlyWatching.Media;
-				}
-			} catch (error) {
-			}
-		})
+			return currentlyWatching.Media;
+		}).filter((mediaItem) => mediaItem != undefined)
+
 		setMedia(mediaList)
 	}, [currentlyWatchings])
 
@@ -40,11 +27,13 @@ const MediaList: React.FC<MediaCarouselProps> = ({ currentlyWatchings }) => {
 		try {
 			const removeMediaItem = (mediaId: number) => {
 				setMedia((prevMedia) => {
-					return prevMedia.filter((mediaItem) => mediaItem.ID != mediaId)
+					return prevMedia!.filter((mediaItem) => {
+						return mediaItem!.ID != mediaId
+					})
 				})
 			}
-			removeMediaItem(mediaId)
 			await deleteCurrentlyWatching(mediaId)
+			removeMediaItem(mediaId)
 		} catch (error) {
 			console.error("Error deleteing currently watching" + error)
 			throw error
