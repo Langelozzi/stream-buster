@@ -1,9 +1,11 @@
 package middlewares
 
 import (
+	"net/http"
+
 	"github.com/STREAM-BUSTER/stream-buster/models"
+	"github.com/STREAM-BUSTER/stream-buster/utils/auth"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v4"
 	"gorm.io/gorm"
 )
 
@@ -11,13 +13,13 @@ import (
 func UsageTrackingMiddleware(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Extract user info from the context
-		userClaims, exists := c.Get("user") // Adjust this according to how you set the user context
-		if !exists {
-			c.Next() // User not authenticated, just proceed
-			return
+
+		user, err := auth.GetUserFromContext(c)
+		if err != nil {
+			c.Redirect(http.StatusUnauthorized, "/login")
 		}
 
-		userID := uint(userClaims.(jwt.MapClaims)["id"].(float64)) // Assuming "id" is part of the claims
+		userID := uint(user.ID) // Assuming "id" is part of the claims
 
 		// Increment the request count for the user
 		var usage models.Usage
