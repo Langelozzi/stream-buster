@@ -10,9 +10,10 @@ func SetCurrentlyWatchingRoutes(router *gin.RouterGroup) {
 
 	group := router.Group("/currently-watching")
 	{
+		group.POST("/", controller.CreateCurrentlyWatchingHandler)
 		group.GET("/getall", controller.GetAllCurrentlyWatchingHandler)
 		group.GET("/watchlist", controller.GetWatchlist)
-		group.POST("/", controller.CreateCurrentlyWatchingHandler)
 		group.PUT("/update", controller.UpdateCurrentlyWatchingHandler)
+		group.DELETE("/delete/:mediaId", controller.DeleteCurrentlyWatchingHandler)
 	}
 }
