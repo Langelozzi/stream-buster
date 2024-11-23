@@ -7,17 +7,20 @@ import { CurrentlyWatching } from "../../models/currently_watching";
 import { Info, PlayArrow } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "../../hooks/useSnackBar";
 
 interface MediaCardProps {
     media: TV | Movie
     currentlyWatching?: CurrentlyWatching | undefined,
     search?: boolean
+    onDelete?: (mediaId: number) => Promise<void> | undefined
 }
 
-export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, search = true }) => {
+export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, search = true, onDelete }) => {
     // State
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
+    const { showSnackbar, SnackbarComponent } = useSnackbar()
 
     // Functions
     const handleOpenModal = () => {
@@ -43,6 +46,22 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
             );
         }
     }
+    const handleClickDelete = async () => {
+        try {
+
+            if (!currentlyWatching?.MediaId || !onDelete) {
+                showSnackbar("Error Deleting")
+                return
+            }
+
+            await onDelete(currentlyWatching?.MediaId)
+            showSnackbar("Successfully deleted")
+        } catch (error) {
+            showSnackbar("Error Deleting")
+        }
+
+    }
+
 
     return (
         <>
@@ -103,7 +122,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
                             <IconButton onClick={handleClick} sx={{ color: '#fff' }}>
                                 <Info />
                             </IconButton>
-                            <IconButton onClick={handlePlayClick} sx={{ color: '#fff' }}>
+                            <IconButton onClick={handleClickDelete} sx={{ color: '#fff' }}>
                                 <DeleteIcon />
                             </IconButton>
                         </CardContent>
@@ -114,6 +133,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
                 <MediaDetailsModal currentSeasonNumber={currentlyWatching?.SeasonNumber} currentEpisodeNumber={currentlyWatching?.EpisodeNumber} media={media} isOpen={isModalOpen} onClose={handleCloseModal} />
             )
             }
+            {SnackbarComponent}
         </>
     )
 }
