@@ -1,6 +1,129 @@
 basePath: /api/v1
 definitions:
+  api.Episode:
+    properties:
+      episodeNumber:
+        type: integer
+      episodeTMDBID:
+        type: integer
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaID:
+        type: integer
+      name:
+        type: string
+      overview:
+        type: string
+      runtime:
+        type: integer
+      seasonNumber:
+        type: integer
+      stillPath:
+        type: string
+    type: object
+  api.Movie:
+    properties:
+      backdropImage:
+        type: string
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaID:
+        type: integer
+      releaseDate:
+        type: string
+      runtime:
+        type: integer
+    type: object
+  api.Season:
+    properties:
+      episodeCount:
+        type: integer
+      episodes:
+        items:
+          $ref: '#/definitions/api.Episode'
+        type: array
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaID:
+        type: integer
+      name:
+        type: string
+      overview:
+        type: string
+      posterPath:
+        type: string
+      seasonNumber:
+        type: integer
+      seasonTMDBID:
+        type: integer
+    type: object
+  api.TV:
+    properties:
+      backdropImage:
+        type: string
+      episodeCount:
+        type: integer
+      firstAirDate:
+        type: string
+      lastAirDate:
+        type: string
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaID:
+        type: integer
+      seasonCount:
+        type: integer
+      seasons:
+        items:
+          $ref: '#/definitions/api.Season'
+        type: array
+    type: object
   db.CurrentlyWatching:
+    type: object
+  db.Genre:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  db.Media:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      genres:
+        items:
+          $ref: '#/definitions/db.Genre'
+        type: array
+      id:
+        type: integer
+      mediaType:
+        $ref: '#/definitions/db.MediaType'
+      mediaTypeId:
+        type: integer
+      overview:
+        type: string
+      posterImage:
+        type: string
+      title:
+        type: string
+      tmdbid:
+        type: integer
+    type: object
+  db.MediaType:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   models.Config:
     properties:
@@ -87,6 +210,67 @@ paths:
       summary: Logs in valid users
       tags:
       - Auth
+  /cdn/movie/{tmdbId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve HTML content for a movie based on the provided tmdbId
+      parameters:
+      - description: tmdbId of the movie
+        in: path
+        name: tmdbId
+        required: true
+        type: string
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML content of the movie
+          schema:
+            type: string
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get movie content by tmdbId
+      tags:
+      - cdn
+  /cdn/tv/{tmdbId}/{seasonNum}/{episodeNum}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve HTML content for a tv episode based on the provided tmdbId,
+        season number and episode number
+      parameters:
+      - description: tmdbId of the movie
+        in: path
+        name: tmdbId
+        required: true
+        type: string
+      - description: season number of the episode
+        in: path
+        name: seasonNum
+        required: true
+        type: number
+      - description: episode number of the episode
+        in: path
+        name: episodeNum
+        required: true
+        type: number
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML content of the movie
+          schema:
+            type: string
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get movie content by tmdbId, season number and episode number
+      tags:
+      - cdn
   /currently-watching/:
     post:
       consumes:
@@ -176,7 +360,32 @@ paths:
       summary: Retrieve a currently watching record
       tags:
       - currently-watching
-  /media/search:
+  /movie/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the details of a movie from TMDB using the id
+      parameters:
+      - description: tmdbId of the movie
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The movie record
+          schema:
+            $ref: '#/definitions/api.Movie'
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get movie details by id
+      tags:
+      - movie
+  /search/multi:
     get:
       consumes:
       - application/json
@@ -193,7 +402,8 @@ paths:
         "200":
           description: Successfully retrieved multimedia search results
           schema:
-            items: {}
+            items:
+              type: object
             type: array
         "400":
           description: 'Error: Invalid or empty query, or no results found'
@@ -202,7 +412,64 @@ paths:
             type: object
       summary: Retrieve multimedia search results
       tags:
-      - media
+      - search
+  /tv/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the details of a tv show from TMDB using the id
+      parameters:
+      - description: tmdbId of the tv show
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The tv record
+          schema:
+            $ref: '#/definitions/api.TV'
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get tv show details by id
+      tags:
+      - tv
+  /tv/{id}/season/{seasonNum}/episodes:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of episodes in a specific season of a tv show
+      parameters:
+      - description: tmdbId of the tv show
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: the season number
+        in: path
+        name: seasonNum
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The list of tv records in that season
+          schema:
+            items:
+              $ref: '#/definitions/api.TV'
+            type: array
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get episodes of a show by season number
+      tags:
+      - tv
   /user/:
     get:
       consumes:

@@ -64,6 +64,96 @@
                 }
             }
         },
+        "/cdn/movie/{tmdbId}": {
+            "get": {
+                "description": "Retrieve HTML content for a movie based on the provided tmdbId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "cdn"
+                ],
+                "summary": "Get movie content by tmdbId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the movie",
+                        "name": "tmdbId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HTML content of the movie",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/cdn/tv/{tmdbId}/{seasonNum}/{episodeNum}": {
+            "get": {
+                "description": "Retrieve HTML content for a tv episode based on the provided tmdbId, season number and episode number",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "cdn"
+                ],
+                "summary": "Get movie content by tmdbId, season number and episode number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the movie",
+                        "name": "tmdbId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "season number of the episode",
+                        "name": "seasonNum",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "episode number of the episode",
+                        "name": "episodeNum",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HTML content of the movie",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
         "/currently-watching/": {
             "put": {
                 "description": "update a currently watching record",
@@ -197,7 +287,45 @@
                 }
             }
         },
-        "/media/search": {
+        "/movie/{id}": {
+            "get": {
+                "description": "Retrieve the details of a movie from TMDB using the id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movie"
+                ],
+                "summary": "Get movie details by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the movie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The movie record",
+                        "schema": {
+                            "$ref": "#/definitions/api.Movie"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/search/multi": {
             "get": {
                 "description": "Get multimedia content based on the search query.",
                 "consumes": [
@@ -207,7 +335,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "media"
+                    "search"
                 ],
                 "summary": "Retrieve multimedia search results",
                 "parameters": [
@@ -224,7 +352,9 @@
                         "description": "Successfully retrieved multimedia search results",
                         "schema": {
                             "type": "array",
-                            "items": {}
+                            "items": {
+                                "type": "object"
+                            }
                         }
                     },
                     "400": {
@@ -232,6 +362,92 @@
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/tv/{id}": {
+            "get": {
+                "description": "Retrieve the details of a tv show from TMDB using the id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tv"
+                ],
+                "summary": "Get tv show details by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the tv show",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The tv record",
+                        "schema": {
+                            "$ref": "#/definitions/api.TV"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/tv/{id}/season/{seasonNum}/episodes": {
+            "get": {
+                "description": "Retrieve a list of episodes in a specific season of a tv show",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tv"
+                ],
+                "summary": "Get episodes of a show by season number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the tv show",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "the season number",
+                        "name": "seasonNum",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The list of tv records in that season",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.TV"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
                         }
                     }
                 }
@@ -501,8 +717,196 @@
         }
     },
     "definitions": {
+        "api.Episode": {
+            "type": "object",
+            "properties": {
+                "episodeNumber": {
+                    "type": "integer"
+                },
+                "episodeTMDBID": {
+                    "type": "integer"
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaID": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "overview": {
+                    "type": "string"
+                },
+                "runtime": {
+                    "type": "integer"
+                },
+                "seasonNumber": {
+                    "type": "integer"
+                },
+                "stillPath": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Movie": {
+            "type": "object",
+            "properties": {
+                "backdropImage": {
+                    "type": "string"
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaID": {
+                    "type": "integer"
+                },
+                "releaseDate": {
+                    "type": "string"
+                },
+                "runtime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.Season": {
+            "type": "object",
+            "properties": {
+                "episodeCount": {
+                    "type": "integer"
+                },
+                "episodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Episode"
+                    }
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaID": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "overview": {
+                    "type": "string"
+                },
+                "posterPath": {
+                    "type": "string"
+                },
+                "seasonNumber": {
+                    "type": "integer"
+                },
+                "seasonTMDBID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.TV": {
+            "type": "object",
+            "properties": {
+                "backdropImage": {
+                    "type": "string"
+                },
+                "episodeCount": {
+                    "type": "integer"
+                },
+                "firstAirDate": {
+                    "type": "string"
+                },
+                "lastAirDate": {
+                    "type": "string"
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaID": {
+                    "type": "integer"
+                },
+                "seasonCount": {
+                    "type": "integer"
+                },
+                "seasons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Season"
+                    }
+                }
+            }
+        },
         "db.CurrentlyWatching": {
             "type": "object"
+        },
+        "db.Genre": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "db.Media": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "genres": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/db.Genre"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaType": {
+                    "$ref": "#/definitions/db.MediaType"
+                },
+                "mediaTypeId": {
+                    "type": "integer"
+                },
+                "overview": {
+                    "type": "string"
+                },
+                "posterImage": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "tmdbid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "db.MediaType": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
         },
         "models.Config": {
             "type": "object",

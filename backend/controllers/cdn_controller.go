@@ -17,6 +17,16 @@ func NewCDNController(service interfaces.CDNServiceInterface) *CDNController {
 	}
 }
 
+// GetMovieContent retrieves the content for a movie by its tmdbId
+// @Summary Get movie content by tmdbId
+// @Description Retrieve HTML content for a movie based on the provided tmdbId
+// @Tags cdn
+// @Accept  json
+// @Produce  html
+// @Param tmdbId path string true "tmdbId of the movie"
+// @Success 200 {string} string "HTML content of the movie"
+// @Failure 400 {object} object "Error: Unable to procure content"
+// @Router /cdn/movie/{tmdbId} [get]
 func (contr *CDNController) GetMovieContent(c *gin.Context) {
 	// get the tmdbId from the route params
 	tmdbId := c.Param("tmdbId")
@@ -34,6 +44,18 @@ func (contr *CDNController) GetMovieContent(c *gin.Context) {
 	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(html))
 }
 
+// GetTVContent retrieves the content for a tv show by its tmdbId, season number and episode number
+// @Summary Get movie content by tmdbId, season number and episode number
+// @Description Retrieve HTML content for a tv episode based on the provided tmdbId, season number and episode number
+// @Tags cdn
+// @Accept  json
+// @Produce  html
+// @Param tmdbId path string true "tmdbId of the movie"
+// @Param seasonNum path number true "season number of the episode"
+// @Param episodeNum path number true "episode number of the episode"
+// @Success 200 {string} string "HTML content of the movie"
+// @Failure 400 {object} object "Error: Unable to procure content"
+// @Router /cdn/tv/{tmdbId}/{seasonNum}/{episodeNum} [get]
 func (contr *CDNController) GetTVContent(c *gin.Context) {
 	// get the tmdbId from the route params
 	tmdbId := c.Param("tmdbId")
