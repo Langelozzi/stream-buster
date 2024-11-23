@@ -79,6 +79,8 @@ interface MediaDetailsModalProps {
     media: Movie | TV;
     isOpen: boolean;
     onClose: () => void;
+    currentSeasonNumber?: number | undefined;
+    currentEpisodeNumber?: number | undefined;
 }
 
 /*
@@ -90,7 +92,9 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     const {
         media,
         isOpen,
-        onClose
+        onClose,
+        currentSeasonNumber = 1,
+        currentEpisodeNumber = 1,
     } = props;
 
 
@@ -109,24 +113,24 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     // Functions
     const fetchDetailedTV = async () => {
         const tv: TV = await getTVDetails(media.Media?.TMDBID!);
-        console.log('tv', tv);
+
         setDetailedMedia(tv);
     }
 
     const fetchDetailedMovie = async () => {
         const movie: Movie = await getMovieDetails(media.Media?.TMDBID!);
-        console.log('movie', movie);
+
         setDetailedMedia(movie);
     }
 
     const determineCurrentSeason = () => {
-        const currentSeason: Season = (detailedMedia as TV).Seasons.filter(season => season.SeasonNumber === 1)[0];
+        const currentSeason: Season = (detailedMedia as TV).Seasons.filter(season => season.SeasonNumber === currentSeasonNumber)[0];
         setCurrentSeason(currentSeason);
     }
 
     const fetchEpisodesForCurrentSeason = async () => {
         const episodes: Episode[] = await getEpisodesForSeason(media.Media?.TMDBID!, currentSeason?.SeasonNumber!);
-        console.log('episodes', episodes);
+
         setEpisodes(episodes);
     }
 
@@ -134,8 +138,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     const determineCurrentEpisode = useCallback(() => {
         if (!episodes || currentEpisode) return;
 
-        const currentEpisodeNum: number = 1;
-        setCurrentEpisode(episodes[currentEpisodeNum - 1])
+        setCurrentEpisode(episodes[currentEpisodeNumber - 1])
     }, [episodes]);
 
     // Effects

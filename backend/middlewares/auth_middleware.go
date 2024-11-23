@@ -28,7 +28,7 @@ func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 
 			accessTokenString, err := service.RefreshToken(refreshTokenString)
 			if err != nil {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to refresh token"})
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to refresh token" + err.Error()})
 				c.Abort()
 				return
 			}

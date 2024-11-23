@@ -6,10 +6,8 @@ import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
 import { Episode } from '../../../models/episode';
-import { createCurrentlyWatching } from '../../../api/services/currentlyWatching.service';
-import { CurrentlyWatching } from '../../../models/currently_watching';
-import { createMedia } from '../../../api/services/media.service';
 import { useUser } from '../../../hooks/useUser';
+import { onAddToList } from '../../../api/services/currentlyWatching.service';
 
 const useStyles = makeStyles(() => ({
     modalContainer: {
@@ -71,36 +69,21 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     // Functions
     const onPlay = () => {
         if (currentEpisode) {
+            onAddToList(media, user, currentEpisode.SeasonNumber, currentEpisode.EpisodeNumber)
             navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media, currentEpisode } });
+        } else if (media.Media?.MediaType?.Name == "TV") {
+            onAddToList(media, user, 1, 1)
+            navigate(`/watch/${media.Media?.TMDBID}/1/1`,
+                // todo get the media
+                { state: { media } }
+            );
         } else {
 
+            onAddToList(media, user)
             navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
         }
     }
 
-    const onAddToList = async () => {
-        try {
-            let mediaResponse;
-            try {
-                mediaResponse = await createMedia(media.Media!)
-                console.log('mediaResponse', mediaResponse);
-
-            } catch (error) {
-
-            }
-
-            const currentlyWatching: CurrentlyWatching = {
-                MediaId: mediaResponse?.ID,
-                UserID: user.user?.ID
-            }
-
-            const response = await createCurrentlyWatching(currentlyWatching)
-            console.log('response', response);
-        } catch (error) {
-            console.error("Error addign to list")
-        }
-
-    }
 
     return (
         <Box className={classes.modalContainer}>
@@ -128,8 +111,9 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 >
                     Play
                 </Button>
+
                 <Tooltip title="Add to List" arrow>
-                    <IconButton onClick={onAddToList} className={`${classes.roundButton}`} aria-label="Add to My List">
+                    <IconButton onClick={() => { onAddToList(media, user, currentEpisode?.SeasonNumber, currentEpisode?.EpisodeNumber) }} className={`${classes.roundButton}`} aria-label="Add to My List">
                         <Add />
                     </IconButton>
                 </Tooltip>

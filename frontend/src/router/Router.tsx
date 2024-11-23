@@ -8,6 +8,8 @@ import { DashboardPage } from '../pages/dashboard/DashboardPage';
 import { UserProvider } from '../contexts/UserContext';
 import { RegistrationPage } from '../pages/registration/RegistrationPage';
 import { Navbar } from '../components/navbar/Navbar';
+import { routes } from './Routes.ts';
+
 
 export const Router = () => {
     return (
@@ -16,13 +18,21 @@ export const Router = () => {
                 <Navbar />
                 <Routes>
                     {/* Public Routes */}
-                    <Route path='/' Component={HomePage} />
-                    <Route path='/login' Component={LoginPage} />
-                    <Route path='/register' Component={RegistrationPage} />
+                    <Route path={routes.root} Component={HomePage} />
+                    <Route
+                        path={routes.home}
+                        element={
+                            <PrivateRoute>
+                                <HomePage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route path={routes.login} Component={LoginPage} />
+                    <Route path={routes.register} Component={RegistrationPage} />
 
                     {/* Private Routes */}
-                    <Route
-                        path="/dashboard"
+                    < Route
+                        path={routes.dashboard}
                         element={
                             <PrivateRoute>
                                 <DashboardPage />
@@ -30,7 +40,7 @@ export const Router = () => {
                         }
                     />
                     <Route
-                        path='/browse'
+                        path={routes.browse}
                         element={
                             <PrivateRoute>
                                 <BrowsePage />
@@ -38,7 +48,7 @@ export const Router = () => {
                         }
                     />
                     <Route
-                        path='/watch/:tmdbId/:seasonNum?/:episodeNum?'
+                        path={routes.watch}
                         element={
                             <PrivateRoute>
                                 <WatchPage />

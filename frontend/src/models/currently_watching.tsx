@@ -7,6 +7,7 @@ export interface CurrentlyWatching {
   Media?: Media;
   EpisodeNumber?: number;
   SeasonNumber?: number;
+  UpdatedAt?: string;
   DeletedAt?: string | null;
   CreatedAt?: string;
 }

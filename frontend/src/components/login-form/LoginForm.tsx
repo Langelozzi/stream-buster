@@ -4,6 +4,7 @@ import { makeStyles } from '@mui/styles';
 import { postLogin } from '../../api/services/auth.service';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../hooks/useUser';
+import { routes } from '../../router/Routes';
 
 const useStyles = makeStyles(() => ({
 	paper: {
@@ -69,14 +70,14 @@ export const LoginForm: React.FC = () => {
 		if (res?.status === 200 && res.data) {
 			const { user, token } = res.data;
 			login(user, token);
-			navigate('/dashboard');
+			navigate(routes.dashboard);
 		} else {
 			alert('Login failed');
 		}
 	};
 
 	const goToRegister = () => {
-		navigate('/register');
+		navigate(routes.register);
 	}
 
 	return (

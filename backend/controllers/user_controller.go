@@ -1,11 +1,12 @@
 package controllers
 
 import (
+	"strconv"
+
 	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/services/interfaces"
+	"github.com/STREAM-BUSTER/stream-buster/utils/auth"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v4"
-	"strconv"
 )
 
 type UserController struct {
@@ -133,11 +134,13 @@ func (contr *UserController) GetUserHandler(c *gin.Context) {
 // @Router /user/current/ [get]
 func (contr *UserController) GetCurrentUserHandler(c *gin.Context) {
 	// Get the current user from the context
-	userClaims, exists := c.Get("user")
-	userID := int(userClaims.(jwt.MapClaims)["id"].(float64)) // Assuming "id" is part of the claims
-	if !exists {
+	var ctxUser models.User
+	ctxUser, err := auth.GetUserFromContext(c)
+	userID := ctxUser.ID
+
+	if err != nil {
 		c.JSON(400, gin.H{
-			"message": "No user records found for the current user",
+			"message": "Error Validating user: Error Cannot Get Id from Context",
 		})
 		return
 	}
@@ -164,7 +167,7 @@ func (contr *UserController) GetCurrentUserHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := contr.service.GetUser(userID, includeDeleted, full)
+	user, err := contr.service.GetUser(int(userID), includeDeleted, full)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": "Error getting full user record",

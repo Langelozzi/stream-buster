@@ -3,6 +3,7 @@ package daos
 import (
 	"github.com/STREAM-BUSTER/stream-buster/models/db"
 	"github.com/STREAM-BUSTER/stream-buster/utils/database"
+	"gorm.io/gorm/clause"
 )
 
 type CurrentlyWatchingDao struct{}
@@ -15,9 +16,10 @@ func NewCurrentlyWatchingDao() *CurrentlyWatchingDao {
 func (dao *CurrentlyWatchingDao) CreateCurrentlyWatching(watch *db.CurrentlyWatching) (*db.CurrentlyWatching, error) {
 	db := database.GetInstance()
 
-	if err := db.Create(watch).Error; err != nil {
-		return nil, err
-	}
+	db.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "user_id"}, {Name: "media_id"}},
+		DoUpdates: clause.AssignmentColumns([]string{"episode_number", "season_number", "updated_at"}),
+	}).Create(watch)
 
 	return watch, nil
 }
@@ -61,10 +63,9 @@ func (dao *CurrentlyWatchingDao) GetWatchlist(userId uint) ([]db.CurrentlyWatchi
 	databaseInstance := database.GetInstance()
 
 	var watchingList []db.CurrentlyWatching
-	userID := 1 // Replace with the actual UserID you want to filter by
 
 	// Query CurrentlyWatching records with related Media records for the specified UserID
-	err := databaseInstance.Preload("Media.MediaType").Preload("Media").Where("user_id = ?", userID).Find(&watchingList).Error
+	err := databaseInstance.Preload("Media.MediaType").Preload("Media").Where("user_id = ?", userId).Find(&watchingList).Error
 	if err != nil {
 		// Handle error
 		return nil, err
@@ -88,4 +89,17 @@ func (dao *CurrentlyWatchingDao) UpdateCurrentlyWatching(updatedWatch *db.Curren
 	}
 
 	return &existingWatch, nil
+}
+
+func (dao *CurrentlyWatchingDao) DeleteCurrentlyWatching(userId, mediaId uint) error {
+	databaseInstance := database.GetInstance()
+	watch := db.CurrentlyWatching{UserID: userId, MediaId: mediaId}
+
+	result := databaseInstance.Delete(&watch)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
 }

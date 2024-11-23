@@ -15,6 +15,7 @@ type CurrentlyWatching struct {
 	EpisodeNumber int
 	SeasonNumber  int
 
+	UpdatedAt *time.Time `gorm:"index"`
 	DeletedAt *time.Time `gorm:"index"`
 	CreatedAt *time.Time `gorm:"index"`
 }
