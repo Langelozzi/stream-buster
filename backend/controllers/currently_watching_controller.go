@@ -189,6 +189,7 @@ func (contr *CurrentlyWatchingController) GetAllCurrentlyWatchingHandler(c *gin.
 
 	c.JSON(200, watches)
 }
+
 func (contr *CurrentlyWatchingController) GetWatchlist(c *gin.Context) {
 	user, err := auth.GetUserFromContext(c)
 
@@ -208,4 +209,38 @@ func (contr *CurrentlyWatchingController) GetWatchlist(c *gin.Context) {
 	}
 
 	c.JSON(200, watches)
+}
+
+func (contr *CurrentlyWatchingController) DeleteCurrentlyWatching(c *gin.Context) {
+	user, err := auth.GetUserFromContext(c)
+
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Error getting user information. Error: " + err.Error(),
+		})
+		return
+	}
+
+	mediaId, ok := c.Params.Get("mediaId")
+	mediaIdUint, err := strconv.ParseUint(mediaId, 10, 64)
+
+	if !ok {
+		c.JSON(400, gin.H{
+			"message": "Error Getting meidaId",
+		})
+		return
+	}
+
+	err = contr.service.DeleteCurrentlyWatching(uint(user.ID), uint(mediaIdUint))
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Error deleting Currrently watching" + err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{
+		"message": "Currently watching successfully deleted",
+	})
+
 }

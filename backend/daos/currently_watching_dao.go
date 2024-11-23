@@ -90,3 +90,16 @@ func (dao *CurrentlyWatchingDao) UpdateCurrentlyWatching(updatedWatch *db.Curren
 
 	return &existingWatch, nil
 }
+
+func (dao *CurrentlyWatchingDao) DeleteCurrentlyWatching(userId, mediaId uint) error {
+	databaseInstance := database.GetInstance()
+	watch := db.CurrentlyWatching{UserID: userId, MediaId: mediaId}
+
+	result := databaseInstance.Delete(&watch)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
