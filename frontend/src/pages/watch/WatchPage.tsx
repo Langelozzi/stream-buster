@@ -1,17 +1,15 @@
 
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MediaPlayer } from "../../components/media-player/MediaPlayer";
-import { TV } from "../../models/tv";
-import { Movie } from '../../models/movie';
 import { Box, IconButton, Typography } from "@mui/material";
 import BackIcon from '@mui/icons-material/ArrowBack';
 import Grid from "@mui/material/Grid2"
 import { useState } from "react";
-import ControlBar from "./ControlBar";
 import { updateCurrentlyWatching } from "../../api/services/currentlyWatching.service";
 import { CurrentlyWatching } from "../../models/currently_watching";
 import { useUser } from "../../hooks/useUser";
 import { getFormattedDate } from "../../utils/date.helpter";
+import { Media } from "../../models/media";
 
 export const WatchPage = () => {
     // Hooks
@@ -30,8 +28,7 @@ export const WatchPage = () => {
     const episodeNum: number = Number(episodeNumStr);
 
     // State
-    const [media] = useState<Movie | TV | Media | undefined>(location.state?.media);
-    console.log('media', media);
+    const [media] = useState<Media | undefined>(location.state?.media);
 
     // Constants
     const isTV = seasonNum && episodeNum;
@@ -42,8 +39,10 @@ export const WatchPage = () => {
     };
 
     const goToNext = () => {
+        console.log(media)
+
         const currentlyWatching: CurrentlyWatching = {
-            MediaId: media?.MediaID ? media?.MediaID : media.ID,
+            MediaId: media?.ID,
             UserID: user.user?.ID,
             SeasonNumber: seasonNum,
             EpisodeNumber: episodeNum + 1,
@@ -55,7 +54,7 @@ export const WatchPage = () => {
 
     const goToPrev = () => {
         const currentlyWatching: CurrentlyWatching = {
-            MediaId: media?.MediaID ? media?.MediaID : media.ID,
+            MediaId: media?.ID,
             UserID: user.user?.ID,
             SeasonNumber: seasonNum,
             EpisodeNumber: episodeNum - 1,
@@ -79,7 +78,7 @@ export const WatchPage = () => {
                 {media && (
                     <Grid size={11} component="div"> {/* Title Section */}
                         <Typography variant="h5" align="left" gutterBottom>
-                            {media.Media?.Title}
+                            {media?.Title}
                         </Typography>
                     </Grid>
                 )}

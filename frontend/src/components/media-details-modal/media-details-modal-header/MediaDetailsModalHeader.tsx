@@ -73,17 +73,17 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
         if (currentEpisode) {
             const mediaResponse = await onAddToList(media, user, currentEpisode.SeasonNumber, currentEpisode.EpisodeNumber)
             media.MediaID = mediaResponse.ID
-            navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media, currentEpisode } });
+            navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media: mediaResponse, currentEpisode } });
         } else if (media.Media?.MediaType?.Name == "TV") {
             const mediaResponse = await onAddToList(media, user, 1, 1)
             media.MediaID = mediaResponse.ID;
             navigate(`/watch/${media.Media?.TMDBID}/1/1`,
-                { state: { media } }
+                { state: { media: mediaResponse } }
             );
         } else {
             const mediaResponse = await onAddToList(media, user);
             media.MediaID = mediaResponse.ID;
-            navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
+            navigate(`/watch/${media.Media?.TMDBID}`, { state: { media: mediaResponse, currentEpisode } });
         }
     }
 
