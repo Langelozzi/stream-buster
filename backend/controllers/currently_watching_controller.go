@@ -16,6 +16,13 @@ type CurrentlyWatchingController struct {
 	service interfaces.CurrentlyWatchingServiceInterface
 }
 
+// Test tests the controller
+// @Summary Test endpoint
+// @Description Endpoint to test the controller
+// @Tags currently-watching
+// @Produce  plain
+// @Success 200 {string} string "success"
+// @Router /currently-watching/test [get]
 func NewCurrentlyWatchingController(service interfaces.CurrentlyWatchingServiceInterface) *CurrentlyWatchingController {
 	return &CurrentlyWatchingController{
 		service: service,
@@ -151,6 +158,16 @@ func (contr *CurrentlyWatchingController) UpdateCurrentlyWatchingHandler(c *gin.
 	c.JSON(200, updatedWatch)
 }
 
+// GetAllCurrentlyWatchingHandler retrieves all currently watching records
+// @Summary Retrieve all currently watching records for the authenticated user
+// @Description get all currently watching records
+// @Tags currently-watching
+// @Accept  json
+// @Produce  json
+// @Param includeDeleted query bool false "Set to false to exclude soft deleted records" default(false)
+// @Success 200 {array} db.CurrentlyWatching "Successfully retrieved all currently watching records"
+// @Failure 400 {object} map[string]interface{} "Error: Record not found"
+// @Router /currently-watching/all [get]
 func (contr *CurrentlyWatchingController) GetAllCurrentlyWatchingHandler(c *gin.Context) {
 	claims, exists := c.Get("user")
 	if !exists {
@@ -190,6 +207,15 @@ func (contr *CurrentlyWatchingController) GetAllCurrentlyWatchingHandler(c *gin.
 	c.JSON(200, watches)
 }
 
+// GetWatchlist retrieves the user's watchlist
+// @Summary Retrieve the watchlist
+// @Description get the user's watchlist
+// @Tags currently-watching
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} db.CurrentlyWatching "Successfully retrieved the watchlist"
+// @Failure 400 {object} map[string]interface{} "Error: Unable to retrieve watchlist"
+// @Router /currently-watching/watchlist [get]
 func (contr *CurrentlyWatchingController) GetWatchlist(c *gin.Context) {
 	user, err := auth.GetUserFromContext(c)
 
@@ -211,6 +237,14 @@ func (contr *CurrentlyWatchingController) GetWatchlist(c *gin.Context) {
 	c.JSON(200, watches)
 }
 
+// DeleteCurrentlyWatchingHandler deletes a currently watching record
+// @Summary Delete a currently watching record
+// @Description delete a currently watching record
+// @Tags currently-watching
+// @Param mediaId path string true "Media ID"
+// @Success 204 {object} map[string]interface{} "Successfully deleted the currently watching record"
+// @Failure 400 {object} map[string]interface{} "Error: Failed to delete the record"
+// @Router /currently-watching/{mediaId}/delete [delete]
 func (contr *CurrentlyWatchingController) DeleteCurrentlyWatchingHandler(c *gin.Context) {
 	user, err := auth.GetUserFromContext(c)
 

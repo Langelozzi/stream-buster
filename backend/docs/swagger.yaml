@@ -21,6 +21,13 @@ definitions:
       stillPath:
         type: string
     type: object
+  api.Message:
+    properties:
+      content:
+        type: string
+      role:
+        type: string
+    type: object
   api.Movie:
     properties:
       backdropImage:
@@ -79,6 +86,25 @@ definitions:
         type: array
     type: object
   db.CurrentlyWatching:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      episodeNumber:
+        type: integer
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaId:
+        type: integer
+      seasonNumber:
+        type: integer
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
     type: object
   db.Genre:
     properties:
@@ -138,7 +164,61 @@ definitions:
       value:
         type: string
     type: object
+  models.Role:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      maxRequestCount:
+        type: integer
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.Usage:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      requestCount:
+        type: integer
+      updatedAt:
+        type: string
+      userID:
+        description: Ensure uniqueness for one-to-one relationship
+        type: integer
+    type: object
   models.User:
+    properties:
+      configs:
+        items:
+          $ref: '#/definitions/models.UserConfig'
+        type: array
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: integer
+      lastName:
+        type: string
+      password:
+        type: string
+      usage:
+        $ref: '#/definitions/models.Usage'
+      userRoles:
+        items:
+          $ref: '#/definitions/models.UserRole'
+        type: array
     type: object
   models.UserConfig:
     properties:
@@ -155,27 +235,31 @@ definitions:
       userID:
         type: integer
     type: object
+  models.UserRole:
+    properties:
+      role:
+        $ref: '#/definitions/models.Role'
+      roleID:
+        type: integer
+      user:
+        allOf:
+        - $ref: '#/definitions/models.User'
+        description: Optional associations for eager loading
+      userID:
+        type: integer
+    type: object
 externalDocs:
-  description: OpenAPI Specification for DOCSWAP
+  description: OpenAPI Specification for StreamBuster
   url: https://swagger.io/resources/open-api/
-host: localhost:8080
+host: api.streambuster.xyz
 info:
-  contact:
-    email: support@doc-swap.com
-    name: DOC-SWAP Support
-    url: http://www.doc-swap.com/support
-  description: DOCSWAP is a platform designed for realtors to efficiently share, manage,
-    and analyze documents on a neighborhood level. It enables realtors to make better
-    use of the content created for each listing by organizing it into a searchable
-    database that supports both uploads and downloads of documents. These documents
-    are categorized to facilitate market analysis, putting the power of data directly
-    into the hands of realtors and market analysts interested in housing information
-    in the lower mainland.
+  contact: {}
+  description: A Streaming app inspired by the OG's
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: DOCSWAP API
+  title: StreamBuster API
   version: "1.0"
 paths:
   /auth/login:
@@ -209,7 +293,62 @@ paths:
             type: object
       summary: Logs in valid users
       tags:
-      - Auth
+      - auth
+  /auth/logout:
+    post:
+      description: Clear all authentication tokens from cookies and log out the user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logged out successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Log out user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Register a user with email, password, first name, and last name
+      parameters:
+      - description: Email of the user
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Password of the user
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: First name of the user
+        in: formData
+        name: firstName
+        required: true
+        type: string
+      - description: Last name of the user
+        in: formData
+        name: lastName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 'Error: User creation failed'
+          schema:
+            type: string
+      summary: Register a new user
+      tags:
+      - auth
   /cdn/movie/{tmdbId}:
     get:
       consumes:
@@ -324,6 +463,29 @@ paths:
       summary: Update a currently watching record
       tags:
       - currently-watching
+  /currently-watching/{mediaId}/delete:
+    delete:
+      description: delete a currently watching record
+      parameters:
+      - description: Media ID
+        in: path
+        name: mediaId
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Successfully deleted the currently watching record
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Failed to delete the record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a currently watching record
+      tags:
+      - currently-watching
   /currently-watching/{userID}/{mediaId}/:
     get:
       consumes:
@@ -360,6 +522,179 @@ paths:
       summary: Retrieve a currently watching record
       tags:
       - currently-watching
+  /currently-watching/all:
+    get:
+      consumes:
+      - application/json
+      description: get all currently watching records
+      parameters:
+      - default: false
+        description: Set to false to exclude soft deleted records
+        in: query
+        name: includeDeleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all currently watching records
+          schema:
+            items:
+              $ref: '#/definitions/db.CurrentlyWatching'
+            type: array
+        "400":
+          description: 'Error: Record not found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all currently watching records for the authenticated user
+      tags:
+      - currently-watching
+  /currently-watching/test:
+    get:
+      description: Endpoint to test the controller
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      summary: Test endpoint
+      tags:
+      - currently-watching
+  /currently-watching/watchlist:
+    get:
+      consumes:
+      - application/json
+      description: get the user's watchlist
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the watchlist
+          schema:
+            items:
+              $ref: '#/definitions/db.CurrentlyWatching'
+            type: array
+        "400":
+          description: 'Error: Unable to retrieve watchlist'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve the watchlist
+      tags:
+      - currently-watching
+  /llm/query:
+    post:
+      consumes:
+      - application/json
+      description: Sends a list of messages to the LLM and retrieves a response
+      parameters:
+      - description: Array of messages for LLM interaction
+        in: body
+        name: messages
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/api.Message'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Response from the LLM
+          schema: {}
+        "400":
+          description: 'Error: Invalid request body'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Error: Failed to get response from LLM'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Query the LLM
+      tags:
+      - llm
+  /media:
+    post:
+      consumes:
+      - application/json
+      description: create a new media record
+      parameters:
+      - description: Media object that needs to be created
+        in: body
+        name: media
+        required: true
+        schema:
+          $ref: '#/definitions/db.Media'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created the media record
+          schema:
+            $ref: '#/definitions/db.Media'
+        "400":
+          description: 'Error: Invalid request body or creation failed'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new media record
+      tags:
+      - media
+  /media/by-id:
+    get:
+      consumes:
+      - application/json
+      description: get a media record by its ID
+      parameters:
+      - description: Media ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the media record
+          schema:
+            $ref: '#/definitions/db.Media'
+        "400":
+          description: 'Error: Invalid media ID'
+          schema:
+            type: string
+      summary: Retrieve a media record by ID
+      tags:
+      - media
+  /media/by-tmdb-id:
+    get:
+      consumes:
+      - application/json
+      description: get a media record by its TMDB ID
+      parameters:
+      - description: TMDB ID
+        in: query
+        name: tmdb_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the media record
+          schema:
+            $ref: '#/definitions/db.Media'
+        "400":
+          description: 'Error: Invalid TMDB ID'
+          schema:
+            type: string
+      summary: Retrieve a media record by TMDB ID
+      tags:
+      - media
   /movie/{id}:
     get:
       consumes:
@@ -402,8 +737,7 @@ paths:
         "200":
           description: Successfully retrieved multimedia search results
           schema:
-            items:
-              type: object
+            items: {}
             type: array
         "400":
           description: 'Error: Invalid or empty query, or no results found'

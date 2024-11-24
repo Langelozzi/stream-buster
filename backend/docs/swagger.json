@@ -1,21 +1,17 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "DOCSWAP is a platform designed for realtors to efficiently share, manage, and analyze documents on a neighborhood level. It enables realtors to make better use of the content created for each listing by organizing it into a searchable database that supports both uploads and downloads of documents. These documents are categorized to facilitate market analysis, putting the power of data directly into the hands of realtors and market analysts interested in housing information in the lower mainland.",
-        "title": "DOCSWAP API",
+        "description": "A Streaming app inspired by the OG's",
+        "title": "StreamBuster API",
         "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "DOC-SWAP Support",
-            "url": "http://www.doc-swap.com/support",
-            "email": "support@doc-swap.com"
-        },
+        "contact": {},
         "license": {
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "api.streambuster.xyz",
     "basePath": "/api/v1",
     "paths": {
         "/auth/login": {
@@ -28,7 +24,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "auth"
                 ],
                 "summary": "Logs in valid users",
                 "parameters": [
@@ -59,6 +55,88 @@
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "description": "Clear all authentication tokens from cookies and log out the user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log out user",
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Register a user with email, password, first name, and last name",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Email of the user",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password of the user",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "First name of the user",
+                        "name": "firstName",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Last name of the user",
+                        "name": "lastName",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully created the user",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: User creation failed",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -234,6 +312,135 @@
                 }
             }
         },
+        "/currently-watching/all": {
+            "get": {
+                "description": "get all currently watching records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "currently-watching"
+                ],
+                "summary": "Retrieve all currently watching records for the authenticated user",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Set to false to exclude soft deleted records",
+                        "name": "includeDeleted",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved all currently watching records",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/db.CurrentlyWatching"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Record not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/currently-watching/test": {
+            "get": {
+                "description": "Endpoint to test the controller",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "currently-watching"
+                ],
+                "summary": "Test endpoint",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/currently-watching/watchlist": {
+            "get": {
+                "description": "get the user's watchlist",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "currently-watching"
+                ],
+                "summary": "Retrieve the watchlist",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the watchlist",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/db.CurrentlyWatching"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to retrieve watchlist",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/currently-watching/{mediaId}/delete": {
+            "delete": {
+                "description": "delete a currently watching record",
+                "tags": [
+                    "currently-watching"
+                ],
+                "summary": "Delete a currently watching record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Media ID",
+                        "name": "mediaId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successfully deleted the currently watching record",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Failed to delete the record",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/currently-watching/{userID}/{mediaId}/": {
             "get": {
                 "description": "get a currently watching record",
@@ -282,6 +489,172 @@
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/llm/query": {
+            "post": {
+                "description": "Sends a list of messages to the LLM and retrieves a response",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "llm"
+                ],
+                "summary": "Query the LLM",
+                "parameters": [
+                    {
+                        "description": "Array of messages for LLM interaction",
+                        "name": "messages",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.Message"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response from the LLM",
+                        "schema": {}
+                    },
+                    "400": {
+                        "description": "Error: Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Error: Failed to get response from LLM",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/media": {
+            "post": {
+                "description": "create a new media record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "Create a new media record",
+                "parameters": [
+                    {
+                        "description": "Media object that needs to be created",
+                        "name": "media",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/db.Media"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created the media record",
+                        "schema": {
+                            "$ref": "#/definitions/db.Media"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid request body or creation failed",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/media/by-id": {
+            "get": {
+                "description": "get a media record by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "Retrieve a media record by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Media ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the media record",
+                        "schema": {
+                            "$ref": "#/definitions/db.Media"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid media ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/media/by-tmdb-id": {
+            "get": {
+                "description": "get a media record by its TMDB ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "Retrieve a media record by TMDB ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "TMDB ID",
+                        "name": "tmdb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the media record",
+                        "schema": {
+                            "$ref": "#/definitions/db.Media"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid TMDB ID",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -352,9 +725,7 @@
                         "description": "Successfully retrieved multimedia search results",
                         "schema": {
                             "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
+                            "items": {}
                         }
                     },
                     "400": {
@@ -749,6 +1120,17 @@
                 }
             }
         },
+        "api.Message": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
         "api.Movie": {
             "type": "object",
             "properties": {
@@ -837,7 +1219,36 @@
             }
         },
         "db.CurrentlyWatching": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "episodeNumber": {
+                    "type": "integer"
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaId": {
+                    "type": "integer"
+                },
+                "seasonNumber": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
         },
         "db.Genre": {
             "type": "object",
@@ -928,8 +1339,90 @@
                 }
             }
         },
+        "models.Role": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "maxRequestCount": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Usage": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "requestCount": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userID": {
+                    "description": "Ensure uniqueness for one-to-one relationship",
+                    "type": "integer"
+                }
+            }
+        },
         "models.User": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserConfig"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "usage": {
+                    "$ref": "#/definitions/models.Usage"
+                },
+                "userRoles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.UserRole"
+                    }
+                }
+            }
         },
         "models.UserConfig": {
             "type": "object",
@@ -953,6 +1446,28 @@
                     "type": "integer"
                 }
             }
+        },
+        "models.UserRole": {
+            "type": "object",
+            "properties": {
+                "role": {
+                    "$ref": "#/definitions/models.Role"
+                },
+                "roleID": {
+                    "type": "integer"
+                },
+                "user": {
+                    "description": "Optional associations for eager loading",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    ]
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -961,7 +1476,7 @@
         }
     },
     "externalDocs": {
-        "description": "OpenAPI Specification for DOCSWAP",
+        "description": "OpenAPI Specification for StreamBuster",
         "url": "https://swagger.io/resources/open-api/"
     }
 }
