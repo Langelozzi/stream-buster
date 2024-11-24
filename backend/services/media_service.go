@@ -15,6 +15,9 @@ func NewMediaService(dao iDao.MediaDaoInterface) *MediaService {
 func (service MediaService) GetMediaById(id int64) (*db.Media, error) {
 	return service.dao.GetMediaById(id)
 }
-func (service MediaService) CreateMedia(media *db.Media) error {
+func (service MediaService) GetMediaByTMDBId(id int64) (*db.Media, error) {
+	return service.dao.GetMediaByTMDBId(id)
+}
+func (service MediaService) CreateMedia(media *db.Media) (*db.Media, error) {
 	return service.dao.CreateMedia(media)
 }

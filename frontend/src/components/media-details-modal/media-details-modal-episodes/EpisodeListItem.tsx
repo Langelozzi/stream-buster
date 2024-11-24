@@ -6,6 +6,8 @@ import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleOutline';
 import { TV } from "../../../models/tv";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { onAddToList } from "../../../api/services/currentlyWatching.service";
+import { useUser } from "../../../hooks/useUser";
 
 const useStyles = makeStyles({
     listItem: {
@@ -31,6 +33,7 @@ interface EpisodeListItemProps {
 }
 
 export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
+    const user = useUser()
     const { episode, tv } = props;
 
     const { t } = useTranslation();
@@ -38,6 +41,7 @@ export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
     const navigate = useNavigate();
 
     const onPlayEpisode = () => {
+        onAddToList(tv, user, episode.SeasonNumber, episode.EpisodeNumber)
         navigate(`/watch/${tv.Media?.TMDBID}/${episode.SeasonNumber}/${episode.EpisodeNumber}`, { state: { media: tv, currentEpisode: episode } });
     }
 

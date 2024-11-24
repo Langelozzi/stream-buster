@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Box } 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useUser } from '../../hooks/useUser'; // Adjust path as needed
 import { useNavigate } from 'react-router-dom';
+import { routes } from '../../router/Routes';
 import { useTranslation } from 'react-i18next';
 
 export const Navbar: React.FC = () => {
@@ -30,18 +31,18 @@ export const Navbar: React.FC = () => {
         <AppBar position="static" sx={{ marginBottom: 2 }}>
             <Toolbar>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                    <Typography variant="h6" sx={{ mr: 2, cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>
+                    <Typography variant="h6" sx={{ mr: 2, cursor: 'pointer' }} onClick={() => navigate(routes.home)}>
                         {t('dictionary.streambuster')}
                     </Typography>
                     {user && (
-                        <Button color="inherit" onClick={() => navigate('/browse')}>
+                        <Button color="inherit" onClick={() => navigate(routes.browse)}>
                             {t('button.browse')}
                         </Button>
                     )}
                 </Box>
 
                 {!user ? (
-                    <Button color="inherit" onClick={() => navigate('/login')}>
+                    <Button color="inherit" onClick={() => navigate(routes.login)}>
                         {t('button.login')}
                     </Button>
                 ) : (
@@ -66,7 +67,7 @@ export const Navbar: React.FC = () => {
                                 horizontal: 'right',
                             }}
                         >
-                            <MenuItem onClick={() => { handleMenuClose(); navigate('/dashboard'); }}>{t('button.dashboard')}</MenuItem>
+                            <MenuItem onClick={() => { handleMenuClose(); navigate(routes.dashboard); }}>{t('button.dashboard')}</MenuItem>
                             <MenuItem onClick={handleLogout}>{t('button.logout')}</MenuItem>
                         </Menu>
                     </>

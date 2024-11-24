@@ -1,306 +1,57 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "DOCSWAP is a platform designed for realtors to efficiently share, manage, and analyze documents on a neighborhood level. It enables realtors to make better use of the content created for each listing by organizing it into a searchable database that supports both uploads and downloads of documents. These documents are categorized to facilitate market analysis, putting the power of data directly into the hands of realtors and market analysts interested in housing information in the lower mainland.",
-        "title": "DOCSWAP API",
+        "description": "A Streaming app inspired by the OG's",
+        "title": "StreamBuster API",
         "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "DOC-SWAP Support",
-            "url": "http://www.doc-swap.com/support",
-            "email": "support@doc-swap.com"
-        },
+        "contact": {},
         "license": {
             "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "api.streambuster.xyz",
     "basePath": "/api/v1",
     "paths": {
-        "/category": {
-            "get": {
-                "description": "get all categories",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "categories"
-                ],
-                "summary": "Retrieve all categories",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Category"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/category/search": {
+        "/auth/login": {
             "post": {
-                "description": "Search for categories with the given search parameters",
+                "description": "Authenticates a user using the provided username and password, and returns a JWT token in a cookie if successful.",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "categories"
+                    "auth"
                 ],
-                "summary": "Search categories",
-                "parameters": [
-                    {
-                        "description": "Search object",
-                        "name": "searchObj",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/search.Search"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the category",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Category"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/category/{id}": {
-            "get": {
-                "description": "get a category",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "categories"
-                ],
-                "summary": "Retrieve a category",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Category ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Category"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/document/": {
-            "get": {
-                "description": "Get all documents from the database",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documents"
-                ],
-                "summary": "Retrieve all documents",
-                "parameters": [
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted documents",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full tag details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the document",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Document"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create multiple new document records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documents"
-                ],
-                "summary": "Create multiple new document records",
-                "parameters": [
-                    {
-                        "description": "Document objects",
-                        "name": "document",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Document"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully created the document records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to create document records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/document/bulk": {
-            "delete": {
-                "description": "Delete multiple document records using documentID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documents"
-                ],
-                "summary": "Delete multiple document records",
-                "parameters": [
-                    {
-                        "description": "Document objects that need to be deleted",
-                        "name": "documents",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Document"
-                            }
-                        }
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set too false to fully delete the document records",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the document records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to delete document records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/document/download": {
-            "get": {
-                "description": "Download a document by its file location",
-                "produces": [
-                    "application/octet-stream"
-                ],
-                "tags": [
-                    "documents"
-                ],
-                "summary": "Download document",
+                "summary": "Logs in valid users",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "File Location",
-                        "name": "fileLocation",
-                        "in": "query",
+                        "description": "Username",
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password",
+                        "name": "password",
+                        "in": "formData",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully downloaded the document",
+                        "description": "Successfully logged in, JWT set in cookie",
                         "schema": {
-                            "type": "file"
+                            "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Error: Bad Request",
+                        "description": "Invalid username or password",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -309,9 +60,181 @@
                 }
             }
         },
-        "/document/search": {
+        "/auth/logout": {
             "post": {
-                "description": "Search for documents with the given search parameters",
+                "description": "Clear all authentication tokens from cookies and log out the user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log out user",
+                "responses": {
+                    "200": {
+                        "description": "Logged out successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Register a user with email, password, first name, and last name",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Email of the user",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password of the user",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "First name of the user",
+                        "name": "firstName",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Last name of the user",
+                        "name": "lastName",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully created the user",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: User creation failed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/cdn/movie/{tmdbId}": {
+            "get": {
+                "description": "Retrieve HTML content for a movie based on the provided tmdbId",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "cdn"
+                ],
+                "summary": "Get movie content by tmdbId",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the movie",
+                        "name": "tmdbId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HTML content of the movie",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/cdn/tv/{tmdbId}/{seasonNum}/{episodeNum}": {
+            "get": {
+                "description": "Retrieve HTML content for a tv episode based on the provided tmdbId, season number and episode number",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/html"
+                ],
+                "tags": [
+                    "cdn"
+                ],
+                "summary": "Get movie content by tmdbId, season number and episode number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the movie",
+                        "name": "tmdbId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "season number of the episode",
+                        "name": "seasonNum",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "episode number of the episode",
+                        "name": "episodeNum",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HTML content of the movie",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/currently-watching/": {
+            "put": {
+                "description": "update a currently watching record",
                 "consumes": [
                     "application/json"
                 ],
@@ -319,39 +242,110 @@
                     "application/json"
                 ],
                 "tags": [
-                    "documents"
+                    "currently-watching"
                 ],
-                "summary": "Search documents",
+                "summary": "Update a currently watching record",
                 "parameters": [
                     {
-                        "description": "Search object",
-                        "name": "searchObj",
+                        "description": "CurrentlyWatching object that needs to be updated",
+                        "name": "watch",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/search.Search"
+                            "$ref": "#/definitions/db.CurrentlyWatching"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated the currently watching record",
+                        "schema": {
+                            "$ref": "#/definitions/db.CurrentlyWatching"
                         }
                     },
+                    "400": {
+                        "description": "Error: Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "create a new currently watching record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "currently-watching"
+                ],
+                "summary": "Create a new currently watching record",
+                "parameters": [
+                    {
+                        "description": "CurrentlyWatching object that needs to be created",
+                        "name": "watch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/db.CurrentlyWatching"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully created the currently watching record",
+                        "schema": {
+                            "$ref": "#/definitions/db.CurrentlyWatching"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/currently-watching/all": {
+            "get": {
+                "description": "get all currently watching records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "currently-watching"
+                ],
+                "summary": "Retrieve all currently watching records for the authenticated user",
+                "parameters": [
                     {
                         "type": "boolean",
                         "default": false,
-                        "description": "Set to true to include full tag details",
-                        "name": "full",
+                        "description": "Set to false to exclude soft deleted records",
+                        "name": "includeDeleted",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully retrieved the document",
+                        "description": "Successfully retrieved all currently watching records",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Document"
+                                "$ref": "#/definitions/db.CurrentlyWatching"
                             }
                         }
                     },
                     "400": {
-                        "description": "Error: Bad Request",
+                        "description": "Error: Record not found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -360,9 +354,29 @@
                 }
             }
         },
-        "/document/{documentId}": {
-            "delete": {
-                "description": "Delete a document records via its ID",
+        "/currently-watching/test": {
+            "get": {
+                "description": "Endpoint to test the controller",
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "currently-watching"
+                ],
+                "summary": "Test endpoint",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/currently-watching/watchlist": {
+            "get": {
+                "description": "get the user's watchlist",
                 "consumes": [
                     "application/json"
                 ],
@@ -370,36 +384,55 @@
                     "application/json"
                 ],
                 "tags": [
-                    "documents"
+                    "currently-watching"
                 ],
-                "summary": "Delete a document record",
+                "summary": "Retrieve the watchlist",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the watchlist",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/db.CurrentlyWatching"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to retrieve watchlist",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/currently-watching/{mediaId}/delete": {
+            "delete": {
+                "description": "delete a currently watching record",
+                "tags": [
+                    "currently-watching"
+                ],
+                "summary": "Delete a currently watching record",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Document ID",
-                        "name": "documentID",
+                        "type": "string",
+                        "description": "Media ID",
+                        "name": "mediaId",
                         "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set too false to fully delete the document record",
-                        "name": "softDelete",
-                        "in": "query",
                         "required": true
                     }
                 ],
                 "responses": {
                     "204": {
-                        "description": "Successfully deleted the document record",
+                        "description": "Successfully deleted the currently watching record",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
                         }
                     },
                     "400": {
-                        "description": "Error: Failed to delete the document record",
+                        "description": "Error: Failed to delete the record",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -408,9 +441,9 @@
                 }
             }
         },
-        "/document/{id}": {
+        "/currently-watching/{userID}/{mediaId}/": {
             "get": {
-                "description": "get document record by ID",
+                "description": "get a currently watching record",
                 "consumes": [
                     "application/json"
                 ],
@@ -418,627 +451,374 @@
                     "application/json"
                 ],
                 "tags": [
-                    "documents"
+                    "currently-watching"
                 ],
-                "summary": "Retrieve document record",
+                "summary": "Retrieve a currently watching record",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Document ID",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Media ID",
+                        "name": "mediaId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Set to false to exclude soft deleted record",
+                        "name": "includeDeleted",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the currently watching record",
+                        "schema": {
+                            "$ref": "#/definitions/db.CurrentlyWatching"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Record not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/llm/query": {
+            "post": {
+                "description": "Sends a list of messages to the LLM and retrieves a response",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "llm"
+                ],
+                "summary": "Query the LLM",
+                "parameters": [
+                    {
+                        "description": "Array of messages for LLM interaction",
+                        "name": "messages",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.Message"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Response from the LLM",
+                        "schema": {}
+                    },
+                    "400": {
+                        "description": "Error: Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Error: Failed to get response from LLM",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/media": {
+            "post": {
+                "description": "create a new media record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "Create a new media record",
+                "parameters": [
+                    {
+                        "description": "Media object that needs to be created",
+                        "name": "media",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/db.Media"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created the media record",
+                        "schema": {
+                            "$ref": "#/definitions/db.Media"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid request body or creation failed",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/media/by-id": {
+            "get": {
+                "description": "get a media record by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "Retrieve a media record by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Media ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the media record",
+                        "schema": {
+                            "$ref": "#/definitions/db.Media"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid media ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/media/by-tmdb-id": {
+            "get": {
+                "description": "get a media record by its TMDB ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "Retrieve a media record by TMDB ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "TMDB ID",
+                        "name": "tmdb_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the media record",
+                        "schema": {
+                            "$ref": "#/definitions/db.Media"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid TMDB ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/movie/{id}": {
+            "get": {
+                "description": "Retrieve the details of a movie from TMDB using the id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movie"
+                ],
+                "summary": "Get movie details by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the movie",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The movie record",
+                        "schema": {
+                            "$ref": "#/definitions/api.Movie"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/search/multi": {
+            "get": {
+                "description": "Get multimedia content based on the search query.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "search"
+                ],
+                "summary": "Retrieve multimedia search results",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search query for multimedia content",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved multimedia search results",
+                        "schema": {
+                            "type": "array",
+                            "items": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid or empty query, or no results found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/tv/{id}": {
+            "get": {
+                "description": "Retrieve the details of a tv show from TMDB using the id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tv"
+                ],
+                "summary": "Get tv show details by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the tv show",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The tv record",
+                        "schema": {
+                            "$ref": "#/definitions/api.TV"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Unable to procure content",
+                        "schema": {
+                            "type": "object"
+                        }
+                    }
+                }
+            }
+        },
+        "/tv/{id}/season/{seasonNum}/episodes": {
+            "get": {
+                "description": "Retrieve a list of episodes in a specific season of a tv show",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tv"
+                ],
+                "summary": "Get episodes of a show by season number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "tmdbId of the tv show",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted documents",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full tag details",
-                        "name": "full",
-                        "in": "query"
+                        "type": "number",
+                        "description": "the season number",
+                        "name": "seasonNum",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully retrieved the document",
-                        "schema": {
-                            "$ref": "#/definitions/models.Document"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/documenttag/": {
-            "get": {
-                "description": "Get all document tag records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documenttags"
-                ],
-                "summary": "Retrieve all document tag records",
-                "parameters": [
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted document tags",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full tag and document details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the list of document tag records",
+                        "description": "The list of tv records in that season",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.DocumentTag"
+                                "$ref": "#/definitions/api.TV"
                             }
                         }
                     },
                     "400": {
-                        "description": "Error: No document tag records found",
+                        "description": "Error: Unable to procure content",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new document tag record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documenttags"
-                ],
-                "summary": "Create a new document tag record",
-                "parameters": [
-                    {
-                        "description": "Document Tag object that needs to be created",
-                        "name": "documentTag",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.DocumentTag"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully created the document tag record",
-                        "schema": {
-                            "$ref": "#/definitions/models.DocumentTag"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to create document tag record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/documenttag/bulk": {
-            "post": {
-                "description": "Create multiple new document tag records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documenttags"
-                ],
-                "summary": "Create multiple new document tag records",
-                "parameters": [
-                    {
-                        "description": "Document Tag objects that need to be created",
-                        "name": "documentTags",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.DocumentTag"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully created the document tag records",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.DocumentTag"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to create document tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete multiple document tag records by their ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documenttags"
-                ],
-                "summary": "Delete multiple document tag records by their ID",
-                "parameters": [
-                    {
-                        "description": "Document Tag objects that need to be deleted",
-                        "name": "documentTags",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.DocumentTag"
-                            }
-                        }
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set to false to fully delete the document tag records",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the document tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to delete document tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/documenttag/{documentId}/{tagId}": {
-            "get": {
-                "description": "Get a document tag record by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documenttags"
-                ],
-                "summary": "Retrieve a document tag record by its ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Document ID",
-                        "name": "documentId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Tag ID",
-                        "name": "tagId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted document tags",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full document and tag details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the document tag record",
-                        "schema": {
-                            "$ref": "#/definitions/models.DocumentTag"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: No document tag record found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a document tag record by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "documenttags"
-                ],
-                "summary": "Delete a document tag record by its ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Document ID",
-                        "name": "documentId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Tag ID",
-                        "name": "tagId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set to false to fully delete the document tag record",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the document tag record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to delete document tag record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/tag/": {
-            "get": {
-                "description": "Get all tags from the database",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tags"
-                ],
-                "summary": "Retrieve all tags",
-                "parameters": [
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted tags",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full tag details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the tag",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Tag"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create multiple new tag records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tags"
-                ],
-                "summary": "Create multiple new tag records",
-                "parameters": [
-                    {
-                        "description": "Tag objects",
-                        "name": "tag",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Tag"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully created the tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to create tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/tag/bulk": {
-            "delete": {
-                "description": "Delete multiple tag records using tagID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tags"
-                ],
-                "summary": "Delete multiple tag records",
-                "parameters": [
-                    {
-                        "description": "Tag objects that need to be deleted",
-                        "name": "tags",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Tag"
-                            }
-                        }
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set to false to fully delete the tag records",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to delete tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/tag/search": {
-            "post": {
-                "description": "Search for tags with the given search parameters",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tags"
-                ],
-                "summary": "Search tags",
-                "parameters": [
-                    {
-                        "description": "Search object",
-                        "name": "searchObj",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/search.Search"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the tag",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Tag"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/tag/{id}": {
-            "get": {
-                "description": "get tag record by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tags"
-                ],
-                "summary": "Retrieve tag record",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Tag ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted tags",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full tag details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the tag",
-                        "schema": {
-                            "$ref": "#/definitions/models.Tag"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/tag/{tagId}": {
-            "delete": {
-                "description": "Delete a tag records via its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tags"
-                ],
-                "summary": "Delete a tag record",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Tag ID",
-                        "name": "tagID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set to false to fully delete the tag record",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the tag record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Failed to delete the tag record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "type": "object"
                         }
                     }
                 }
@@ -1124,43 +904,6 @@
                     },
                     "400": {
                         "description": "Error: Invalid request body",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/user/current": {
-            "put": {
-                "description": "update the authenticated user's record using external ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "users"
-                ],
-                "summary": "Update current user",
-                "responses": {
-                    "200": {
-                        "description": "Successfully updated the current user",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Invalid request body",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "404": {
-                        "description": "Error: User not found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -1342,612 +1085,229 @@
                     }
                 }
             }
-        },
-        "/userdocument/": {
-            "get": {
-                "description": "Get all user document records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "userdocuments"
-                ],
-                "summary": "Retrieve all user document records",
-                "parameters": [
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted user documents",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full user and document details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the list of user document records",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.UserDocument"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: No user document records found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new user document record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "userdocuments"
-                ],
-                "summary": "Create a new user document record",
-                "parameters": [
-                    {
-                        "description": "User Document object that needs to be created",
-                        "name": "userDocument",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UserDocument"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully created the user document record",
-                        "schema": {
-                            "$ref": "#/definitions/models.UserDocument"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to create user document record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/userdocument/bulk": {
-            "post": {
-                "description": "Create multiple new user document records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "userdocuments"
-                ],
-                "summary": "Create multiple new user document records",
-                "parameters": [
-                    {
-                        "description": "User Document objects that need to be created",
-                        "name": "userDocuments",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.UserDocument"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully created the user document records",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.UserDocument"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to create user document records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete multiple user document records by their ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "userdocuments"
-                ],
-                "summary": "Delete multiple user document records by their ID",
-                "parameters": [
-                    {
-                        "description": "User Document objects that need to be deleted",
-                        "name": "userDocuments",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.UserDocument"
-                            }
-                        }
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set to false to fully delete the user document records",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the user document records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to delete user document records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/userdocument/{userId}/{documentId}": {
-            "get": {
-                "description": "Get a user document record by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "userdocuments"
-                ],
-                "summary": "Retrieve a user document record by its ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "userId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Document ID",
-                        "name": "documentId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted user documents",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full user and document details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the user document record",
-                        "schema": {
-                            "$ref": "#/definitions/models.UserDocument"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: No user document record found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a user document record by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "userdocuments"
-                ],
-                "summary": "Delete a user document record by its ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "userId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Document ID",
-                        "name": "documentId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set to false to fully delete the user document record",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the user document record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to delete user document record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/usertag/": {
-            "get": {
-                "description": "Get all user Tag records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "UserTags"
-                ],
-                "summary": "Retrieve all user Tag records",
-                "parameters": [
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted user Tags",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full user and Tag details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the list of user Tag records",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.UserTag"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: No user Tag records found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new user Tag record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "UserTags"
-                ],
-                "summary": "Create a new user Tag record",
-                "parameters": [
-                    {
-                        "description": "User Tag object that needs to be created",
-                        "name": "UserTag",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.UserTag"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully created the user Tag record",
-                        "schema": {
-                            "$ref": "#/definitions/models.UserTag"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to create user Tag record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/usertag/bulk": {
-            "post": {
-                "description": "Create multiple new user Tag records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "UserTags"
-                ],
-                "summary": "Create multiple new user Tag records",
-                "parameters": [
-                    {
-                        "description": "User Tag objects that need to be created",
-                        "name": "UserTags",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.UserTag"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully created the user Tag records",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.UserTag"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to create user Tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete multiple user Tag records by their ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "UserTags"
-                ],
-                "summary": "Delete multiple user Tag records by their ID",
-                "parameters": [
-                    {
-                        "description": "User Tag objects that need to be deleted",
-                        "name": "UserTags",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.UserTag"
-                            }
-                        }
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set to false to fully delete the user Tag records",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the user Tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to delete user Tag records",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/usertag/{userId}/{TagId}": {
-            "delete": {
-                "description": "Delete a user Tag record by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "UserTags"
-                ],
-                "summary": "Delete a user Tag record by its ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "userId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Tag ID",
-                        "name": "TagId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Set to false to fully delete the user Tag record",
-                        "name": "softDelete",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Successfully deleted the user Tag record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    },
-                    "400": {
-                        "description": "Error: Unable to delete user Tag record",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
-        },
-        "/usertag/{userId}/{tagId}": {
-            "get": {
-                "description": "Get a user Tag record by its ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "UserTags"
-                ],
-                "summary": "Retrieve a user Tag record by its ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "userId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Tag ID",
-                        "name": "TagId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include soft deleted user Tags",
-                        "name": "includeDeleted",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Set to true to include full user and Tag details",
-                        "name": "full",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved the user Tag record",
-                        "schema": {
-                            "$ref": "#/definitions/models.UserTag"
-                        }
-                    },
-                    "400": {
-                        "description": "Error: No user Tag record found",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
-        "models.Category": {
+        "api.Episode": {
             "type": "object",
             "properties": {
+                "episodeNumber": {
+                    "type": "integer"
+                },
+                "episodeTMDBID": {
+                    "type": "integer"
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaID": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "overview": {
+                    "type": "string"
+                },
+                "runtime": {
+                    "type": "integer"
+                },
+                "seasonNumber": {
+                    "type": "integer"
+                },
+                "stillPath": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Message": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.Movie": {
+            "type": "object",
+            "properties": {
+                "backdropImage": {
+                    "type": "string"
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaID": {
+                    "type": "integer"
+                },
+                "releaseDate": {
+                    "type": "string"
+                },
+                "runtime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.Season": {
+            "type": "object",
+            "properties": {
+                "episodeCount": {
+                    "type": "integer"
+                },
+                "episodes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Episode"
+                    }
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaID": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "overview": {
+                    "type": "string"
+                },
+                "posterPath": {
+                    "type": "string"
+                },
+                "seasonNumber": {
+                    "type": "integer"
+                },
+                "seasonTMDBID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.TV": {
+            "type": "object",
+            "properties": {
+                "backdropImage": {
+                    "type": "string"
+                },
+                "episodeCount": {
+                    "type": "integer"
+                },
+                "firstAirDate": {
+                    "type": "string"
+                },
+                "lastAirDate": {
+                    "type": "string"
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaID": {
+                    "type": "integer"
+                },
+                "seasonCount": {
+                    "type": "integer"
+                },
+                "seasons": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Season"
+                    }
+                }
+            }
+        },
+        "db.CurrentlyWatching": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "episodeNumber": {
+                    "type": "integer"
+                },
+                "media": {
+                    "$ref": "#/definitions/db.Media"
+                },
+                "mediaId": {
+                    "type": "integer"
+                },
+                "seasonNumber": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "db.Genre": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "db.Media": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "genres": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/db.Genre"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "mediaType": {
+                    "$ref": "#/definitions/db.MediaType"
+                },
+                "mediaTypeId": {
+                    "type": "integer"
+                },
+                "overview": {
+                    "type": "string"
+                },
+                "posterImage": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "tmdbid": {
+                    "type": "integer"
+                }
+            }
+        },
+        "db.MediaType": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -1956,18 +1316,15 @@
                 },
                 "name": {
                     "type": "string"
-                },
-                "parent": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "parentID": {
-                    "type": "integer"
                 }
             }
         },
         "models.Config": {
             "type": "object",
             "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
                 "deletedAt": {
                     "type": "string"
                 },
@@ -1982,208 +1339,66 @@
                 }
             }
         },
-        "models.Document": {
-            "type": "object",
-            "properties": {
-                "additionalDetails": {
-                    "type": "string"
-                },
-                "address": {
-                    "type": "string"
-                },
-                "approvedAt": {
-                    "type": "string"
-                },
-                "approvedBy": {
-                    "type": "integer"
-                },
-                "approvedByUser": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "categoryID": {
-                    "type": "integer"
-                },
-                "creditValue": {
-                    "type": "integer"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "fileName": {
-                    "type": "string"
-                },
-                "filePath": {
-                    "type": "string"
-                },
-                "fileStorageURL": {
-                    "type": "string"
-                },
-                "fileType": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.DocumentTag"
-                    }
-                },
-                "uploadedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.DocumentTag": {
-            "type": "object",
-            "properties": {
-                "deletedAt": {
-                    "type": "string"
-                },
-                "document": {
-                    "$ref": "#/definitions/models.Document"
-                },
-                "documentID": {
-                    "type": "integer"
-                },
-                "tag": {
-                    "$ref": "#/definitions/models.Tag"
-                },
-                "tagID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Permission": {
-            "type": "object",
-            "properties": {
-                "deletedAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.RolePermission"
-                    }
-                }
-            }
-        },
         "models.Role": {
             "type": "object",
             "properties": {
-                "deletedAt": {
-                    "type": "string"
-                },
-                "description": {
+                "createdAt": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
+                "maxRequestCount": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string"
                 },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.RolePermission"
-                    }
-                },
-                "users": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UserRole"
-                    }
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
-        "models.RolePermission": {
+        "models.Usage": {
             "type": "object",
             "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
                 "deletedAt": {
                     "type": "string"
-                },
-                "permission": {
-                    "$ref": "#/definitions/models.Permission"
-                },
-                "permissionID": {
-                    "type": "integer"
-                },
-                "role": {
-                    "$ref": "#/definitions/models.Role"
-                },
-                "roleID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.Tag": {
-            "type": "object",
-            "properties": {
-                "deletedAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "documents": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.DocumentTag"
-                    }
                 },
                 "id": {
                     "type": "integer"
                 },
-                "name": {
+                "requestCount": {
+                    "type": "integer"
+                },
+                "updatedAt": {
                     "type": "string"
+                },
+                "userID": {
+                    "description": "Ensure uniqueness for one-to-one relationship",
+                    "type": "integer"
                 }
             }
         },
         "models.User": {
             "type": "object",
             "properties": {
-                "authenticationType": {
-                    "type": "string"
-                },
-                "biography": {
-                    "type": "string"
-                },
                 "configs": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.UserConfig"
                     }
                 },
+                "createdAt": {
+                    "type": "string"
+                },
                 "deletedAt": {
                     "type": "string"
                 },
-                "documents": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.UserDocument"
-                    }
-                },
                 "email": {
-                    "type": "string"
-                },
-                "externalUserID": {
                     "type": "string"
                 },
                 "firstName": {
@@ -2195,14 +1410,17 @@
                 "lastName": {
                     "type": "string"
                 },
-                "roles": {
+                "password": {
+                    "type": "string"
+                },
+                "usage": {
+                    "$ref": "#/definitions/models.Usage"
+                },
+                "userRoles": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.UserRole"
                     }
-                },
-                "username": {
-                    "type": "string"
                 }
             }
         },
@@ -2215,31 +1433,11 @@
                 "configID": {
                     "type": "integer"
                 },
-                "deletedAt": {
+                "createdAt": {
                     "type": "string"
                 },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "models.UserDocument": {
-            "type": "object",
-            "properties": {
                 "deletedAt": {
                     "type": "string"
-                },
-                "document": {
-                    "$ref": "#/definitions/models.Document"
-                },
-                "documentID": {
-                    "type": "integer"
-                },
-                "isOwner": {
-                    "type": "boolean"
                 },
                 "user": {
                     "$ref": "#/definitions/models.User"
@@ -2252,9 +1450,6 @@
         "models.UserRole": {
             "type": "object",
             "properties": {
-                "deletedAt": {
-                    "type": "string"
-                },
                 "role": {
                     "$ref": "#/definitions/models.Role"
                 },
@@ -2262,101 +1457,15 @@
                     "type": "integer"
                 },
                 "user": {
-                    "$ref": "#/definitions/models.User"
+                    "description": "Optional associations for eager loading",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    ]
                 },
                 "userID": {
                     "type": "integer"
-                }
-            }
-        },
-        "models.UserTag": {
-            "type": "object",
-            "properties": {
-                "deletedAt": {
-                    "type": "string"
-                },
-                "tag": {
-                    "$ref": "#/definitions/models.Tag"
-                },
-                "tagID": {
-                    "type": "integer"
-                },
-                "user": {
-                    "$ref": "#/definitions/models.User"
-                },
-                "userID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "search.LogicalOperator": {
-            "type": "string",
-            "enum": [
-                "AND",
-                "OR"
-            ],
-            "x-enum-varnames": [
-                "And",
-                "Or"
-            ]
-        },
-        "search.Operator": {
-            "type": "string",
-            "enum": [
-                "=",
-                "!=",
-                "\u003e",
-                "\u003e=",
-                "\u003c",
-                "\u003c=",
-                "LIKE",
-                "NOT LIKE",
-                "IN",
-                "NOT IN",
-                "IS NULL",
-                "IS NOT NULL"
-            ],
-            "x-enum-varnames": [
-                "Equal",
-                "NotEqual",
-                "GreaterThan",
-                "GreaterThanOrEqual",
-                "LessThan",
-                "LessThanOrEqual",
-                "Like",
-                "NotLike",
-                "In",
-                "NotIn",
-                "IsNull",
-                "IsNotNull"
-            ]
-        },
-        "search.Param": {
-            "type": "object",
-            "properties": {
-                "AssociationForeignKey": {
-                    "type": "string"
-                },
-                "Field": {
-                    "type": "string"
-                },
-                "Operator": {
-                    "$ref": "#/definitions/search.Operator"
-                },
-                "Value": {}
-            }
-        },
-        "search.Search": {
-            "type": "object",
-            "properties": {
-                "LogicalOperator": {
-                    "$ref": "#/definitions/search.LogicalOperator"
-                },
-                "Params": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/search.Param"
-                    }
                 }
             }
         }
@@ -2367,7 +1476,7 @@
         }
     },
     "externalDocs": {
-        "description": "OpenAPI Specification for DOCSWAP",
+        "description": "OpenAPI Specification for StreamBuster",
         "url": "https://swagger.io/resources/open-api/"
     }
 }

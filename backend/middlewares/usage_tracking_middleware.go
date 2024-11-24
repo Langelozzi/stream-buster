@@ -2,27 +2,28 @@ package middlewares
 
 import (
 	"errors"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/utils/auth"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"log"
-	"time"
 )
 
 // UsageTrackingMiddleware tracks the number of requests made by the user
 func UsageTrackingMiddleware(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Extract user info from the context
-		user, err := auth.GetUserFromContext(c)
-		if err != nil {
-			c.Next() // User not authenticated, just proceed
-			return
-		}
-
 		// Get the endpoint path and userid
 		endpointPath := c.FullPath()
-		userID := user.ID
+
+		user, err := auth.GetUserFromContext(c)
+		if err != nil {
+			c.Redirect(http.StatusUnauthorized, "/login")
+		}
+
+		userID := uint(user.ID) // Assuming "id" is part of the claims
 
 		var endpoint models.Endpoint
 		if err := db.Where("path = ?", endpointPath).First(&endpoint).Error; err != nil {

@@ -6,15 +6,16 @@ import (
 )
 
 type CurrentlyWatching struct {
-	UserID uint         `gorm:"foreignKey:ID"`
+	UserID uint         `gorm:"primaryKey"`
 	User   *models.User `gorm:"constraint:OnDelete:CASCADE;"`
 
-	MediaId uint   `gorm:"foreignKey:ID"`
+	MediaId uint   `gorm:"primaryKey"`
 	Media   *Media `gorm:"constraint:OnDelete:SET NULL;"`
 
 	EpisodeNumber int
 	SeasonNumber  int
 
-	DeletedAt *time.Time `gorm:"index"` // Use pointer to allow null
-	CreatedAt *time.Time `gorm:"index"` // Use pointer to allow null
+	UpdatedAt *time.Time `gorm:"index"`
+	DeletedAt *time.Time `gorm:"index"`
+	CreatedAt *time.Time `gorm:"index"`
 }

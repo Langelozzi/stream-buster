@@ -1,20 +1,160 @@
 basePath: /api/v1
 definitions:
-  models.Category:
+  api.Episode:
     properties:
+      episodeNumber:
+        type: integer
+      episodeTMDBID:
+        type: integer
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaID:
+        type: integer
+      name:
+        type: string
+      overview:
+        type: string
+      runtime:
+        type: integer
+      seasonNumber:
+        type: integer
+      stillPath:
+        type: string
+    type: object
+  api.Message:
+    properties:
+      content:
+        type: string
+      role:
+        type: string
+    type: object
+  api.Movie:
+    properties:
+      backdropImage:
+        type: string
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaID:
+        type: integer
+      releaseDate:
+        type: string
+      runtime:
+        type: integer
+    type: object
+  api.Season:
+    properties:
+      episodeCount:
+        type: integer
+      episodes:
+        items:
+          $ref: '#/definitions/api.Episode'
+        type: array
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaID:
+        type: integer
+      name:
+        type: string
+      overview:
+        type: string
+      posterPath:
+        type: string
+      seasonNumber:
+        type: integer
+      seasonTMDBID:
+        type: integer
+    type: object
+  api.TV:
+    properties:
+      backdropImage:
+        type: string
+      episodeCount:
+        type: integer
+      firstAirDate:
+        type: string
+      lastAirDate:
+        type: string
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaID:
+        type: integer
+      seasonCount:
+        type: integer
+      seasons:
+        items:
+          $ref: '#/definitions/api.Season'
+        type: array
+    type: object
+  db.CurrentlyWatching:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      episodeNumber:
+        type: integer
+      media:
+        $ref: '#/definitions/db.Media'
+      mediaId:
+        type: integer
+      seasonNumber:
+        type: integer
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
+    type: object
+  db.Genre:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  db.Media:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      genres:
+        items:
+          $ref: '#/definitions/db.Genre'
+        type: array
+      id:
+        type: integer
+      mediaType:
+        $ref: '#/definitions/db.MediaType'
+      mediaTypeId:
+        type: integer
+      overview:
+        type: string
+      posterImage:
+        type: string
+      title:
+        type: string
+      tmdbid:
+        type: integer
+    type: object
+  db.MediaType:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
       description:
         type: string
       id:
         type: integer
       name:
         type: string
-      parent:
-        $ref: '#/definitions/models.Category'
-      parentID:
-        type: integer
     type: object
   models.Config:
     properties:
+      createdAt:
+        type: string
       deletedAt:
         type: string
       id:
@@ -24,139 +164,46 @@ definitions:
       value:
         type: string
     type: object
-  models.Document:
-    properties:
-      additionalDetails:
-        type: string
-      address:
-        type: string
-      approvedAt:
-        type: string
-      approvedBy:
-        type: integer
-      approvedByUser:
-        $ref: '#/definitions/models.User'
-      category:
-        $ref: '#/definitions/models.Category'
-      categoryID:
-        type: integer
-      creditValue:
-        type: integer
-      deletedAt:
-        type: string
-      description:
-        type: string
-      fileName:
-        type: string
-      filePath:
-        type: string
-      fileStorageURL:
-        type: string
-      fileType:
-        type: string
-      id:
-        type: integer
-      tags:
-        items:
-          $ref: '#/definitions/models.DocumentTag'
-        type: array
-      uploadedAt:
-        type: string
-    type: object
-  models.DocumentTag:
-    properties:
-      deletedAt:
-        type: string
-      document:
-        $ref: '#/definitions/models.Document'
-      documentID:
-        type: integer
-      tag:
-        $ref: '#/definitions/models.Tag'
-      tagID:
-        type: integer
-    type: object
-  models.Permission:
-    properties:
-      deletedAt:
-        type: string
-      description:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      roles:
-        items:
-          $ref: '#/definitions/models.RolePermission'
-        type: array
-    type: object
   models.Role:
     properties:
-      deletedAt:
-        type: string
-      description:
+      createdAt:
         type: string
       id:
         type: integer
+      maxRequestCount:
+        type: integer
       name:
         type: string
-      permissions:
-        items:
-          $ref: '#/definitions/models.RolePermission'
-        type: array
-      users:
-        items:
-          $ref: '#/definitions/models.UserRole'
-        type: array
+      updatedAt:
+        type: string
     type: object
-  models.RolePermission:
+  models.Usage:
     properties:
+      createdAt:
+        type: string
       deletedAt:
         type: string
-      permission:
-        $ref: '#/definitions/models.Permission'
-      permissionID:
-        type: integer
-      role:
-        $ref: '#/definitions/models.Role'
-      roleID:
-        type: integer
-    type: object
-  models.Tag:
-    properties:
-      deletedAt:
-        type: string
-      description:
-        type: string
-      documents:
-        items:
-          $ref: '#/definitions/models.DocumentTag'
-        type: array
       id:
         type: integer
-      name:
+      requestCount:
+        type: integer
+      updatedAt:
         type: string
+      userID:
+        description: Ensure uniqueness for one-to-one relationship
+        type: integer
     type: object
   models.User:
     properties:
-      authenticationType:
-        type: string
-      biography:
-        type: string
       configs:
         items:
           $ref: '#/definitions/models.UserConfig'
         type: array
+      createdAt:
+        type: string
       deletedAt:
         type: string
-      documents:
-        items:
-          $ref: '#/definitions/models.UserDocument'
-        type: array
       email:
-        type: string
-      externalUserID:
         type: string
       firstName:
         type: string
@@ -164,12 +211,14 @@ definitions:
         type: integer
       lastName:
         type: string
-      roles:
+      password:
+        type: string
+      usage:
+        $ref: '#/definitions/models.Usage'
+      userRoles:
         items:
           $ref: '#/definitions/models.UserRole'
         type: array
-      username:
-        type: string
     type: object
   models.UserConfig:
     properties:
@@ -177,23 +226,10 @@ definitions:
         $ref: '#/definitions/models.Config'
       configID:
         type: integer
+      createdAt:
+        type: string
       deletedAt:
         type: string
-      user:
-        $ref: '#/definitions/models.User'
-      userID:
-        type: integer
-    type: object
-  models.UserDocument:
-    properties:
-      deletedAt:
-        type: string
-      document:
-        $ref: '#/definitions/models.Document'
-      documentID:
-        type: integer
-      isOwner:
-        type: boolean
       user:
         $ref: '#/definitions/models.User'
       userID:
@@ -201,801 +237,573 @@ definitions:
     type: object
   models.UserRole:
     properties:
-      deletedAt:
-        type: string
       role:
         $ref: '#/definitions/models.Role'
       roleID:
         type: integer
       user:
-        $ref: '#/definitions/models.User'
+        allOf:
+        - $ref: '#/definitions/models.User'
+        description: Optional associations for eager loading
       userID:
         type: integer
-    type: object
-  models.UserTag:
-    properties:
-      deletedAt:
-        type: string
-      tag:
-        $ref: '#/definitions/models.Tag'
-      tagID:
-        type: integer
-      user:
-        $ref: '#/definitions/models.User'
-      userID:
-        type: integer
-    type: object
-  search.LogicalOperator:
-    enum:
-    - AND
-    - OR
-    type: string
-    x-enum-varnames:
-    - And
-    - Or
-  search.Operator:
-    enum:
-    - =
-    - '!='
-    - '>'
-    - '>='
-    - <
-    - <=
-    - LIKE
-    - NOT LIKE
-    - IN
-    - NOT IN
-    - IS NULL
-    - IS NOT NULL
-    type: string
-    x-enum-varnames:
-    - Equal
-    - NotEqual
-    - GreaterThan
-    - GreaterThanOrEqual
-    - LessThan
-    - LessThanOrEqual
-    - Like
-    - NotLike
-    - In
-    - NotIn
-    - IsNull
-    - IsNotNull
-  search.Param:
-    properties:
-      AssociationForeignKey:
-        type: string
-      Field:
-        type: string
-      Operator:
-        $ref: '#/definitions/search.Operator'
-      Value: {}
-    type: object
-  search.Search:
-    properties:
-      LogicalOperator:
-        $ref: '#/definitions/search.LogicalOperator'
-      Params:
-        items:
-          $ref: '#/definitions/search.Param'
-        type: array
     type: object
 externalDocs:
-  description: OpenAPI Specification for DOCSWAP
+  description: OpenAPI Specification for StreamBuster
   url: https://swagger.io/resources/open-api/
-host: localhost:8080
+host: api.streambuster.xyz
 info:
-  contact:
-    email: support@doc-swap.com
-    name: DOC-SWAP Support
-    url: http://www.doc-swap.com/support
-  description: DOCSWAP is a platform designed for realtors to efficiently share, manage,
-    and analyze documents on a neighborhood level. It enables realtors to make better
-    use of the content created for each listing by organizing it into a searchable
-    database that supports both uploads and downloads of documents. These documents
-    are categorized to facilitate market analysis, putting the power of data directly
-    into the hands of realtors and market analysts interested in housing information
-    in the lower mainland.
+  contact: {}
+  description: A Streaming app inspired by the OG's
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: DOCSWAP API
+  title: StreamBuster API
   version: "1.0"
 paths:
-  /category:
-    get:
-      consumes:
-      - application/json
-      description: get all categories
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Category'
-            type: array
-        "400":
-          description: 'Error: Bad Request'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve all categories
-      tags:
-      - categories
-  /category/{id}:
-    get:
-      consumes:
-      - application/json
-      description: get a category
-      parameters:
-      - description: Category ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Category'
-        "400":
-          description: 'Error: Bad Request'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve a category
-      tags:
-      - categories
-  /category/search:
+  /auth/login:
     post:
       consumes:
-      - application/json
-      description: Search for categories with the given search parameters
+      - application/x-www-form-urlencoded
+      description: Authenticates a user using the provided username and password,
+        and returns a JWT token in a cookie if successful.
       parameters:
-      - description: Search object
-        in: body
-        name: searchObj
+      - description: Username
+        in: formData
+        name: username
         required: true
-        schema:
-          $ref: '#/definitions/search.Search'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the category
-          schema:
-            items:
-              $ref: '#/definitions/models.Category'
-            type: array
-        "400":
-          description: 'Error: Bad Request'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Search categories
-      tags:
-      - categories
-  /document/:
-    get:
-      description: Get all documents from the database
-      parameters:
-      - default: false
-        description: Set to true to include soft deleted documents
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full tag details
-        in: query
-        name: full
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the document
-          schema:
-            items:
-              $ref: '#/definitions/models.Document'
-            type: array
-        "400":
-          description: 'Error: Bad Request'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve all documents
-      tags:
-      - documents
-    post:
-      consumes:
-      - application/json
-      description: Create multiple new document records
-      parameters:
-      - description: Document objects
-        in: body
-        name: document
-        required: true
-        schema:
-          $ref: '#/definitions/models.Document'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Successfully created the document records
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to create document records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Create multiple new document records
-      tags:
-      - documents
-  /document/{documentId}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a document records via its ID
-      parameters:
-      - description: Document ID
-        in: path
-        name: documentID
-        required: true
-        type: integer
-      - default: true
-        description: Set too false to fully delete the document record
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the document record
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Failed to delete the document record'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete a document record
-      tags:
-      - documents
-  /document/{id}:
-    get:
-      consumes:
-      - application/json
-      description: get document record by ID
-      parameters:
-      - description: Document ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - default: false
-        description: Set to true to include soft deleted documents
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full tag details
-        in: query
-        name: full
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the document
-          schema:
-            $ref: '#/definitions/models.Document'
-        "400":
-          description: 'Error: Bad Request'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve document record
-      tags:
-      - documents
-  /document/bulk:
-    delete:
-      consumes:
-      - application/json
-      description: Delete multiple document records using documentID
-      parameters:
-      - description: Document objects that need to be deleted
-        in: body
-        name: documents
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Document'
-          type: array
-      - default: true
-        description: Set too false to fully delete the document records
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the document records
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to delete document records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete multiple document records
-      tags:
-      - documents
-  /document/download:
-    get:
-      description: Download a document by its file location
-      parameters:
-      - description: File Location
-        in: query
-        name: fileLocation
+        type: string
+      - description: Password
+        in: formData
+        name: password
         required: true
         type: string
       produces:
-      - application/octet-stream
+      - application/json
       responses:
         "200":
-          description: Successfully downloaded the document
+          description: Successfully logged in, JWT set in cookie
           schema:
-            type: file
+            type: string
         "400":
-          description: 'Error: Bad Request'
+          description: Invalid username or password
           schema:
             additionalProperties: true
             type: object
-      summary: Download document
+      summary: Logs in valid users
       tags:
-      - documents
-  /document/search:
+      - auth
+  /auth/logout:
     post:
-      consumes:
-      - application/json
-      description: Search for documents with the given search parameters
-      parameters:
-      - description: Search object
-        in: body
-        name: searchObj
-        required: true
-        schema:
-          $ref: '#/definitions/search.Search'
-      - default: false
-        description: Set to true to include full tag details
-        in: query
-        name: full
-        type: boolean
+      description: Clear all authentication tokens from cookies and log out the user
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully retrieved the document
+          description: Logged out successfully
           schema:
-            items:
-              $ref: '#/definitions/models.Document'
-            type: array
-        "400":
-          description: 'Error: Bad Request'
-          schema:
-            additionalProperties: true
+            additionalProperties:
+              type: string
             type: object
-      summary: Search documents
+      summary: Log out user
       tags:
-      - documents
-  /documenttag/:
-    get:
-      consumes:
-      - application/json
-      description: Get all document tag records
-      parameters:
-      - default: false
-        description: Set to true to include soft deleted document tags
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full tag and document details
-        in: query
-        name: full
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the list of document tag records
-          schema:
-            items:
-              $ref: '#/definitions/models.DocumentTag'
-            type: array
-        "400":
-          description: 'Error: No document tag records found'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve all document tag records
-      tags:
-      - documenttags
+      - auth
+  /auth/register:
     post:
       consumes:
-      - application/json
-      description: Create a new document tag record
+      - application/x-www-form-urlencoded
+      description: Register a user with email, password, first name, and last name
       parameters:
-      - description: Document Tag object that needs to be created
-        in: body
-        name: documentTag
+      - description: Email of the user
+        in: formData
+        name: email
         required: true
-        schema:
-          $ref: '#/definitions/models.DocumentTag'
+        type: string
+      - description: Password of the user
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: First name of the user
+        in: formData
+        name: firstName
+        required: true
+        type: string
+      - description: Last name of the user
+        in: formData
+        name: lastName
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "201":
-          description: Successfully created the document tag record
+          description: Successfully created the user
           schema:
-            $ref: '#/definitions/models.DocumentTag'
+            $ref: '#/definitions/models.User'
         "400":
-          description: 'Error: Unable to create document tag record'
+          description: 'Error: User creation failed'
           schema:
-            additionalProperties: true
-            type: object
-      summary: Create a new document tag record
+            type: string
+      summary: Register a new user
       tags:
-      - documenttags
-  /documenttag/{documentId}/{tagId}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a document tag record by its ID
-      parameters:
-      - description: Document ID
-        in: path
-        name: documentId
-        required: true
-        type: integer
-      - description: Tag ID
-        in: path
-        name: tagId
-        required: true
-        type: integer
-      - default: true
-        description: Set to false to fully delete the document tag record
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the document tag record
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to delete document tag record'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete a document tag record by its ID
-      tags:
-      - documenttags
+      - auth
+  /cdn/movie/{tmdbId}:
     get:
       consumes:
       - application/json
-      description: Get a document tag record by its ID
+      description: Retrieve HTML content for a movie based on the provided tmdbId
       parameters:
-      - description: Document ID
+      - description: tmdbId of the movie
         in: path
-        name: documentId
+        name: tmdbId
+        required: true
+        type: string
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML content of the movie
+          schema:
+            type: string
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get movie content by tmdbId
+      tags:
+      - cdn
+  /cdn/tv/{tmdbId}/{seasonNum}/{episodeNum}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve HTML content for a tv episode based on the provided tmdbId,
+        season number and episode number
+      parameters:
+      - description: tmdbId of the movie
+        in: path
+        name: tmdbId
+        required: true
+        type: string
+      - description: season number of the episode
+        in: path
+        name: seasonNum
+        required: true
+        type: number
+      - description: episode number of the episode
+        in: path
+        name: episodeNum
+        required: true
+        type: number
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML content of the movie
+          schema:
+            type: string
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get movie content by tmdbId, season number and episode number
+      tags:
+      - cdn
+  /currently-watching/:
+    post:
+      consumes:
+      - application/json
+      description: create a new currently watching record
+      parameters:
+      - description: CurrentlyWatching object that needs to be created
+        in: body
+        name: watch
+        required: true
+        schema:
+          $ref: '#/definitions/db.CurrentlyWatching'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created the currently watching record
+          schema:
+            $ref: '#/definitions/db.CurrentlyWatching'
+        "400":
+          description: 'Error: Invalid request body'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new currently watching record
+      tags:
+      - currently-watching
+    put:
+      consumes:
+      - application/json
+      description: update a currently watching record
+      parameters:
+      - description: CurrentlyWatching object that needs to be updated
+        in: body
+        name: watch
+        required: true
+        schema:
+          $ref: '#/definitions/db.CurrentlyWatching'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated the currently watching record
+          schema:
+            $ref: '#/definitions/db.CurrentlyWatching'
+        "400":
+          description: 'Error: Invalid request body'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update a currently watching record
+      tags:
+      - currently-watching
+  /currently-watching/{mediaId}/delete:
+    delete:
+      description: delete a currently watching record
+      parameters:
+      - description: Media ID
+        in: path
+        name: mediaId
+        required: true
+        type: string
+      responses:
+        "204":
+          description: Successfully deleted the currently watching record
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Error: Failed to delete the record'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a currently watching record
+      tags:
+      - currently-watching
+  /currently-watching/{userID}/{mediaId}/:
+    get:
+      consumes:
+      - application/json
+      description: get a currently watching record
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
         required: true
         type: integer
-      - description: Tag ID
+      - description: Media ID
         in: path
-        name: tagId
+        name: mediaId
         required: true
-        type: integer
+        type: string
       - default: false
-        description: Set to true to include soft deleted document tags
+        description: Set to false to exclude soft deleted record
         in: query
         name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full document and tag details
-        in: query
-        name: full
         type: boolean
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully retrieved the document tag record
+          description: Successfully retrieved the currently watching record
           schema:
-            $ref: '#/definitions/models.DocumentTag'
+            $ref: '#/definitions/db.CurrentlyWatching'
         "400":
-          description: 'Error: No document tag record found'
+          description: 'Error: Record not found'
           schema:
             additionalProperties: true
             type: object
-      summary: Retrieve a document tag record by its ID
+      summary: Retrieve a currently watching record
       tags:
-      - documenttags
-  /documenttag/bulk:
-    delete:
+      - currently-watching
+  /currently-watching/all:
+    get:
       consumes:
       - application/json
-      description: Delete multiple document tag records by their ID
+      description: get all currently watching records
       parameters:
-      - description: Document Tag objects that need to be deleted
+      - default: false
+        description: Set to false to exclude soft deleted records
+        in: query
+        name: includeDeleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved all currently watching records
+          schema:
+            items:
+              $ref: '#/definitions/db.CurrentlyWatching'
+            type: array
+        "400":
+          description: 'Error: Record not found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve all currently watching records for the authenticated user
+      tags:
+      - currently-watching
+  /currently-watching/test:
+    get:
+      description: Endpoint to test the controller
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+      summary: Test endpoint
+      tags:
+      - currently-watching
+  /currently-watching/watchlist:
+    get:
+      consumes:
+      - application/json
+      description: get the user's watchlist
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the watchlist
+          schema:
+            items:
+              $ref: '#/definitions/db.CurrentlyWatching'
+            type: array
+        "400":
+          description: 'Error: Unable to retrieve watchlist'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve the watchlist
+      tags:
+      - currently-watching
+  /llm/query:
+    post:
+      consumes:
+      - application/json
+      description: Sends a list of messages to the LLM and retrieves a response
+      parameters:
+      - description: Array of messages for LLM interaction
         in: body
-        name: documentTags
+        name: messages
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.DocumentTag'
+            $ref: '#/definitions/api.Message'
           type: array
-      - default: true
-        description: Set to false to fully delete the document tag records
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the document tag records
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to delete document tag records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete multiple document tag records by their ID
-      tags:
-      - documenttags
-    post:
-      consumes:
-      - application/json
-      description: Create multiple new document tag records
-      parameters:
-      - description: Document Tag objects that need to be created
-        in: body
-        name: documentTags
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.DocumentTag'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Successfully created the document tag records
-          schema:
-            items:
-              $ref: '#/definitions/models.DocumentTag'
-            type: array
-        "400":
-          description: 'Error: Unable to create document tag records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Create multiple new document tag records
-      tags:
-      - documenttags
-  /tag/:
-    get:
-      description: Get all tags from the database
-      parameters:
-      - default: false
-        description: Set to true to include soft deleted tags
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full tag details
-        in: query
-        name: full
-        type: boolean
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully retrieved the tag
-          schema:
-            items:
-              $ref: '#/definitions/models.Tag'
-            type: array
+          description: Response from the LLM
+          schema: {}
         "400":
-          description: 'Error: Bad Request'
+          description: 'Error: Invalid request body'
           schema:
             additionalProperties: true
             type: object
-      summary: Retrieve all tags
+        "500":
+          description: 'Error: Failed to get response from LLM'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Query the LLM
       tags:
-      - tags
+      - llm
+  /media:
     post:
       consumes:
       - application/json
-      description: Create multiple new tag records
+      description: create a new media record
       parameters:
-      - description: Tag objects
+      - description: Media object that needs to be created
         in: body
-        name: tag
+        name: media
         required: true
         schema:
-          $ref: '#/definitions/models.Tag'
+          $ref: '#/definitions/db.Media'
       produces:
       - application/json
       responses:
-        "201":
-          description: Successfully created the tag records
+        "200":
+          description: Successfully created the media record
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/db.Media'
         "400":
-          description: 'Error: Unable to create tag records'
+          description: 'Error: Invalid request body or creation failed'
           schema:
             additionalProperties: true
             type: object
-      summary: Create multiple new tag records
+      summary: Create a new media record
       tags:
-      - tags
-  /tag/{id}:
+      - media
+  /media/by-id:
     get:
       consumes:
       - application/json
-      description: get tag record by ID
+      description: get a media record by its ID
       parameters:
-      - description: Tag ID
-        in: path
+      - description: Media ID
+        in: query
         name: id
         required: true
         type: integer
-      - default: false
-        description: Set to true to include soft deleted tags
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full tag details
-        in: query
-        name: full
-        type: boolean
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully retrieved the tag
+          description: Successfully retrieved the media record
           schema:
-            $ref: '#/definitions/models.Tag'
+            $ref: '#/definitions/db.Media'
         "400":
-          description: 'Error: Bad Request'
+          description: 'Error: Invalid media ID'
           schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve tag record
+            type: string
+      summary: Retrieve a media record by ID
       tags:
-      - tags
-  /tag/{tagId}:
-    delete:
+      - media
+  /media/by-tmdb-id:
+    get:
       consumes:
       - application/json
-      description: Delete a tag records via its ID
+      description: get a media record by its TMDB ID
       parameters:
-      - description: Tag ID
-        in: path
-        name: tagID
+      - description: TMDB ID
+        in: query
+        name: tmdb_id
         required: true
         type: integer
-      - default: true
-        description: Set to false to fully delete the tag record
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the tag record
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Failed to delete the tag record'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete a tag record
-      tags:
-      - tags
-  /tag/bulk:
-    delete:
-      consumes:
-      - application/json
-      description: Delete multiple tag records using tagID
-      parameters:
-      - description: Tag objects that need to be deleted
-        in: body
-        name: tags
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.Tag'
-          type: array
-      - default: true
-        description: Set to false to fully delete the tag records
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the tag records
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to delete tag records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete multiple tag records
-      tags:
-      - tags
-  /tag/search:
-    post:
-      consumes:
-      - application/json
-      description: Search for tags with the given search parameters
-      parameters:
-      - description: Search object
-        in: body
-        name: searchObj
-        required: true
-        schema:
-          $ref: '#/definitions/search.Search'
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully retrieved the tag
+          description: Successfully retrieved the media record
           schema:
-            items:
-              $ref: '#/definitions/models.Tag'
+            $ref: '#/definitions/db.Media'
+        "400":
+          description: 'Error: Invalid TMDB ID'
+          schema:
+            type: string
+      summary: Retrieve a media record by TMDB ID
+      tags:
+      - media
+  /movie/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the details of a movie from TMDB using the id
+      parameters:
+      - description: tmdbId of the movie
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The movie record
+          schema:
+            $ref: '#/definitions/api.Movie'
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get movie details by id
+      tags:
+      - movie
+  /search/multi:
+    get:
+      consumes:
+      - application/json
+      description: Get multimedia content based on the search query.
+      parameters:
+      - description: Search query for multimedia content
+        in: query
+        name: query
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved multimedia search results
+          schema:
+            items: {}
             type: array
         "400":
-          description: 'Error: Bad Request'
+          description: 'Error: Invalid or empty query, or no results found'
           schema:
             additionalProperties: true
             type: object
-      summary: Search tags
+      summary: Retrieve multimedia search results
       tags:
-      - tags
+      - search
+  /tv/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the details of a tv show from TMDB using the id
+      parameters:
+      - description: tmdbId of the tv show
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The tv record
+          schema:
+            $ref: '#/definitions/api.TV'
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get tv show details by id
+      tags:
+      - tv
+  /tv/{id}/season/{seasonNum}/episodes:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of episodes in a specific season of a tv show
+      parameters:
+      - description: tmdbId of the tv show
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: the season number
+        in: path
+        name: seasonNum
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The list of tv records in that season
+          schema:
+            items:
+              $ref: '#/definitions/api.TV'
+            type: array
+        "400":
+          description: 'Error: Unable to procure content'
+          schema:
+            type: object
+      summary: Get episodes of a show by season number
+      tags:
+      - tv
   /user/:
     get:
       consumes:
@@ -1153,31 +961,6 @@ paths:
       summary: Update a user
       tags:
       - users
-  /user/current:
-    put:
-      consumes:
-      - application/json
-      description: update the authenticated user's record using external ID
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully updated the current user
-          schema:
-            $ref: '#/definitions/models.User'
-        "400":
-          description: 'Error: Invalid request body'
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: 'Error: User not found'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Update current user
-      tags:
-      - users
   /user/current/:
     get:
       consumes:
@@ -1198,413 +981,6 @@ paths:
       summary: Retrieve the current user
       tags:
       - users
-  /userdocument/:
-    get:
-      consumes:
-      - application/json
-      description: Get all user document records
-      parameters:
-      - default: false
-        description: Set to true to include soft deleted user documents
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full user and document details
-        in: query
-        name: full
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the list of user document records
-          schema:
-            items:
-              $ref: '#/definitions/models.UserDocument'
-            type: array
-        "400":
-          description: 'Error: No user document records found'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve all user document records
-      tags:
-      - userdocuments
-    post:
-      consumes:
-      - application/json
-      description: Create a new user document record
-      parameters:
-      - description: User Document object that needs to be created
-        in: body
-        name: userDocument
-        required: true
-        schema:
-          $ref: '#/definitions/models.UserDocument'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Successfully created the user document record
-          schema:
-            $ref: '#/definitions/models.UserDocument'
-        "400":
-          description: 'Error: Unable to create user document record'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Create a new user document record
-      tags:
-      - userdocuments
-  /userdocument/{userId}/{documentId}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a user document record by its ID
-      parameters:
-      - description: User ID
-        in: path
-        name: userId
-        required: true
-        type: integer
-      - description: Document ID
-        in: path
-        name: documentId
-        required: true
-        type: integer
-      - default: true
-        description: Set to false to fully delete the user document record
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the user document record
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to delete user document record'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete a user document record by its ID
-      tags:
-      - userdocuments
-    get:
-      consumes:
-      - application/json
-      description: Get a user document record by its ID
-      parameters:
-      - description: User ID
-        in: path
-        name: userId
-        required: true
-        type: integer
-      - description: Document ID
-        in: path
-        name: documentId
-        required: true
-        type: integer
-      - default: false
-        description: Set to true to include soft deleted user documents
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full user and document details
-        in: query
-        name: full
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the user document record
-          schema:
-            $ref: '#/definitions/models.UserDocument'
-        "400":
-          description: 'Error: No user document record found'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve a user document record by its ID
-      tags:
-      - userdocuments
-  /userdocument/bulk:
-    delete:
-      consumes:
-      - application/json
-      description: Delete multiple user document records by their ID
-      parameters:
-      - description: User Document objects that need to be deleted
-        in: body
-        name: userDocuments
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.UserDocument'
-          type: array
-      - default: true
-        description: Set to false to fully delete the user document records
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the user document records
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to delete user document records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete multiple user document records by their ID
-      tags:
-      - userdocuments
-    post:
-      consumes:
-      - application/json
-      description: Create multiple new user document records
-      parameters:
-      - description: User Document objects that need to be created
-        in: body
-        name: userDocuments
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.UserDocument'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Successfully created the user document records
-          schema:
-            items:
-              $ref: '#/definitions/models.UserDocument'
-            type: array
-        "400":
-          description: 'Error: Unable to create user document records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Create multiple new user document records
-      tags:
-      - userdocuments
-  /usertag/:
-    get:
-      consumes:
-      - application/json
-      description: Get all user Tag records
-      parameters:
-      - default: false
-        description: Set to true to include soft deleted user Tags
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full user and Tag details
-        in: query
-        name: full
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the list of user Tag records
-          schema:
-            items:
-              $ref: '#/definitions/models.UserTag'
-            type: array
-        "400":
-          description: 'Error: No user Tag records found'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve all user Tag records
-      tags:
-      - UserTags
-    post:
-      consumes:
-      - application/json
-      description: Create a new user Tag record
-      parameters:
-      - description: User Tag object that needs to be created
-        in: body
-        name: UserTag
-        required: true
-        schema:
-          $ref: '#/definitions/models.UserTag'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Successfully created the user Tag record
-          schema:
-            $ref: '#/definitions/models.UserTag'
-        "400":
-          description: 'Error: Unable to create user Tag record'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Create a new user Tag record
-      tags:
-      - UserTags
-  /usertag/{userId}/{TagId}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a user Tag record by its ID
-      parameters:
-      - description: User ID
-        in: path
-        name: userId
-        required: true
-        type: integer
-      - description: Tag ID
-        in: path
-        name: TagId
-        required: true
-        type: integer
-      - default: true
-        description: Set to false to fully delete the user Tag record
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the user Tag record
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to delete user Tag record'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete a user Tag record by its ID
-      tags:
-      - UserTags
-  /usertag/{userId}/{tagId}:
-    get:
-      consumes:
-      - application/json
-      description: Get a user Tag record by its ID
-      parameters:
-      - description: User ID
-        in: path
-        name: userId
-        required: true
-        type: integer
-      - description: Tag ID
-        in: path
-        name: TagId
-        required: true
-        type: integer
-      - default: false
-        description: Set to true to include soft deleted user Tags
-        in: query
-        name: includeDeleted
-        type: boolean
-      - default: false
-        description: Set to true to include full user and Tag details
-        in: query
-        name: full
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Successfully retrieved the user Tag record
-          schema:
-            $ref: '#/definitions/models.UserTag'
-        "400":
-          description: 'Error: No user Tag record found'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Retrieve a user Tag record by its ID
-      tags:
-      - UserTags
-  /usertag/bulk:
-    delete:
-      consumes:
-      - application/json
-      description: Delete multiple user Tag records by their ID
-      parameters:
-      - description: User Tag objects that need to be deleted
-        in: body
-        name: UserTags
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.UserTag'
-          type: array
-      - default: true
-        description: Set to false to fully delete the user Tag records
-        in: query
-        name: softDelete
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: Successfully deleted the user Tag records
-          schema:
-            additionalProperties: true
-            type: object
-        "400":
-          description: 'Error: Unable to delete user Tag records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Delete multiple user Tag records by their ID
-      tags:
-      - UserTags
-    post:
-      consumes:
-      - application/json
-      description: Create multiple new user Tag records
-      parameters:
-      - description: User Tag objects that need to be created
-        in: body
-        name: UserTags
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.UserTag'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Successfully created the user Tag records
-          schema:
-            items:
-              $ref: '#/definitions/models.UserTag'
-            type: array
-        "400":
-          description: 'Error: Unable to create user Tag records'
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Create multiple new user Tag records
-      tags:
-      - UserTags
 securityDefinitions:
   BasicAuth:
     type: basic

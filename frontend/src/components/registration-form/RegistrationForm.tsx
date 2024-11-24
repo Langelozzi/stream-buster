@@ -9,6 +9,7 @@ import { makeStyles } from '@mui/styles';
 import { postRegister } from '../../api/services/auth.service';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { routes } from '../../router/Routes';
 
 const useStyles = makeStyles(() => ({
     paper: {
@@ -123,7 +124,7 @@ export const RegistrationForm: React.FC = () => {
         } else {
             setErrors({});
             // Submit the form data here
-            console.log(formValues);
+
 
             const formData: FormData = new FormData();
             formData.append("firstName", formValues.firstName);
@@ -133,13 +134,13 @@ export const RegistrationForm: React.FC = () => {
 
             const res = await postRegister(formData);
             if (res?.status === 201) {
-                navigate('/login');
+                navigate(routes.login);
             }
         }
     };
 
     const goToLogin = () => {
-        navigate('/login');
+        navigate(routes.login);
     }
 
     return (

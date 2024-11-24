@@ -11,11 +11,6 @@ import (
 func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("token")
-		if err != nil || tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "No valid access token"})
-			c.Abort()
-			return
-		}
 
 		token, err := service.VerifyToken(tokenString)
 		if err != nil || !token.Valid {
@@ -28,12 +23,12 @@ func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 
 			accessTokenString, err := service.RefreshToken(refreshTokenString)
 			if err != nil {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to refresh token"})
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to refresh token" + err.Error()})
 				c.Abort()
 				return
 			}
 
-			service.SetTokenCookie(c, accessTokenString)
+			service.SetCookie(c, "token", accessTokenString, 3600)
 
 			token, err = service.VerifyToken(accessTokenString)
 			if err != nil || !token.Valid {

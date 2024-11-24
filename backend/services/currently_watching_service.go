@@ -38,3 +38,7 @@ func (service *CurrentlyWatchingService) GetWatchlist(userID uint) ([]db.Current
 func (service *CurrentlyWatchingService) UpdateCurrentlyWatching(updatedWatch *db.CurrentlyWatching) (*db.CurrentlyWatching, error) {
 	return service.dao.UpdateCurrentlyWatching(updatedWatch)
 }
+
+func (service *CurrentlyWatchingService) DeleteCurrentlyWatching(userId uint, mediaId uint) error {
+	return service.dao.DeleteCurrentlyWatching(userId, mediaId)
+}

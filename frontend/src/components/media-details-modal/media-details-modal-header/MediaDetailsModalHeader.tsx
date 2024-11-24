@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, IconButton, Button, Typography } from '@mui/material';
+import { Box, IconButton, Button, Typography, Tooltip } from '@mui/material';
 import { PlayArrow, Add, ThumbUp } from '@mui/icons-material';
 import { makeStyles } from '@mui/styles';
 import { Movie } from '../../../models/movie';
@@ -7,6 +7,8 @@ import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
 import { Episode } from '../../../models/episode';
 import { useTranslation } from 'react-i18next';
+import { useUser } from '../../../hooks/useUser';
+import { onAddToList } from '../../../api/services/currentlyWatching.service';
 
 const useStyles = makeStyles(() => ({
     modalContainer: {
@@ -60,6 +62,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     const { t } = useTranslation();
     const classes = useStyles();
     const navigate = useNavigate();
+    const user = useUser();
 
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
@@ -68,12 +71,21 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     // Functions
     const onPlay = () => {
         if (currentEpisode) {
+            onAddToList(media, user, currentEpisode.SeasonNumber, currentEpisode.EpisodeNumber)
             navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media, currentEpisode } });
+        } else if (media.Media?.MediaType?.Name == "TV") {
+            onAddToList(media, user, 1, 1)
+            navigate(`/watch/${media.Media?.TMDBID}/1/1`,
+                // todo get the media
+                { state: { media } }
+            );
         } else {
 
+            onAddToList(media, user)
             navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
         }
     }
+
 
     return (
         <Box className={classes.modalContainer}>
@@ -107,6 +119,17 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 <IconButton className={`${classes.roundButton}`} aria-label={t('dictionary.rate')}>
                     <ThumbUp />
                 </IconButton>
+
+                <Tooltip title={t('dictionary.addToMyList')} arrow>
+                    <IconButton onClick={() => { onAddToList(media, user, currentEpisode?.SeasonNumber, currentEpisode?.EpisodeNumber) }} className={`${classes.roundButton}`} aria-label={t('dictionary.addToMyList')}>
+                        <Add />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title={t('dictonary.rate')} arrow>
+                    <IconButton className={`${classes.roundButton}`} aria-label={t('dictonary.rate')}>
+                        <ThumbUp />
+                    </IconButton>
+                </Tooltip>
             </Box>
         </Box>
     );
