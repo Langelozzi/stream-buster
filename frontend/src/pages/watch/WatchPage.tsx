@@ -39,8 +39,6 @@ export const WatchPage = () => {
     };
 
     const goToNext = () => {
-        console.log(media)
-
         const currentlyWatching: CurrentlyWatching = {
             MediaId: media?.ID,
             UserID: user.user?.ID,
