@@ -68,17 +68,8 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 			c.String(http.StatusInternalServerError, "Error fetching refresh token age")
 		}
 
-		c.SetCookie(
-			"refreshToken",                 // Name of the cookie
-			refreshTokenString,             // Value of the cookie
-			maxRefreshTokenAge,             // MaxAge (7 days)
-			"/",                            // Path
-			utils.GetEnvVariable("DOMAIN"), // Domain
-			false,                          // Secure flag (whether the cookie should be sent only over HTTPS)
-			false,                          // HttpOnly flag (whether the cookie is inaccessible to JavaScript)
-		)
-
-		contr.Service.SetTokenCookie(c, tokenString)
+		contr.Service.SetCookie(c, "refreshToken", refreshTokenString)
+		contr.Service.SetCookie(c, "token", tokenString)
 
 		c.JSON(200, gin.H{
 			"user":  user,
