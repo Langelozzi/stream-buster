@@ -63,13 +63,14 @@ func (contr *AuthController) LoginUser(c *gin.Context) {
 		}
 
 		maxRefreshTokenAge, err := strconv.Atoi(utils.GetEnvVariable("REFRESH_TOKEN_EXPIRATION_TIME"))
+		maxTokenAge, err := strconv.Atoi(utils.GetEnvVariable("TOKEN_EXPIRATION_TIME"))
 
 		if err != nil {
 			c.String(http.StatusInternalServerError, "Error fetching refresh token age")
 		}
 
-		contr.Service.SetCookie(c, "refreshToken", refreshTokenString)
-		contr.Service.SetCookie(c, "token", tokenString)
+		contr.Service.SetCookie(c, "refreshToken", refreshTokenString, maxRefreshTokenAge)
+		contr.Service.SetCookie(c, "token", tokenString, maxTokenAge)
 
 		c.JSON(200, gin.H{
 			"user":  user,
