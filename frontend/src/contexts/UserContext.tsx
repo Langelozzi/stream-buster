@@ -1,5 +1,4 @@
-import { createContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { createContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '../models/user';
 import { getCurrentUser } from '../api/services/user.service';
 import { useNavigate } from 'react-router-dom';
