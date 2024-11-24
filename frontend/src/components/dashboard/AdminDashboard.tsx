@@ -54,6 +54,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>{t('columnHeader.user')}</TableCell>
+                                    <TableCell>{t('columnHeader.email')}</TableCell>
                                     <TableCell>{t('columnHeader.usage')}</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -63,6 +64,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
                                         <TableCell sx={{ verticalAlign: 'top', width: '150px' }}>
                                             <Typography variant="body1">
                                                 {`${user.FirstName} ${user.LastName}`}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell sx={{ verticalAlign: 'top', width: '150px' }}>
+                                            <Typography variant="body1">
+                                                {user.Email}
                                             </Typography>
                                         </TableCell>
                                         <TableCell>

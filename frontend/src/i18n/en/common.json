@@ -9,6 +9,7 @@
         "submit": "Submit"
     },
     "columnHeader": {
+        "email": "Email",
         "endpoint": "Endpoint",
         "method": "Method",
         "requests": "Requests",
