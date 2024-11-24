@@ -45,7 +45,6 @@ export const UserUsageInfo: React.FC<UserUsageInfoProps> = ({ user, isAdmin }) =
         // get all the endpoints so we can show all but set count to 0 for the endpoint
         try {
             const fetchedEndpoints = await getAllEndpoints();
-            console.log(fetchedEndpoints);
             setEndpoints(fetchedEndpoints);
         } catch (e) {
             console.error(e);

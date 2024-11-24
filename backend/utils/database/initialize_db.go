@@ -24,7 +24,6 @@ func InitializeDb() {
 		&models.UserConfig{},
 		&models.Role{},
 		&models.UserRole{},
-		//&models.Usage{},
 		&models.Endpoint{},
 		&models.UserEndpointUsage{},
 		&db.CurrentlyWatching{},

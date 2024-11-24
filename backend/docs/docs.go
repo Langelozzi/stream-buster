@@ -530,7 +530,9 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "Response from the LLM",
-                        "schema": {}
+                        "schema": {
+                            "type": "object"
+                        }
                     },
                     "400": {
                         "description": "Error: Invalid request body",
@@ -731,7 +733,9 @@ const docTemplate = `{
                         "description": "Successfully retrieved multimedia search results",
                         "schema": {
                             "type": "array",
-                            "items": {}
+                            "items": {
+                                "type": "object"
+                            }
                         }
                     },
                     "400": {
@@ -910,6 +914,36 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Error: Invalid request body",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/user/current": {
+            "get": {
+                "description": "get the current user record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Retrieve the current user",
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved the current user",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: No user records found",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -1365,30 +1399,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Usage": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "requestCount": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userID": {
-                    "description": "Ensure uniqueness for one-to-one relationship",
-                    "type": "integer"
-                }
-            }
-        },
         "models.User": {
             "type": "object",
             "properties": {
@@ -1419,8 +1429,8 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
-                "usage": {
-                    "$ref": "#/definitions/models.Usage"
+                "totalRequestCount": {
+                    "$ref": "#/definitions/models.UserTotalRequestCount"
                 },
                 "userRoles": {
                     "type": "array",
@@ -1469,6 +1479,17 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.User"
                         }
                     ]
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.UserTotalRequestCount": {
+            "type": "object",
+            "properties": {
+                "totalRequestCount": {
+                    "type": "integer"
                 },
                 "userID": {
                     "type": "integer"

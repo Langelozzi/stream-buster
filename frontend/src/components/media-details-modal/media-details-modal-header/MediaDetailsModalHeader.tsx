@@ -113,12 +113,6 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 >
                     {t('button.play')}
                 </Button>
-                <IconButton className={`${classes.roundButton}`} aria-label={t('dictionary.addToMyList')}>
-                    <Add />
-                </IconButton>
-                <IconButton className={`${classes.roundButton}`} aria-label={t('dictionary.rate')}>
-                    <ThumbUp />
-                </IconButton>
 
                 <Tooltip title={t('dictionary.addToMyList')} arrow>
                     <IconButton onClick={() => { onAddToList(media, user, currentEpisode?.SeasonNumber, currentEpisode?.EpisodeNumber) }} className={`${classes.roundButton}`} aria-label={t('dictionary.addToMyList')}>

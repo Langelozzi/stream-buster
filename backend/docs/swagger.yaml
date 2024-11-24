@@ -177,22 +177,6 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.Usage:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        type: string
-      id:
-        type: integer
-      requestCount:
-        type: integer
-      updatedAt:
-        type: string
-      userID:
-        description: Ensure uniqueness for one-to-one relationship
-        type: integer
-    type: object
   models.User:
     properties:
       configs:
@@ -213,8 +197,8 @@ definitions:
         type: string
       password:
         type: string
-      usage:
-        $ref: '#/definitions/models.Usage'
+      totalRequestCount:
+        $ref: '#/definitions/models.UserTotalRequestCount'
       userRoles:
         items:
           $ref: '#/definitions/models.UserRole'
@@ -245,6 +229,13 @@ definitions:
         allOf:
         - $ref: '#/definitions/models.User'
         description: Optional associations for eager loading
+      userID:
+        type: integer
+    type: object
+  models.UserTotalRequestCount:
+    properties:
+      totalRequestCount:
+        type: integer
       userID:
         type: integer
     type: object
@@ -604,7 +595,8 @@ paths:
       responses:
         "200":
           description: Response from the LLM
-          schema: {}
+          schema:
+            type: object
         "400":
           description: 'Error: Invalid request body'
           schema:
@@ -737,7 +729,8 @@ paths:
         "200":
           description: Successfully retrieved multimedia search results
           schema:
-            items: {}
+            items:
+              type: object
             type: array
         "400":
           description: 'Error: Invalid or empty query, or no results found'
@@ -959,6 +952,26 @@ paths:
             additionalProperties: true
             type: object
       summary: Update a user
+      tags:
+      - users
+  /user/current:
+    get:
+      consumes:
+      - application/json
+      description: get the current user record
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the current user
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 'Error: No user records found'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Retrieve the current user
       tags:
       - users
   /user/current/:
