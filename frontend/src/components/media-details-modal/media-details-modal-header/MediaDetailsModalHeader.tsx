@@ -69,19 +69,20 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     const backgroundImage = !!media.BackdropImage ? media.BackdropImage : defaultBackdropImage;
 
     // Functions
-    const onPlay = () => {
+    const onPlay = async () => {
         if (currentEpisode) {
-            onAddToList(media, user, currentEpisode.SeasonNumber, currentEpisode.EpisodeNumber)
+            const mediaResponse = await onAddToList(media, user, currentEpisode.SeasonNumber, currentEpisode.EpisodeNumber)
+            media.MediaID = mediaResponse.ID
             navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media, currentEpisode } });
         } else if (media.Media?.MediaType?.Name == "TV") {
-            onAddToList(media, user, 1, 1)
+            const mediaResponse = await onAddToList(media, user, 1, 1)
+            media.MediaID = mediaResponse.ID;
             navigate(`/watch/${media.Media?.TMDBID}/1/1`,
-                // todo get the media
                 { state: { media } }
             );
         } else {
-
-            onAddToList(media, user)
+            const mediaResponse = await onAddToList(media, user);
+            media.MediaID = mediaResponse.ID;
             navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
         }
     }

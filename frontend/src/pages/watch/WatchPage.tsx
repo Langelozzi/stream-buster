@@ -30,7 +30,8 @@ export const WatchPage = () => {
     const episodeNum: number = Number(episodeNumStr);
 
     // State
-    const [media] = useState<Movie | TV | undefined>(location.state?.media);
+    const [media] = useState<Movie | TV | Media | undefined>(location.state?.media);
+    console.log('media', media);
 
     // Constants
     const isTV = seasonNum && episodeNum;
@@ -42,7 +43,7 @@ export const WatchPage = () => {
 
     const goToNext = () => {
         const currentlyWatching: CurrentlyWatching = {
-            MediaId: media?.MediaID,
+            MediaId: media?.MediaID ? media?.MediaID : media.ID,
             UserID: user.user?.ID,
             SeasonNumber: seasonNum,
             EpisodeNumber: episodeNum + 1,
@@ -54,7 +55,7 @@ export const WatchPage = () => {
 
     const goToPrev = () => {
         const currentlyWatching: CurrentlyWatching = {
-            MediaId: media?.MediaID,
+            MediaId: media?.MediaID ? media?.MediaID : media.ID,
             UserID: user.user?.ID,
             SeasonNumber: seasonNum,
             EpisodeNumber: episodeNum - 1,
@@ -90,8 +91,7 @@ export const WatchPage = () => {
                     )}
                     {tmdbId && isTV && episodeNum && seasonNum && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: "column" }}>
-                            <MediaPlayer tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
-                            <ControlBar goToNext={goToNext} goToPrev={goToPrev}></ControlBar>
+                            <MediaPlayer goToNext={goToNext} goToPrev={goToPrev} tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
                         </Box>
 
                     )}

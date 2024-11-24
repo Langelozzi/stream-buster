@@ -9,11 +9,33 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "../../hooks/useSnackBar";
 
+
+
 interface MediaCardProps {
     media: TV | Movie
     currentlyWatching?: CurrentlyWatching | undefined,
     search?: boolean
     onDelete?: (mediaId: number) => Promise<void> | undefined
+}
+
+const cardContentStyles = {
+    display: "flex",
+    justifyContent: "space-between",
+
+    padding: 1,
+    color: '#ffffff',
+    position: 'absolute', // Keeps it at the bottom
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 0, // Starts hidden
+    opacity: 0, // Fully transparent
+    backgroundColor: '#121212', // Background for the sliding content
+    transition: 'height 0.3s ease, opacity 0.3s ease', // Smooth animation
+    '&:hover': {
+        height: '20px', // Expands to reveal content
+        opacity: .7, // Becomes visible
+    },
 }
 
 export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, search = true, onDelete }) => {
@@ -38,11 +60,11 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
         if (currentlyWatching?.EpisodeNumber! > 0) {
             navigate(`/watch/${media.Media?.TMDBID}/${currentlyWatching?.SeasonNumber}/${currentlyWatching?.EpisodeNumber}`,
                 // todo get the media
-                { state: { media } }
+                { state: { media: media.Media } }
             );
         } else {
             navigate(`/watch/${media.Media?.TMDBID}`,
-                // { state: { media, currentEpisode } }
+                { state: { media } }
             );
         }
     }
@@ -94,28 +116,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
                 {!search && (
                     <>
                         {/* Sliding Card Content */}
-                        < CardContent
-                            sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-
-                                padding: 1,
-                                color: '#ffffff',
-                                position: 'absolute', // Keeps it at the bottom
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height: 0, // Starts hidden
-                                opacity: 0, // Fully transparent
-                                backgroundColor: '#121212', // Background for the sliding content
-                                transition: 'height 0.3s ease, opacity 0.3s ease', // Smooth animation
-                                '&:hover': {
-                                    height: '20px', // Expands to reveal content
-                                    opacity: .7, // Becomes visible
-                                },
-                            }}
-                        >
-
+                        < CardContent sx={cardContentStyles}>
                             <IconButton onClick={handlePlayClick} sx={{ color: '#fff' }}>
                                 <PlayArrow />
                             </IconButton>

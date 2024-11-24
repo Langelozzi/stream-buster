@@ -5,6 +5,7 @@ import { UserContextType } from "../../contexts/UserContext";
 import { Movie } from "../../models/movie";
 import { TV } from "../../models/tv";
 import { getFormattedDate, compareByUpdatedAt } from "../../utils/date.helpter";
+import { Media } from "../../models/media";
 
 export const getCurrentlyWatching = async () => {
     try {
@@ -47,14 +48,13 @@ export const getWatchList = async (): Promise<CurrentlyWatching[]> => {
         throw error;
     }
 }
-export const onAddToList = async (media: Movie | TV, user: UserContextType, seasonNumber: number = 0, episodeNumber: number = 0) => {
+export const onAddToList = async (media: Movie | TV, user: UserContextType, seasonNumber: number = 0, episodeNumber: number = 0): Promise<Media> => {
     try {
         let mediaResponse;
         try {
             mediaResponse = await createMedia(media.Media!)
         } catch (error) {
             console.error(error);
-
         }
 
         const currentlyWatching: CurrentlyWatching = {
@@ -66,9 +66,11 @@ export const onAddToList = async (media: Movie | TV, user: UserContextType, seas
         }
 
         await createCurrentlyWatching(currentlyWatching)
+        return mediaResponse!
 
     } catch (error) {
         console.error("Error addign to list")
+        throw error
     }
 }
 
