@@ -31,7 +31,7 @@ export const WatchPage = () => {
     const [media] = useState<Media | undefined>(location.state?.media);
 
     // Constants
-    const isTV = seasonNum && episodeNum;
+    const isTV = !!seasonNum && !!episodeNum;
 
     // Functions
     const handleBrowseClick = () => {
@@ -82,15 +82,14 @@ export const WatchPage = () => {
                 )}
                 <Grid size={12} component="div">
                     {tmdbId && !isTV && (
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: "column" }}>
                             <MediaPlayer tmdbId={tmdbId} />
                         </Box>
                     )}
-                    {tmdbId && isTV && episodeNum && seasonNum && (
+                    {!!isTV && !!episodeNum && !!seasonNum && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: "column" }}>
                             <MediaPlayer goToNext={goToNext} goToPrev={goToPrev} tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
                         </Box>
-
                     )}
                 </Grid>
 

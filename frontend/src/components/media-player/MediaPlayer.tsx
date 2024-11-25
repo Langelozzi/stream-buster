@@ -47,7 +47,9 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = (props) => {
                     borderRadius: '8px', // Optional: Add rounded corners
                 }}
             />
-            <ControlBar goToNext={goToNext!} goToPrev={goToPrev!}></ControlBar>
+            {goToNext && (
+                <ControlBar goToNext={goToNext!} goToPrev={goToPrev!}></ControlBar>
+            )}
         </Box>
     );
 };
