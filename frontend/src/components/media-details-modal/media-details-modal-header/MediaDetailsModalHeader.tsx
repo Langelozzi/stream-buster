@@ -9,6 +9,7 @@ import { Episode } from '../../../models/episode';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../../hooks/useUser';
 import { onAddToList } from '../../../api/services/currentlyWatching.service';
+import { useSnackbar } from '../../../hooks/useSnackBar';
 
 const useStyles = makeStyles(() => ({
     modalContainer: {
@@ -64,6 +65,8 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     const navigate = useNavigate();
     const user = useUser();
 
+    const { showSnackbar, SnackbarComponent } = useSnackbar()
+
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
     const backgroundImage = !!media.BackdropImage ? media.BackdropImage : defaultBackdropImage;
@@ -84,6 +87,15 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
             const mediaResponse = await onAddToList(media, user);
             media.MediaID = mediaResponse.ID;
             navigate(`/watch/${media.Media?.TMDBID}`, { state: { media: mediaResponse, currentEpisode } });
+        }
+    }
+
+    const onAdd = async () => {
+        try {
+            await onAddToList(media, user, currentEpisode?.SeasonNumber, currentEpisode?.EpisodeNumber)
+            showSnackbar("Successfully added to watchlist")
+        } catch (error) {
+            showSnackbar("Error added to watchlist")
         }
     }
 
@@ -116,7 +128,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 </Button>
 
                 <Tooltip title={t('dictionary.addToMyList')} arrow>
-                    <IconButton onClick={() => { onAddToList(media, user, currentEpisode?.SeasonNumber, currentEpisode?.EpisodeNumber) }} className={`${classes.roundButton}`} aria-label={t('dictionary.addToMyList')}>
+                    <IconButton onClick={onAdd} className={`${classes.roundButton}`} aria-label={t('dictionary.addToMyList')}>
                         <Add />
                     </IconButton>
                 </Tooltip>
@@ -126,6 +138,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                     </IconButton>
                 </Tooltip>
             </Box>
+            {SnackbarComponent}
         </Box>
     );
 };

@@ -32,8 +32,8 @@ const MediaList: React.FC<MediaCarouselProps> = ({ currentlyWatchings }) => {
 					})
 				})
 			}
-			await deleteCurrentlyWatching(mediaId)
 			removeMediaItem(mediaId)
+			await deleteCurrentlyWatching(mediaId)
 		} catch (error) {
 			console.error("Error deleteing currently watching" + error)
 			throw error
