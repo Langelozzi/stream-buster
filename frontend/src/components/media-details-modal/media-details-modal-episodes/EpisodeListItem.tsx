@@ -12,7 +12,16 @@ import { useUser } from "../../../hooks/useUser";
 const useStyles = makeStyles({
     listItem: {
         padding: '12px 0',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: '16px',
+        '@media (max-width: 600px)': { // Media query for mobile screens
+            flexDirection: 'column',
+            alignItems: 'center',
+        },
     },
+
     avatarContainer: {
         position: 'relative', // Set relative position to contain the overlay
     },
@@ -25,6 +34,7 @@ const useStyles = makeStyles({
         color: 'white',
         borderRadius: '50%',
     }
+
 });
 
 interface EpisodeListItemProps {
