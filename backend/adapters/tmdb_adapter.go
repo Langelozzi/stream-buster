@@ -141,6 +141,16 @@ func CastToMedia(obj map[string]interface{}, mediaType *db.MediaType) *db.Media 
 			title = obj["title"].(string)
 		}
 	}
+	var mediaTypeId uint
+
+	if mediaType.Name == "tv" {
+		mediaType.ID = 1
+		mediaTypeId = 1
+
+	} else {
+		mediaType.ID = 2
+		mediaTypeId = 2
+	}
 
 	var posterPath string
 	if obj["poster_path"] != nil {
@@ -167,6 +177,7 @@ func CastToMedia(obj map[string]interface{}, mediaType *db.MediaType) *db.Media 
 		Overview:    overview,
 		PosterImage: posterPath,
 		MediaType:   mediaType,
+		MediaTypeId: mediaTypeId,
 		Genres:      castedGenres,
 	}
 }
