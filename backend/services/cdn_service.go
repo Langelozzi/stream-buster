@@ -30,6 +30,10 @@ func (service *CDNService) GetTVContent(tmdbId string, seasonNum int, episodeNum
 	return transformContent(html)
 }
 
+func (service *CDNService) CheckContentExists(tmdbId string, isTV bool) bool {
+	return service.dao.CheckContentExist(tmdbId, isTV)
+}
+
 func transformContent(html string) (string, error) {
 	srcUrl, err := getContentSrcUrl(html)
 	if err != nil {
