@@ -85,7 +85,7 @@ func getWrappedHtmlContent(contentSrcUrl string) string {
 			</style>
 		</head>
 		<body>
-			<iframe src="` + contentSrcUrl + `" allowFullScreen></iframe>
+			<iframe src="` + contentSrcUrl + `" allowFullScreen sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"></iframe>
 		</body>
 		</html>`
 
