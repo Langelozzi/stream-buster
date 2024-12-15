@@ -13,7 +13,7 @@ import { useSnackbar } from '../../../hooks/useSnackBar';
 interface MediaDetailsModalHeaderProps {
     media: Movie | TV;
     currentEpisode?: Episode;
-    available: boolean;
+    available: boolean | undefined;
 }
 
 export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode, available }) => {
@@ -57,6 +57,13 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 backgroundColor: 'rgba(255, 255, 255, 0.5)',
             },
         },
+        availabilityContainer: {
+            display: 'flex',
+            alignItems: 'center',
+        },
+        availabilityText: {
+            marginLeft: 1
+        }
     }
 
     // Hooks
@@ -98,7 +105,6 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
         }
     }
 
-
     return (
         <Box sx={styles.modalContainer}>
             {/* Image Overlay */}
@@ -113,16 +119,24 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 <Typography variant="h4" fontWeight="bold">
                     {media.Media?.Title}
                 </Typography>
-                {available ? (
-                    <Typography>
-                        <CheckCircle />
-                        Available
-                    </Typography>
-                ) : (
-                    <Typography>
-                        <Cancel />
-                        Unavailable
-                    </Typography>
+                {available !== undefined && (
+                    <div>
+                        {available ? (
+                            <Box sx={styles.availabilityContainer}>
+                                <CheckCircle color='success' />
+                                <Typography sx={styles.availabilityText}>
+                                    Available
+                                </Typography>
+                            </Box>
+                        ) : (
+                            <Box sx={styles.availabilityContainer}>
+                                <Cancel color='error' />
+                                <Typography sx={styles.availabilityText}>
+                                    Unavailable
+                                </Typography>
+                            </Box>
+                        )}
+                    </div>
                 )}
             </Box>
 

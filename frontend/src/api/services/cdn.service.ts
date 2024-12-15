@@ -1,8 +1,8 @@
-import instance from "../axios";
+import axios from '../axios';
 
 export const getContentExists = async (tmdbId: number, isTV: boolean) => {
     try {
-        const res = await instance.get(
+        const res = await axios.get(
             `/cdn/${tmdbId}/exists`,
             {
                 params: {

@@ -110,7 +110,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     const [currentSeason, setCurrentSeason] = useState<Season | null>(null);
     const [episodes, setEpisodes] = useState<Episode[] | null>(null);
     const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
-    const [available, setAvailable] = useState<boolean>(true);
+    const [available, setAvailable] = useState<boolean | undefined>(undefined);
 
     // Functions
     const fetchDetailedTV = async () => {
