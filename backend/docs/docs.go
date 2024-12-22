@@ -530,9 +530,7 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "Response from the LLM",
-                        "schema": {
-                            "type": "object"
-                        }
+                        "schema": {}
                     },
                     "400": {
                         "description": "Error: Invalid request body",
@@ -733,9 +731,7 @@ const docTemplate = `{
                         "description": "Successfully retrieved multimedia search results",
                         "schema": {
                             "type": "array",
-                            "items": {
-                                "type": "object"
-                            }
+                            "items": {}
                         }
                     },
                     "400": {

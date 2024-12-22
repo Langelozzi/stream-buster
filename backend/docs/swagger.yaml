@@ -595,8 +595,7 @@ paths:
       responses:
         "200":
           description: Response from the LLM
-          schema:
-            type: object
+          schema: {}
         "400":
           description: 'Error: Invalid request body'
           schema:
@@ -729,8 +728,7 @@ paths:
         "200":
           description: Successfully retrieved multimedia search results
           schema:
-            items:
-              type: object
+            items: {}
             type: array
         "400":
           description: 'Error: Invalid or empty query, or no results found'
