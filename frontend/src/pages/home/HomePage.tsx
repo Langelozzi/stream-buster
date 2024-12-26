@@ -1,50 +1,70 @@
-import { useEffect, useState } from "react";
-import { getWatchList } from "../../api/services/currentlyWatching.service";
-import MediaList from "../../components/media-list/medialist";
-import { useUser } from "../../hooks/useUser";
-import { Box, Typography } from "@mui/material";
+import React from 'react';
+import {
+    Box,
+    Container,
+    Typography,
+    Paper,
+    useTheme
+} from '@mui/material';
 
 export const HomePage = () => {
-    const user = useUser()
-    const [currentlyWatchings, setCurrentlyWatchings] = useState<any[]>([])
-    useEffect(() => {
-        // const test = async () => {
-        //     const res = await searchMulti("How to train your dragon")
-        //     
-        //     const himym = res[0]
-        //     
-        //     const createdMedia = await createMedia(himym.Media!)
-        // }
-        //
-        // if (first == 0) {
-        //     setFirst(1)
-        //     test()
-        // }
-
-        const getMediaList = async () => {
-            const currentlyWatchingList = await getWatchList()
-            setCurrentlyWatchings(currentlyWatchingList)
-        }
-        getMediaList()
-
-    }, [])
+    const theme = useTheme();
 
     return (
-        <>
-            {user ? (
-                <>
-                    <Box padding={2}>
+        <Box
+            sx={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: theme.palette.grey[100]
+            }}
+        >
+            <Container maxWidth="sm">
+                <Paper
+                    elevation={3}
+                    sx={{
+                        padding: 4,
+                        textAlign: 'center',
+                        borderRadius: 2
+                    }}
+                >
+                    <Typography
+                        variant="h4"
+                        component="h1"
+                        gutterBottom
+                        color="primary"
+                        sx={{ fontWeight: 'bold' }}
+                    >
+                        We'll Be Right Back!
+                    </Typography>
 
-                        <Typography>Continue Watching</Typography>
-                        <MediaList currentlyWatchings={currentlyWatchings}></MediaList>
-                    </Box>
-                </>
-            ) : (
-                <>
-                    <div>Welcome to stream buster</div>
-                    <div>login or sign up</div>
-                </>
-            )}
-        </>
-    )
-}
+                    <Typography variant="body1" gutterBottom sx={{ mb: 3 }}>
+                        Our system is currently undergoing maintenance to serve you better.
+                        We'll be back online in approximately 24 hours.
+                    </Typography>
+
+                    <Box
+                        component="img"
+                        src="https://media4.giphy.com/media/yhfTY8JL1wIAE/giphy.gif?cid=6c09b952hntb972a96dxtndh8waakt9web6zpb2navyf6err&ep=v1_gifs_search&rid=giphy.gif&ct=g" // Replace with your gif URL
+                        alt="Maintenance"
+                        sx={{
+                            width: '100%',
+                            maxWidth: 300,
+                            height: 'auto',
+                            margin: '20px 0'
+                        }}
+                    />
+
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 3 }}>
+                        Thank you for your patience!
+                    </Typography>
+
+                    <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 2 }}>
+                        Expected completion: {new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString()}
+                    </Typography>
+                </Paper>
+            </Container>
+        </Box>
+    );
+};
+
