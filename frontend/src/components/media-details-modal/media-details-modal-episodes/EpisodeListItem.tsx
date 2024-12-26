@@ -5,11 +5,23 @@ import { makeStyles } from "@mui/styles";
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleOutline';
 import { TV } from "../../../models/tv";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { onAddToList } from "../../../api/services/currentlyWatching.service";
+import { useUser } from "../../../hooks/useUser";
 
 const useStyles = makeStyles({
     listItem: {
         padding: '12px 0',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: '16px',
+        '@media (max-width: 600px)': { // Media query for mobile screens
+            flexDirection: 'column',
+            alignItems: 'center',
+        },
     },
+
     avatarContainer: {
         position: 'relative', // Set relative position to contain the overlay
     },
@@ -22,6 +34,7 @@ const useStyles = makeStyles({
         color: 'white',
         borderRadius: '50%',
     }
+
 });
 
 interface EpisodeListItemProps {
@@ -30,12 +43,15 @@ interface EpisodeListItemProps {
 }
 
 export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
+    const user = useUser()
     const { episode, tv } = props;
 
+    const { t } = useTranslation();
     const classes = useStyles();
     const navigate = useNavigate();
 
     const onPlayEpisode = () => {
+        onAddToList(tv, user, episode.SeasonNumber, episode.EpisodeNumber)
         navigate(`/watch/${tv.Media?.TMDBID}/${episode.SeasonNumber}/${episode.EpisodeNumber}`, { state: { media: tv, currentEpisode: episode } });
     }
 
@@ -60,7 +76,7 @@ export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
                             {`${episode.EpisodeNumber}. ${episode.Name}`}
                         </Typography>
                         <Typography variant="body2">{episode.Overview}</Typography>
-                        <Typography variant="body2" color="grey">{episode.Runtime}m</Typography>
+                        <Typography variant="body2" color="grey">{episode.Runtime}{t('dictionary.minuteLetter')}</Typography>
                     </Box>
                 }
             />

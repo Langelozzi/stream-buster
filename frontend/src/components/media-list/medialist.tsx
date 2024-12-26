@@ -1,21 +1,52 @@
-import React from 'react';
-import { Box, Typography, ImageList, ImageListItem } from '@mui/material';
-import { CurrentlyWatching } from '../../models/currently_watching';
+import React, { useEffect, useState } from 'react';
+import { Box } from '@mui/material';
 import { MediaCard } from '../media-card/MediaCard';
-import { Media } from '../../models/media';
 import { castToTvOrMovie } from '../../api/services/search.service';
+import { CurrentlyWatching } from '../../models/currently_watching';
+import { deleteCurrentlyWatching } from '../../api/services/currentlyWatching.service';
+import { Media } from '../../models/media';
 interface MediaCarouselProps {
-	media: Media[];
+	currentlyWatchings: CurrentlyWatching[];
 }
 
-const MediaList: React.FC<MediaCarouselProps> = ({ media }) => {
+const MediaList: React.FC<MediaCarouselProps> = ({ currentlyWatchings }) => {
+	const [media, setMedia] = useState<(Media)[]>();
+
+	useEffect(() => {
+		if (!currentlyWatchings) {
+			return
+		}
+		const mediaList = currentlyWatchings.map((currentlyWatching) => {
+			return currentlyWatching.Media;
+		}).filter((mediaItem) => mediaItem != undefined)
+
+		setMedia(mediaList)
+	}, [currentlyWatchings])
+
+	const onDelete = async (mediaId: number) => {
+		try {
+			const removeMediaItem = (mediaId: number) => {
+				setMedia((prevMedia) => {
+					return prevMedia!.filter((mediaItem) => {
+						return mediaItem!.ID != mediaId
+					})
+				})
+			}
+			removeMediaItem(mediaId)
+			await deleteCurrentlyWatching(mediaId)
+		} catch (error) {
+			console.error("Error deleteing currently watching" + error)
+			throw error
+		}
+	}
+
 	return (
-		<Box sx={{ padding: 2, display: "flex", gap: "10px", overflow: "auto" }}>
-			{media.map((mediaObj, index) => {
+		<Box sx={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+			{media && media.map((mediaObj, index) => {
 				const tvOrMovie = castToTvOrMovie({ Media: mediaObj })
-				return <MediaCard key={index} media={tvOrMovie}></MediaCard>
+				return <MediaCard search={false} currentlyWatching={currentlyWatchings[index]} key={index} media={tvOrMovie} onDelete={onDelete}></MediaCard>
 			})}
-		</Box>
+		</Box >
 	);
 };
 

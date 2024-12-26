@@ -1,0 +1,63 @@
+{
+    "button": {
+        "browse": "Browse",
+        "dashboard": "Dashboard",
+        "login": "Login",
+        "logout": "Logout",
+        "play": "Play",
+        "search": "Search",
+        "submit": "Submit"
+    },
+    "columnHeader": {
+        "email": "Email",
+        "endpoint": "Endpoint",
+        "method": "Method",
+        "requests": "Requests",
+        "user": "User",
+        "usage": "Usage"
+    },
+    "dictionary": {
+        "addToMyList": "Add to my list",
+        "alreadyHaveAccount": "Already have an account? Click",
+        "askChatbuster": "Have a question? Ask our AI powered Chatbuster!",
+        "chatbuster": "Chatbuster",
+        "confirmPassword": "Confirm Password",
+        "dontHaveAccount": "Don't have an account? Click",
+        "email": "Email",
+        "enterQuery": "Enter your query",
+        "episodeLetter": "E",
+        "episodes": "Episodes",
+        "firstName": "First Name",
+        "genres": "Genres",
+        "here": "here",
+        "hourLetter": "h",
+        "minuteLetter": "m",
+        "lastName": "Last Name",
+        "login": "Login",
+        "noResultsFound": "No results found",
+        "password": "Password",
+        "query": "Query",
+        "rate": "Rate",
+        "register": "Register",
+        "response": "Response",
+        "requestsUsed": "Requests used",
+        "search": "Search",
+        "searchResults": "Search Results",
+        "season": "Season",
+        "seasonLetter": "S",
+        "seasons": "Seasons",
+        "streambuster": "Streambuster",
+        "toLogin": "to login",
+        "toRegister": "to register",
+        "userUsage": "User Usage",
+        "userUsageTable": "User Usage Table",
+        "watchList": "Watch List",
+        "welcomeBack": "Welcome back, {{name}}"
+    },
+    "error": {
+        "exceededRequestCount": "You have exceeded your free credits",
+        "mustBeValidEmail": "Must be a valid email",
+        "passwordLength": "Password must be at least 8 characters long",
+        "mismatchPasswords": "Passwords do not match"
+    }
+}

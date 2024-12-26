@@ -19,6 +19,17 @@ func NewMediaController(service interfaces.MediaServiceInterface) *MediaControll
 		service: service,
 	}
 }
+
+// CreateMedia creates a new media record
+// @Summary Create a new media record
+// @Description create a new media record
+// @Tags media
+// @Accept  json
+// @Produce  json
+// @Param media body db.Media true "Media object that needs to be created"
+// @Success 200 {object} db.Media "Successfully created the media record"
+// @Failure 400 {object} map[string]interface{} "Error: Invalid request body or creation failed"
+// @Router /media [post]
 func (contr MediaController) CreateMedia(c *gin.Context) {
 	media := &db.Media{}
 	err := c.ShouldBindJSON(media)
@@ -56,6 +67,17 @@ func (contr MediaController) CreateMedia(c *gin.Context) {
 	c.JSON(http.StatusOK, createdMedia)
 
 }
+
+// GetMediaById retrieves a media record by its ID
+// @Summary Retrieve a media record by ID
+// @Description get a media record by its ID
+// @Tags media
+// @Accept  json
+// @Produce  json
+// @Param id query int true "Media ID"
+// @Success 200 {object} db.Media "Successfully retrieved the media record"
+// @Failure 400 {string} string "Error: Invalid media ID"
+// @Router /media/by-id [get]
 func (contr MediaController) GetMediaById(c *gin.Context) {
 	mediaId, err := strconv.ParseInt(c.Query("id"), 10, 32)
 	if err != nil {
@@ -64,6 +86,17 @@ func (contr MediaController) GetMediaById(c *gin.Context) {
 	media, err := contr.service.GetMediaById(mediaId)
 	c.JSON(200, media)
 }
+
+// GetMediaByTMDBId retrieves a media record by its TMDB ID
+// @Summary Retrieve a media record by TMDB ID
+// @Description get a media record by its TMDB ID
+// @Tags media
+// @Accept  json
+// @Produce  json
+// @Param tmdb_id query int true "TMDB ID"
+// @Success 200 {object} db.Media "Successfully retrieved the media record"
+// @Failure 400 {string} string "Error: Invalid TMDB ID"
+// @Router /media/by-tmdb-id [get]
 func (contr MediaController) GetMediaByTMDBId(c *gin.Context) {
 	mediaId, err := strconv.ParseInt(c.Query("tmdb_id"), 10, 32)
 	if err != nil {

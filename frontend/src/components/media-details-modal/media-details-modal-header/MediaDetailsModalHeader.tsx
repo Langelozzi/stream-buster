@@ -6,11 +6,10 @@ import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
 import { Episode } from '../../../models/episode';
-import { createCurrentlyWatching } from '../../../api/services/currentlyWatching.service';
-import { CurrentlyWatching } from '../../../models/currently_watching';
-import { createMedia } from '../../../api/services/media.service';
-import { castToTvOrMovie } from '../../../api/services/search.service';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../../../hooks/useUser';
+import { onAddToList } from '../../../api/services/currentlyWatching.service';
+import { useSnackbar } from '../../../hooks/useSnackBar';
 
 const useStyles = makeStyles(() => ({
     modalContainer: {
@@ -61,47 +60,45 @@ interface MediaDetailsModalHeaderProps {
 
 export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode }) => {
     // Hooks
+    const { t } = useTranslation();
     const classes = useStyles();
     const navigate = useNavigate();
     const user = useUser();
+
+    const { showSnackbar, SnackbarComponent } = useSnackbar()
 
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
     const backgroundImage = !!media.BackdropImage ? media.BackdropImage : defaultBackdropImage;
 
     // Functions
-    const onPlay = () => {
+    const onPlay = async () => {
         if (currentEpisode) {
-            navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media, currentEpisode } });
+            const mediaResponse = await onAddToList(media, user, currentEpisode.SeasonNumber, currentEpisode.EpisodeNumber)
+            media.MediaID = mediaResponse.ID
+            navigate(`/watch/${media.Media?.TMDBID}/${currentEpisode.SeasonNumber}/${currentEpisode.EpisodeNumber}`, { state: { media: mediaResponse, currentEpisode } });
+        } else if (media.Media?.MediaType?.Name == "TV") {
+            const mediaResponse = await onAddToList(media, user, 1, 1)
+            media.MediaID = mediaResponse.ID;
+            navigate(`/watch/${media.Media?.TMDBID}/1/1`,
+                { state: { media: mediaResponse } }
+            );
         } else {
-
-            navigate(`/watch/${media.Media?.TMDBID}`, { state: { media, currentEpisode } });
+            const mediaResponse = await onAddToList(media, user);
+            media.MediaID = mediaResponse.ID;
+            navigate(`/watch/${media.Media?.TMDBID}`, { state: { media: mediaResponse, currentEpisode } });
         }
     }
 
-    const onAddToList = async () => {
+    const onAdd = async () => {
         try {
-            let mediaResponse;
-            try {
-                mediaResponse = await createMedia(media.Media!)
-                console.log('mediaResponse', mediaResponse);
-
-            } catch (error) {
-
-            }
-
-            const currentlyWatching: CurrentlyWatching = {
-                MediaId: mediaResponse?.ID,
-                UserID: user.user?.ID
-            }
-
-            const response = await createCurrentlyWatching(currentlyWatching)
-            console.log('response', response);
+            await onAddToList(media, user, currentEpisode?.SeasonNumber, currentEpisode?.EpisodeNumber)
+            showSnackbar("Successfully added to watchlist")
         } catch (error) {
-            console.error("Error addign to list")
+            showSnackbar("Error added to watchlist")
         }
-
     }
+
 
     return (
         <Box className={classes.modalContainer}>
@@ -127,19 +124,21 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                     startIcon={<PlayArrow />}
                     onClick={onPlay}
                 >
-                    Play
+                    {t('button.play')}
                 </Button>
-                <Tooltip title="Add to List" arrow>
-                    <IconButton onClick={onAddToList} className={`${classes.roundButton}`} aria-label="Add to My List">
+
+                <Tooltip title={t('dictionary.addToMyList')} arrow>
+                    <IconButton onClick={onAdd} className={`${classes.roundButton}`} aria-label={t('dictionary.addToMyList')}>
                         <Add />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Like" arrow>
-                    <IconButton className={`${classes.roundButton}`} aria-label="Rate">
+                <Tooltip title={t('dictonary.rate')} arrow>
+                    <IconButton className={`${classes.roundButton}`} aria-label={t('dictonary.rate')}>
                         <ThumbUp />
                     </IconButton>
                 </Tooltip>
             </Box>
+            {SnackbarComponent}
         </Box>
     );
 };

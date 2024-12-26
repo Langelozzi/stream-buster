@@ -18,13 +18,13 @@ func NewSearchController(service interfaces.SearchServiceInterface) *SearchContr
 // GetMultiMediaSearchResults retrieves multimedia search results based on a query.
 // @Summary Retrieve multimedia search results
 // @Description Get multimedia content based on the search query.
-// @Tags media
+// @Tags search
 // @Accept  json
 // @Produce  json
 // @Param query query string true "Search query for multimedia content"
 // @Success 200 {object} []interface{} "Successfully retrieved multimedia search results"
 // @Failure 400 {object} map[string]interface{} "Error: Invalid or empty query, or no results found"
-// @Router /media/search [get]
+// @Router /search/multi [get]
 func (contr *SearchController) GetMultiMediaSearchResults(c *gin.Context) {
 	// get the query
 	query := c.DefaultQuery("query", "")
