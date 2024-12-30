@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, Box } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import HomeIcon from '@mui/icons-material/Home';
 import { useUser } from '../../hooks/useUser'; // Adjust path as needed
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../../router/Routes';
 import { useTranslation } from 'react-i18next';
+import { NavbarButton } from './navbar-button/NavbarButton';
 
 export const Navbar: React.FC = () => {
     const { user, logout } = useUser();
@@ -35,9 +37,11 @@ export const Navbar: React.FC = () => {
                         {t('dictionary.streambuster')}
                     </Typography>
                     {user && (
-                        <Button color="inherit" onClick={() => navigate(routes.browse)}>
-                            {t('button.browse')}
-                        </Button>
+                        <NavbarButton
+                            Icon={HomeIcon}
+                            label={t('button.browse')}
+                            onClick={() => navigate(routes.browse)}
+                        />
                     )}
                 </Box>
 
@@ -47,19 +51,18 @@ export const Navbar: React.FC = () => {
                     </Button>
                 ) : (
                     <>
-                        <IconButton
-                            color="inherit"
-                            onClick={handleProfileMenuOpen}
-                            component="span"
-                        >
+                        <Button color='inherit' onClick={handleProfileMenuOpen} component='span'>
+                            <Typography>
+                                {user.FirstName}
+                            </Typography>
                             <AccountCircleIcon />
-                        </IconButton>
+                        </Button>
                         <Menu
                             anchorEl={anchorEl}
                             open={open}
                             onClose={handleMenuClose}
                             anchorOrigin={{
-                                vertical: 'top',
+                                vertical: 'bottom',
                                 horizontal: 'right',
                             }}
                             transformOrigin={{
