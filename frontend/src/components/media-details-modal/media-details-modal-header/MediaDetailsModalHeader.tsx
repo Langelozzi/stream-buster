@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, IconButton, Button, Typography, Tooltip } from '@mui/material';
-import { PlayArrow, Add, ThumbUp, CheckCircle, Cancel } from '@mui/icons-material';
+import { PlayArrow, Add, ThumbUp } from '@mui/icons-material';
 import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +9,12 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from '../../../hooks/useUser';
 import { onAddToList } from '../../../api/services/currentlyWatching.service';
 import { useSnackbar } from '../../../hooks/useSnackBar';
+import { AvailabilityInfo } from './AvailabilityInfo';
 
 interface MediaDetailsModalHeaderProps {
     media: Movie | TV;
     currentEpisode?: Episode;
-    available: boolean | undefined;
+    available: number;
 }
 
 export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode, available }) => {
@@ -119,29 +120,11 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 <Typography variant="h4" fontWeight="bold">
                     {media.Media?.Title}
                 </Typography>
-                {available !== undefined && (
-                    <div>
-                        {available ? (
-                            <Box sx={styles.availabilityContainer}>
-                                <CheckCircle color='success' />
-                                <Typography sx={styles.availabilityText}>
-                                    Available
-                                </Typography>
-                            </Box>
-                        ) : (
-                            <Box sx={styles.availabilityContainer}>
-                                <Cancel color='error' />
-                                <Typography sx={styles.availabilityText}>
-                                    Unavailable
-                                </Typography>
-                            </Box>
-                        )}
-                    </div>
-                )}
+                <AvailabilityInfo available={available} />
             </Box>
 
             {/* Controls */}
-            {available && (
+            {available == 1 && (
                 <Box sx={styles.controls}>
                     <Button
                         variant="contained"

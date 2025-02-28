@@ -67,7 +67,7 @@ func (dao *CDNDao) GetTVContent(tmdbId string, seasonNum int, episodeNum int) (s
 }
 
 // CheckContentExist Asynchronous function to check if content exists for the given TMDB ID
-func (dao *CDNDao) CheckContentExist(tmdbId string, isTV bool) bool {
+func (dao *CDNDao) CheckContentExist(tmdbId string, isTV bool) (*http.Response, error) {
 	baseUrl := utils.GetEnvVariable("VIDSRC_BASE_URL")
 
 	var url string
@@ -78,11 +78,5 @@ func (dao *CDNDao) CheckContentExist(tmdbId string, isTV bool) bool {
 	}
 
 	// Ping the vidsrc API to check if the content exists
-	response, err := http.Get(url)
-
-	if err != nil || response.StatusCode != http.StatusOK {
-		return false
-	}
-
-	return true
+	return http.Get(url)
 }

@@ -110,7 +110,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     const [currentSeason, setCurrentSeason] = useState<Season | null>(null);
     const [episodes, setEpisodes] = useState<Episode[] | null>(null);
     const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
-    const [available, setAvailable] = useState<boolean | undefined>(undefined);
+    const [available, setAvailable] = useState<number>(-1);
 
     // Functions
     const fetchDetailedTV = async () => {
@@ -220,7 +220,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
                     )}
 
                     {/* Episode List Section (should be conditionally rendered if it's a tv show)*/}
-                    {detailedMedia && isTV && episodes && currentSeason && (
+                    {detailedMedia && available == 1 && isTV && episodes && currentSeason && (
                         <MediaDetailsModalEpisodes
                             tv={detailedMedia as TV}
                             episodes={episodes}

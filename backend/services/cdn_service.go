@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	iDao "github.com/STREAM-BUSTER/stream-buster/daos/interfaces"
+	"net/http"
 	"regexp"
 )
 
@@ -30,8 +31,22 @@ func (service *CDNService) GetTVContent(tmdbId string, seasonNum int, episodeNum
 	return transformContent(html)
 }
 
-func (service *CDNService) CheckContentExists(tmdbId string, isTV bool) bool {
-	return service.dao.CheckContentExist(tmdbId, isTV)
+func (service *CDNService) CheckContentExists(tmdbId string, isTV bool) int {
+	// Exists = 1
+	// Doesn't exist = 0
+	// Requests exceed or error occurred (i.e. unknown) = -1
+	res, err := service.dao.CheckContentExist(tmdbId, isTV)
+	if err != nil {
+		return -1
+	}
+
+	if res.StatusCode == http.StatusOK {
+		return 1
+	} else if res.StatusCode == http.StatusNotFound {
+		return 0
+	}
+
+	return -1
 }
 
 func transformContent(html string) (string, error) {
