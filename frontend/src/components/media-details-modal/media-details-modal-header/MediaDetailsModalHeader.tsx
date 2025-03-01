@@ -124,7 +124,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
             </Box>
 
             {/* Controls */}
-            {available == 1 && (
+            {available != 0 && (
                 <Box sx={styles.controls}>
                     <Button
                         variant="contained"

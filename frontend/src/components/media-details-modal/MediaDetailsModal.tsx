@@ -220,7 +220,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
                     )}
 
                     {/* Episode List Section (should be conditionally rendered if it's a tv show)*/}
-                    {detailedMedia && available == 1 && isTV && episodes && currentSeason && (
+                    {detailedMedia && available != 0 && isTV && episodes && currentSeason && (
                         <MediaDetailsModalEpisodes
                             tv={detailedMedia as TV}
                             episodes={episodes}
