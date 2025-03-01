@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, Box } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SearchIcon from '@mui/icons-material/Search'
 import HomeIcon from '@mui/icons-material/Home';
 import { useUser } from '../../hooks/useUser'; // Adjust path as needed
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -36,7 +35,7 @@ export const Navbar: React.FC = () => {
         <AppBar position="static" sx={{ marginBottom: 2 }}>
             <Toolbar>
                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
-                    <Typography variant="h6" sx={{ mr: 2, cursor: 'pointer' }} onClick={() => navigate(routes.home)}>
+                    <Typography variant="h6" sx={{ mr: 2, cursor: 'pointer' }} onClick={() => navigate(routes.browse)}>
                         {t('dictionary.streambuster')}
                     </Typography>
                     {user && (

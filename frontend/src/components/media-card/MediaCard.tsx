@@ -72,14 +72,14 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
         try {
 
             if (!currentlyWatching?.MediaId || !onDelete) {
-                showSnackbar("Error Deleting")
+                showSnackbar("Error removing from currently watching")
                 return
             }
 
             await onDelete(currentlyWatching?.MediaId)
-            showSnackbar("Successfully deleted")
+            showSnackbar("Successfully removed from currently watching")
         } catch (error) {
-            showSnackbar("Error Deleting")
+            showSnackbar("Error removing from currently watching")
         }
 
     }
