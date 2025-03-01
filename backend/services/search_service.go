@@ -31,3 +31,12 @@ func (service *SearchService) SearchTrendingMovies(timeWindow string, page int) 
 
 	return searchResults, nil
 }
+
+func (service *SearchService) SearchTrendingTV(timeWindow string, page int) (*api.SearchPage, error) {
+	searchResults, err := service.dao.GetTrendingTV(timeWindow, page)
+	if err != nil {
+		return nil, err
+	}
+
+	return searchResults, nil
+}

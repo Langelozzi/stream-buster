@@ -71,8 +71,8 @@ export const SearchResultPage = () => {
 
             {/* Search results */}
             {results && results.length > 0 && (
-                <Box mt={2} width="100%">
-                    <Typography variant="h6">{t('dictionary.searchResults')}:</Typography>
+                <Box width="100%">
+                    <Typography variant="h5" sx={{ fontWeight: "bold" }}>{t('dictionary.searchResults')}:</Typography>
                     <Box display="flex" flexWrap="wrap" justifyContent="flex-start" gap={2} mt={2}>
                         {results.map((media, index) => (
                             <MediaCard media={media} key={`${media.Id}-${index}`} />

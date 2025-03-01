@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { searchTrendingMovies } from "../../api/services/search.service";
+import { searchTrendingMovies, searchTrendingTv } from "../../api/services/search.service";
 import { MediaCarousel } from "../../components/media-carousel/MediaCarousel";
 import { Container, Box, Typography } from "@mui/material";
 import { MediaCard } from "../../components/media-card/MediaCard";
@@ -25,16 +25,22 @@ const styles = {
 };
 
 export const BrowsePage = () => {
-
     const [moviePage, setMoviePage] = useState();
+    const [tvPage, setTvPage] = useState();
 
     const fetchTrendingMovies = async () => {
         const pageResults = await searchTrendingMovies();
         setMoviePage(pageResults);
     }
 
+    const fetchTrendingTv = async () => {
+        const pageResults = await searchTrendingTv();
+        setTvPage(pageResults);
+    }
+
     useEffect(() => {
         fetchTrendingMovies();
+        fetchTrendingTv();
     }, []);
 
     return (
@@ -44,6 +50,14 @@ export const BrowsePage = () => {
                     title="Trending Movies"
                     items={moviePage.Results}
                     renderItem={(movie) => (<MediaCard media={movie} />)}
+                />
+            )}
+            <br />
+            {tvPage?.Results && (
+                <MediaCarousel
+                    title="Trending TV"
+                    items={tvPage.Results}
+                    renderItem={(tv) => (<MediaCard media={tv} />)}
                 />
             )}
         </Box>

@@ -44,3 +44,19 @@ export const searchTrendingMovies = async (timeWindow: string = "week", page: nu
         throw error;
     }
 };
+
+export const searchTrendingTv = async (timeWindow: string = "week", page: number = 1): Promise<SearchPage> => {
+    try {
+        const response = await axios.get(`/search/trending/tv`, {
+            params: {
+                time_window: timeWindow,
+                page: page
+            },
+        });
+
+        return response.data as SearchPage;
+    } catch (error) {
+        console.error('Error fetching trending movie results:', error);
+        throw error;
+    }
+};

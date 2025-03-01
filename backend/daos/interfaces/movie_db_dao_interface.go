@@ -8,4 +8,5 @@ type MovieDatabaseDaoInterface interface {
 	GetMovieDetails(id int) (*api.Movie, error)
 	GetEpisodesInSeason(seriesId int, seasonNum int) ([]*api.Episode, error)
 	GetTrendingMovies(timeWindow string, page int) (*api.SearchPage, error)
+	GetTrendingTV(timeWindow string, page int) (*api.SearchPage, error)
 }
