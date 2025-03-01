@@ -38,6 +38,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
         padding: theme.spacing(1, 1, 1, 0),
         // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        // Add right padding when clear button is present
+        paddingRight: '30px', // Space for clear button
         transition: theme.transitions.create('width'),
         [theme.breakpoints.up('sm')]: {
             width: '12ch',
@@ -67,7 +69,7 @@ export const NavSearch = () => {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const [previousPath, setPreviousPath] = useState<string>('/browse'); // Default fallback
-    
+
     // Effect to track previous path
     useEffect(() => {
         // Only store paths that are not search or watch pages as previous paths
@@ -75,13 +77,13 @@ export const NavSearch = () => {
             setPreviousPath(location.pathname);
         }
     }, [location.pathname]);
-    
+
     // Create a debounced version of the navigation function with shorter delay
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedNavigate = useCallback(
         debounce((query: string) => {
             if (query.trim() !== '') {
-                navigate(`/search?q=${encodeURIComponent(query.trim())}&page=1`);
+                navigate(`/search?q=${encodeURIComponent(query)}&page=1`);
             } else if (query.trim() === '') {
                 // Navigate back to previous route instead of hardcoded /browse
                 navigate(previousPath);
@@ -96,13 +98,13 @@ export const NavSearch = () => {
         setSearchValue(newValue);
         debouncedNavigate(newValue);
     };
-    
+
     // Handle clear button click
     const handleClearSearch = () => {
         setSearchValue('');
         debouncedNavigate('');
     };
-    
+
     // Effect to sync search input with URL query parameter
     useEffect(() => {
         // Check if we're on the search page
@@ -131,14 +133,13 @@ export const NavSearch = () => {
             </SearchIconWrapper>
             <StyledInputBase
                 placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
                 value={searchValue}
                 onChange={handleSearchChange}
             />
             {searchValue && (
-                <ClearButton 
-                    size="small" 
-                    aria-label="clear search" 
+                <ClearButton
+                    size="small"
+                    aria-label="clear search"
                     onClick={handleClearSearch}
                 >
                     <Close fontSize="small" />
