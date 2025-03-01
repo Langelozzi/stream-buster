@@ -6,7 +6,9 @@
         "logout": "Logout",
         "play": "Play",
         "search": "Search",
-        "submit": "Submit"
+        "submit": "Submit",
+        "next": "Next",
+        "previous": "Previous"
     },
     "columnHeader": {
         "email": "Email",
@@ -52,7 +54,9 @@
         "userUsage": "User Usage",
         "userUsageTable": "User Usage Table",
         "watchList": "Watch List",
-        "welcomeBack": "Welcome back, {{name}}"
+        "welcomeBack": "Welcome back, {{name}}",
+        "page": "Page",
+        "of": "of"
     },
     "error": {
         "exceededRequestCount": "You have exceeded your free credits",

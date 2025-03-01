@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Menu, MenuItem, Box } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SearchIcon from '@mui/icons-material/Search'
 import HomeIcon from '@mui/icons-material/Home';
 import { useUser } from '../../hooks/useUser'; // Adjust path as needed
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '../../router/Routes';
 import { useTranslation } from 'react-i18next';
 import { NavbarButton } from './navbar-button/NavbarButton';
+import { NavSearch } from './search/NavSearch';
 
 export const Navbar: React.FC = () => {
     const { user, logout } = useUser();
     const navigate = useNavigate();
+    const location = useLocation();
     const { t } = useTranslation();
 
     const [anchorEl, setAnchorEl] = useState<HTMLAnchorElement | null>(null);
@@ -45,14 +48,21 @@ export const Navbar: React.FC = () => {
                     )}
                 </Box>
 
+
                 {!user ? (
                     <Button color="inherit" onClick={() => navigate(routes.login)}>
                         {t('button.login')}
                     </Button>
                 ) : (
                     <>
+                        {!location.pathname.startsWith('/watch') && (
+                            <Box mr={2}>
+                                <NavSearch />
+                            </Box>
+                        )}
+
                         <Button color='inherit' onClick={handleProfileMenuOpen} component='span'>
-                            <Typography>
+                            <Typography mr={1}>
                                 {user.FirstName}
                             </Typography>
                             <AccountCircleIcon />

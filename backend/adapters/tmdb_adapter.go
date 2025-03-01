@@ -9,13 +9,17 @@ import (
 	"time"
 )
 
-func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
+func ParseSearchMultiMediaResponse(json string) (*api.SearchPage, error) {
 	jsonMap, err := JSONToMap(json)
 	if err != nil {
 		return nil, err
 	}
 
+	pageNum := int(jsonMap["page"].(float64))
+	totalPages := int(jsonMap["total_pages"].(float64))
+	totalResults := int(jsonMap["total_results"].(float64))
 	var castedResults []interface{}
+
 	// Access the "results" array
 	if results, ok := jsonMap["results"].([]interface{}); ok {
 		// Iterate through the results and cast them to our structs
@@ -40,7 +44,14 @@ func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
 		fmt.Println("No results found or results is not an array")
 	}
 
-	return castedResults, nil
+	searchPage := api.SearchPage{
+		Page:         pageNum,
+		TotalPages:   totalPages,
+		TotalResults: totalResults,
+		Results:      castedResults,
+	}
+
+	return &searchPage, nil
 }
 
 func ParseTVDetailsResponse(json string) (*api.TV, error) {

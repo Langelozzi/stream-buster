@@ -1,9 +1,8 @@
-import { Search } from "../../components/search/Search";
 
 export const BrowsePage = () => {
     return (
         <>
-            <Search />
+            Browse on this page
         </>
     )
 }

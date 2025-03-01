@@ -15,8 +15,8 @@ func NewSearchService(dao iDao.MovieDatabaseDaoInterface) *SearchService {
 }
 
 // SearchMultiMedia searches for multimedia content based on a query
-func (service *SearchService) SearchMultiMedia(query string) ([]interface{}, error) {
-	searchResults, err := service.dao.SearchMultiMedia(query)
+func (service *SearchService) SearchMultiMedia(query string, page int) (*api.SearchPage, error) {
+	searchResults, err := service.dao.SearchMultiMedia(query, page)
 	if err != nil {
 		return nil, err
 	}

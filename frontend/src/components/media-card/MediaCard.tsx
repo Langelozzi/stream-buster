@@ -87,10 +87,9 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
 
     return (
         <>
-
             <Card
                 sx={{
-                    maxWidth: 150,
+                    maxWidth: 160,
                     borderRadius: 2,
                     boxShadow: 5,
                     backgroundColor: '#181818',

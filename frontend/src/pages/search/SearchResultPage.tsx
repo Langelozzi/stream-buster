@@ -1,0 +1,112 @@
+import { useState, FormEvent, useEffect, useRef } from 'react';
+import { Box, CircularProgress, Typography, Button, Pagination } from '@mui/material';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { TV } from '../../models/tv';
+import { Movie } from '../../models/movie';
+import { searchMulti } from '../../api/services/search.service';
+import { MediaCard } from '../../components/media-card/MediaCard';
+import { useTranslation } from 'react-i18next';
+
+export const SearchResultPage = () => {
+    const { t } = useTranslation();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+
+    // Get query and page from URL parameters
+    const query = searchParams.get('q') || '';
+    const paramPage = Number(searchParams.get('page')) || 1;
+
+    // State for the search query and the results
+    const [results, setResults] = useState<(TV | Movie)[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(paramPage);
+    const [totalPages, setTotalPages] = useState<number>(1);
+
+    // Function to fetch search results based on query
+    const fetchResults = async (searchQuery: string, pageNum: number) => {
+        try {
+            setLoading(true);
+            const searchPage = await searchMulti(searchQuery, pageNum);
+            setResults(searchPage.Results);
+            setTotalPages(searchPage.TotalPages);
+        } catch (error) {
+            console.error('Failed to fetch search results:', error);
+        } finally {
+            // Only update loading state if component is still mounted
+            setLoading(false);
+        }
+    };
+
+    // Handle form submission
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (query.trim()) {
+            // Update URL parameter
+            setSearchParams({ q: query.trim(), page: '1' });
+        }
+    };
+
+    // Handle page change with debounce to prevent rapid requests
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        // Prevent rapid page changes by disabling if already loading
+        if (loading) return;
+
+        // Update URL with new page number
+        setSearchParams({ q: query, page: value.toString() });
+    };
+
+    // Effect to fetch results when URL parameters change
+    useEffect(() => {
+        if (query) {
+            fetchResults(query, paramPage);
+        } else {
+            setResults([]);
+        }
+    }, [query, paramPage]);
+
+    return (
+        <Box display="flex" flexDirection="column" alignItems="center" p={2}>
+            {/* Loading spinner */}
+            {loading && <CircularProgress />}
+
+            {/* Search results */}
+            {results && results.length > 0 && (
+                <Box mt={2} width="100%">
+                    <Typography variant="h6">{t('dictionary.searchResults')}:</Typography>
+                    <Box display="flex" flexWrap="wrap" justifyContent="flex-start" gap={2} mt={2}>
+                        {results.map((media, index) => (
+                            <MediaCard media={media} key={`${media.Id}-${index}`} />
+                        ))}
+                    </Box>
+                    {/* Pagination controls - hidden during loading */}
+                    {!loading && (
+                        <Box display="flex" justifyContent="center" width="100%" mt={3}>
+                            <Pagination
+                                onChange={handlePageChange}
+                                page={paramPage}
+                                count={totalPages}
+                                size='large'
+                                showFirstButton
+                                showLastButton
+                                color='primary'
+                                sx={{
+                                    '& .MuiPaginationItem-root': {
+                                        color: 'white'
+                                    },
+                                    '& .MuiPaginationItem-icon': {
+                                        color: 'white'
+                                    }
+                                }}
+                            />
+                        </Box>
+                    )}
+                </Box>
+            )}
+
+            {/* Message when no results */}
+            {!loading && query && !results && (
+                <Typography variant="body1">{t('dictionary.noResultsFound')}</Typography>
+            )}
+        </Box>
+    );
+};

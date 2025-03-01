@@ -1,6 +1,7 @@
 import axios from '../axios';
 import { Movie } from '../../models/movie';
 import { TV } from '../../models/tv';
+import { SearchPage } from '../../models/search_page';
 
 export const castToTvOrMovie = (item: any): (TV | Movie) => {
     if (item.Media?.MediaType.Name === 'tv') {
@@ -12,22 +13,16 @@ export const castToTvOrMovie = (item: any): (TV | Movie) => {
     }
 }
 
-export const searchMulti = async (query: string): Promise<(TV | Movie)[]> => {
+export const searchMulti = async (query: string, page: number): Promise<SearchPage> => {
     try {
         const response = await axios.get(`/search/multi`, {
             params: {
                 query: query,
+                page: page
             },
         });
 
-        const data = response.data as any[];
-        if (!data || data.length === 0) {
-            return [];
-        }
-
-        return data.map(item => {
-            return castToTvOrMovie(item)
-        })
+        return response.data as SearchPage;
     } catch (error) {
         console.error('Error fetching search results:', error);
         throw error;
