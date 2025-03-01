@@ -31,11 +31,11 @@ func (service MediaService) CreateMedia(media *db.Media) (*db.Media, error) {
 
 func (service MediaService) GetMediaAvailability(media *db.Media) (int, error) {
 	existingMedia, err := service.GetMediaByTMDBId(int64(media.TMDBID))
+	if existingMedia != nil {
+		media = existingMedia
+	}
 
 	if err != nil || shouldRefreshAvailability(media) { // Media doesn't exist yet or availability needs refresh
-		if existingMedia != nil {
-			media = existingMedia
-		}
 
 		// Get the availability
 		exists := service.cdnService.CheckContentExists(strconv.Itoa(media.TMDBID), media.MediaTypeId == 1)
@@ -48,10 +48,10 @@ func (service MediaService) GetMediaAvailability(media *db.Media) (int, error) {
 	}
 
 	// If availability is already stored in database and has been updated within the past 2 weeks
-	return existingMedia.Availability, nil
+	return media.Availability, nil
 }
 
 func shouldRefreshAvailability(media *db.Media) bool {
 	twoWeeksAgo := time.Now().AddDate(0, 0, -14) // 14 days ago
-	return media.Availability == -1 || (media.UpdatedAt != nil && media.UpdatedAt.After(twoWeeksAgo))
+	return media.Availability == -1 || (media.UpdatedAt != nil && media.UpdatedAt.Before(twoWeeksAgo))
 }
