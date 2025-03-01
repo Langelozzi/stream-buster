@@ -1,7 +1,6 @@
 import React from 'react';
-import { Box, IconButton, Button, Typography, Tooltip } from '@mui/material';
-import { PlayArrow, Add, ThumbUp } from '@mui/icons-material';
-import { makeStyles } from '@mui/styles';
+import { Box, IconButton, Button, Typography, Tooltip, useMediaQuery, useTheme } from '@mui/material';
+import { PlayArrow, Add, ThumbUp, Close } from '@mui/icons-material';
 import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
@@ -11,61 +10,75 @@ import { useUser } from '../../../hooks/useUser';
 import { onAddToList } from '../../../api/services/currentlyWatching.service';
 import { useSnackbar } from '../../../hooks/useSnackBar';
 
-const useStyles = makeStyles(() => ({
-    modalContainer: {
-        position: 'relative',
-        width: '100%',
-        height: '600px',
-        overflow: 'hidden',
-    },
-    imageOverlay: {
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        backgroundSize: 'cover',
-        opacity: 0.4,
-    },
-    title: {
-        position: 'absolute',
-        bottom: '70px', // adjust this value if needed
-        left: '20px',
-        zIndex: 3,
-    },
-    controls: {
-        position: 'absolute',
-        bottom: '20px',
-        left: '20px',
-        display: 'flex',
-        gap: '10px',
-        zIndex: 3,
-    },
-    controlButton: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '4px',
-    },
-    roundButton: {
-        borderRadius: '50%',
-        backgroundColor: 'rgba(255, 255, 255, 0.3)',
-        '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.5)',
-        },
-    },
-}));
-
 interface MediaDetailsModalHeaderProps {
     media: Movie | TV;
-    currentEpisode?: Episode
+    currentEpisode?: Episode;
+    onClose: () => void;
 }
 
-export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode }) => {
+export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode, onClose }) => {
     // Hooks
     const { t } = useTranslation();
-    const classes = useStyles();
     const navigate = useNavigate();
     const user = useUser();
-
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const { showSnackbar, SnackbarComponent } = useSnackbar()
+
+    // Define styles as a JSON object
+    const styles = {
+        modalContainer: {
+            position: 'relative',
+            width: '100%',
+            height: isMobile ? '200px' : '500px',
+            overflow: 'hidden',
+        },
+        imageOverlay: {
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backgroundSize: 'cover',
+            opacity: 0.4,
+        },
+        title: {
+            position: 'absolute',
+            bottom: '70px',
+            left: '20px',
+            zIndex: 3,
+        },
+        controls: {
+            position: 'absolute',
+            bottom: '20px',
+            left: '20px',
+            display: 'flex',
+            gap: '10px',
+            zIndex: 3,
+        },
+        controlButton: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+        },
+        roundButton: {
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.3)',
+            '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.5)',
+            },
+        },
+        closeButton: {
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+            zIndex: 5,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            color: 'white',
+            '&:hover': {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            },
+        },
+    };
+
 
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
@@ -99,41 +112,67 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
         }
     }
 
-
     return (
-        <Box className={classes.modalContainer}>
+        <Box sx={{
+            ...styles.modalContainer,
+        }}>
+            {/* Close Button */}
+            <IconButton 
+                onClick={onClose} 
+                aria-label="close"
+                size={isMobile ? "small" : "medium"}
+                sx={styles.closeButton}
+            >
+                <Close />
+            </IconButton>
+            
             {/* Image Overlay */}
             <Box
-                className={classes.imageOverlay}
                 sx={{
-                    backgroundImage: `url(${backgroundImage})`
+                    ...styles.imageOverlay,
+                    backgroundImage: `url(${backgroundImage})`,
+                    backgroundPosition: isMobile ? 'center top' : 'center',
                 }}
             />
             {/* Title */}
-            <Box className={classes.title}>
-                <Typography variant="h4" fontWeight="bold">
+            <Box sx={{
+                ...styles.title,
+                left: isMobile ? '10px' : '20px'
+            }}>
+                <Typography variant={isMobile ? "h5" : "h4"} fontWeight="bold">
                     {media.Media?.Title}
                 </Typography>
             </Box>
             {/* Controls */}
-            <Box className={classes.controls}>
+            <Box sx={{
+                ...styles.controls,
+                left: isMobile ? '10px' : '20px'
+            }}>
                 <Button
                     variant="contained"
                     color="primary"
-                    className={classes.controlButton}
+                    sx={styles.controlButton}
                     startIcon={<PlayArrow />}
                     onClick={onPlay}
+                    size={isMobile ? "small" : "medium"}
                 >
                     {t('button.play')}
                 </Button>
 
                 <Tooltip title={t('dictionary.addToMyList')} arrow>
-                    <IconButton onClick={onAdd} className={`${classes.roundButton}`} aria-label={t('dictionary.addToMyList')}>
+                    <IconButton
+                        onClick={onAdd}
+                        sx={styles.roundButton}
+                        size={isMobile ? "small" : "medium"}
+                    >
                         <Add />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={t('dictonary.rate')} arrow>
-                    <IconButton className={`${classes.roundButton}`} aria-label={t('dictonary.rate')}>
+                    <IconButton
+                        sx={styles.roundButton}
+                        size={isMobile ? "small" : "medium"}
+                    >
                         <ThumbUp />
                     </IconButton>
                 </Tooltip>

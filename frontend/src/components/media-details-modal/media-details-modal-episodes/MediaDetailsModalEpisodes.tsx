@@ -1,13 +1,13 @@
 import React from "react";
 import { Episode } from "../../../models/episode";
-import { Typography, Divider, List, Box, Select, MenuItem, SelectChangeEvent } from "@mui/material";
-import { makeStyles } from '@mui/styles';
+import { Typography, Divider, List, Box, Select, MenuItem, SelectChangeEvent, useMediaQuery, useTheme } from "@mui/material";
 import { EpisodeListItem } from "./EpisodeListItem";
 import { TV } from "../../../models/tv";
 import { Season } from "../../../models/season";
 import { useTranslation } from "react-i18next";
 
-const useStyles = makeStyles({
+// Define styles as a JSON object
+const styles = {
     episodeList: {
         width: '100%',
         backgroundColor: 'black',
@@ -18,18 +18,17 @@ const useStyles = makeStyles({
     },
     episodeDivider: {
         borderColor: 'grey',
-        marginTop: 24,
+        marginTop: 2,
     },
     headerContainer: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 16,
     },
     select: {
         color: 'white',
         backgroundColor: '#333', // Dark grey background for selector
-        borderRadius: 4, // Rounded corners for a better visual effect
+        borderRadius: 2, // Rounded corners for a better visual effect
         padding: '8px 16px',
         '& .MuiSelect-icon': {
             color: 'white',
@@ -42,7 +41,7 @@ const useStyles = makeStyles({
             backgroundColor: '#f0f0f0',
         },
     },
-});
+};
 
 interface MediaDetailsModalEpisodesProps {
     tv: TV;
@@ -55,7 +54,8 @@ export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps>
     const { tv, episodes, currentSeason, setCurrentSeason } = props;
 
     const { t } = useTranslation();
-    const classes = useStyles();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const handleSeasonChange = (event: SelectChangeEvent<number>) => {
         const selectedSeasonNumber = event.target.value as number;
@@ -65,21 +65,29 @@ export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps>
 
     return (
         <>
-            <Box className={classes.headerContainer}>
-                <Typography variant="h5">{t('dictionary.episodes')}</Typography>
+            <Box sx={{
+                ...styles.headerContainer,
+                flexDirection: isMobile ? 'column' : 'row',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                gap: isMobile ? '16px' : '0px'
+            }}
+            >
+                <Typography variant={isMobile ? "h6" : "h5"}>{t('dictionary.episodes')}</Typography>
 
-                {/* Right-aligned Season Selector */}
+                {/* Season Selector */}
                 <Select
                     value={currentSeason.SeasonNumber}
                     onChange={handleSeasonChange}
-                    variant="standard" // No outline variant
-                    className={classes.select}
-                    sx={{ minWidth: 120 }}
+                    variant="standard"
+                    sx={{
+                        ...styles.select,
+                        minWidth: 120,
+                        width: isMobile ? '100%' : 'auto'
+                    }}
                 >
                     {tv.Seasons?.map((season, index) => (
-                        // Only display actual seasons, not specials (for now)
                         season.SeasonNumber > 0 && (
-                            <MenuItem key={index} value={season.SeasonNumber} className={classes.menuItem}>
+                            <MenuItem key={index} value={season.SeasonNumber} sx={styles.menuItem}>
                                 {season.Name}
                             </MenuItem>
                         )
@@ -87,10 +95,10 @@ export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps>
                 </Select>
             </Box>
 
-            <List className={classes.episodeList}>
+            <List sx={styles.episodeList}>
                 {episodes?.map((episode) => (
                     <Box key={episode.EpisodeTMDBID}>
-                        <Divider className={classes.episodeDivider} />
+                        <Divider sx={styles.episodeDivider} />
                         <EpisodeListItem tv={tv} episode={episode} />
                     </Box>
                 ))}
