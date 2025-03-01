@@ -3,13 +3,13 @@ import { Movie } from "../../models/movie";
 import { TV } from "../../models/tv";
 import instance from "../axios";
 
-export const getMedia = (id: number) => {
+export const getMediaByTMDBId = async (tmdbId: number): Promise<Media> => {
     try {
-        const res = instance.get("/media/", { params: { id: id } })
-
-        return res
+        const res = await instance.get(`/media/${tmdbId}`);
+        return res.data;
     } catch (error) {
-        return error
+        console.error('Error getting media by TMDB id', error);
+        throw error;
     }
 }
 

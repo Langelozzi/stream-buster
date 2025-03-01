@@ -93,16 +93,16 @@ func (contr MediaController) GetMediaById(c *gin.Context) {
 // @Tags media
 // @Accept  json
 // @Produce  json
-// @Param tmdb_id query int true "TMDB ID"
+// @Param tmdbId param int true "TMDB ID"
 // @Success 200 {object} db.Media "Successfully retrieved the media record"
 // @Failure 400 {string} string "Error: Invalid TMDB ID"
-// @Router /media/by-tmdb-id [get]
+// @Router /media/:tmdbId [get]
 func (contr MediaController) GetMediaByTMDBId(c *gin.Context) {
-	mediaId, err := strconv.ParseInt(c.Query("tmdb_id"), 10, 32)
+	mediaId, err := strconv.ParseInt(c.Param("tmdbId"), 10, 64)
 	if err != nil {
 		c.String(400, "Error parsing mediaId")
 	}
-	media, err := contr.service.GetMediaById(mediaId)
+	media, err := contr.service.GetMediaByTMDBId(mediaId)
 	c.JSON(200, media)
 }
 
