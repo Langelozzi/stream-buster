@@ -4,7 +4,7 @@ import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 import { Search, Close } from '@mui/icons-material';
 import debounce from 'lodash/debounce';
-import { IconButton } from '@mui/material';
+import { IconButton, useMediaQuery, useTheme } from '@mui/material';
 
 const SearchInput = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -36,11 +36,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     width: '100%',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        // Add right padding when clear button is present
         paddingRight: '30px', // Space for clear button
         transition: theme.transitions.create('width'),
+        width: '100%',
         [theme.breakpoints.up('sm')]: {
             width: '12ch',
             '&:focus': {
@@ -63,12 +62,18 @@ const ClearButton = styled(IconButton)(({ theme }) => ({
     },
 }));
 
-export const NavSearch = () => {
+interface NavSearchProps {
+    autoFocus?: boolean;
+}
+
+export const NavSearch: React.FC<NavSearchProps> = ({ autoFocus = false }) => {
     const [searchValue, setSearchValue] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const [previousPath, setPreviousPath] = useState<string>('/browse'); // Default fallback
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Effect to track previous path
     useEffect(() => {
@@ -135,6 +140,13 @@ export const NavSearch = () => {
                 placeholder="Search…"
                 value={searchValue}
                 onChange={handleSearchChange}
+                autoFocus={autoFocus}
+                inputProps={{
+                    'aria-label': 'search',
+                    style: {
+                        width: isMobile ? '100%' : undefined
+                    }
+                }}
             />
             {searchValue && (
                 <ClearButton

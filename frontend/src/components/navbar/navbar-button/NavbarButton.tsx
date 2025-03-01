@@ -1,4 +1,4 @@
-import { Box, Button, SvgIconTypeMap, Typography } from "@mui/material";
+import { Box, Button, SvgIconTypeMap, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 
 interface NavbarButtonProps {
@@ -8,14 +8,18 @@ interface NavbarButtonProps {
 }
 
 export const NavbarButton: React.FC<NavbarButtonProps> = ({ Icon, label, onClick }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    
     const styles = {
         button: {
             position: 'relative',
             overflow: 'hidden',
             padding: 2,
-            fontSize: '16px',
+            fontSize: isMobile ? '14px' : '16px',
             textTransform: 'uppercase',
             letterSpacing: '1px',
+            minWidth: isMobile ? 'auto' : undefined,
             '&:hover .underline': {
                 width: '54%'
             }
@@ -23,12 +27,11 @@ export const NavbarButton: React.FC<NavbarButtonProps> = ({ Icon, label, onClick
         label: {
             marginLeft: 1,
             fontSize: '1em',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            display: isMobile ? 'none' : 'block',
         },
         underline: {
             position: 'absolute',
-            // bottom: 0,
-            // left: 0,
             marginRight: 2,
             height: '2px',
             width: 0,
