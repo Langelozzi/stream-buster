@@ -45,7 +45,7 @@ func (dao *TMDBDao) SearchMultiMedia(query string, page int) (*api.SearchPage, e
 	}
 
 	// Parse the response into a structure that includes page and total_pages
-	searchPage, err := adapters.ParseSearchMultiMediaResponse(string(body))
+	searchPage, err := adapters.ParseSearchPageResponse(string(body))
 	if err != nil {
 		return nil, err
 	}
@@ -152,4 +152,37 @@ func (dao *TMDBDao) GetEpisodesInSeason(seriesId int, seasonNum int) ([]*api.Epi
 	}
 
 	return episodes, nil
+}
+
+func (dao *TMDBDao) GetTrendingMovies(timeWindow string, page int) (*api.SearchPage, error) {
+	baseUrl := utils.GetEnvVariable("TMDB_API_BASE_URL")
+	apiKey := utils.GetEnvVariable("TMDB_API_KEY")
+
+	getUrl := fmt.Sprintf("%s/trending/movie/%s?api_key=%s&page=%d", baseUrl, timeWindow, apiKey, page)
+
+	response, err := http.Get(getUrl)
+	if err != nil {
+		fmt.Printf("Error fetching from tmdb api: %v\n", err)
+		return nil, err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing request body stream: %v\n", err)
+		}
+	}(response.Body)
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		fmt.Printf("Error reading response body: %v\n", err)
+		return nil, err
+	}
+
+	// Parse the response into a structure that includes page and total_pages
+	searchPage, err := adapters.ParseSearchPageResponse(string(body))
+	if err != nil {
+		return nil, err
+	}
+
+	return searchPage, nil
 }

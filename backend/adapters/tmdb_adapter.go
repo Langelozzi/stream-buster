@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func ParseSearchMultiMediaResponse(json string) (*api.SearchPage, error) {
+func ParseSearchPageResponse(json string) (*api.SearchPage, error) {
 	jsonMap, err := JSONToMap(json)
 	if err != nil {
 		return nil, err

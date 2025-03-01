@@ -13,7 +13,7 @@ export const castToTvOrMovie = (item: any): (TV | Movie) => {
     }
 }
 
-export const searchMulti = async (query: string, page: number): Promise<SearchPage> => {
+export const searchMulti = async (query: string, page: number = 1): Promise<SearchPage> => {
     try {
         const response = await axios.get(`/search/multi`, {
             params: {
@@ -25,6 +25,22 @@ export const searchMulti = async (query: string, page: number): Promise<SearchPa
         return response.data as SearchPage;
     } catch (error) {
         console.error('Error fetching search results:', error);
+        throw error;
+    }
+};
+
+export const searchTrendingMovies = async (timeWindow: string = "week", page: number = 1): Promise<SearchPage> => {
+    try {
+        const response = await axios.get(`/search/trending/movie`, {
+            params: {
+                time_window: timeWindow,
+                page: page
+            },
+        });
+
+        return response.data as SearchPage;
+    } catch (error) {
+        console.error('Error fetching trending movie results:', error);
         throw error;
     }
 };
