@@ -73,7 +73,7 @@ export const LoginForm: React.FC = () => {
 		if (res?.status === 200 && res.data) {
 			const { user, token } = res.data;
 			login(user, token);
-			navigate(routes.dashboard);
+			navigate(routes.browse);
 		} else {
 			alert('Login failed');
 		}

@@ -15,12 +15,9 @@ export const DashboardPage = () => {
     return (
         <Box p={2} sx={{ display: 'flex', height: '100vh' }}>
             <Grid2 container spacing={2} sx={{ flexGrow: 1 }}>
-                <Grid2 size={8} sx={{ height: '100%' }}>
+                <Grid2 size={12} sx={{ height: '100%' }}>
                     {isAdmin && user && <AdminDashboard user={user} />}
                     {!isAdmin && user && <UserDashboard user={user} />}
-                </Grid2>
-                <Grid2 size={4} sx={{ height: '100%' }}>
-                    <AskQuery />
                 </Grid2>
             </Grid2>
         </Box>
