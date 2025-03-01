@@ -1,5 +1,5 @@
 import { CurrentlyWatching } from "../../models/currently_watching";
-import { createMedia } from "./media.service";
+import { getMediaByTMDBId } from "./media.service";
 import instance from "../axios";
 import { UserContextType } from "../../contexts/UserContext";
 import { Movie } from "../../models/movie";
@@ -52,7 +52,7 @@ export const onAddToList = async (media: Movie | TV, user: UserContextType, seas
     try {
         let mediaResponse;
         try {
-            mediaResponse = await createMedia(media.Media!)
+            mediaResponse = await getMediaByTMDBId(media.Media?.TMDBID!)
         } catch (error) {
             console.error(error);
         }
