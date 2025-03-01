@@ -35,7 +35,7 @@ func (contr MediaController) CreateMedia(c *gin.Context) {
 	err := c.ShouldBindJSON(media)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"meesge": "Invalid request body. Error: " + err.Error(),
+			"message": "Invalid request body. Error: " + err.Error(),
 		})
 		return
 	}
@@ -104,4 +104,30 @@ func (contr MediaController) GetMediaByTMDBId(c *gin.Context) {
 	}
 	media, err := contr.service.GetMediaById(mediaId)
 	c.JSON(200, media)
+}
+
+// GetMediaAvailability Gets the availability of the media
+// @Summary Retrieve a media record by TMDB ID
+// @Description get a media record by its TMDB ID
+// @Tags media
+// @Accept  json
+// @Produce  json
+// @Param tmdb_id query int true "TMDB ID"
+// @Success 200 {object} db.Media "Successfully retrieved the media record"
+// @Failure 400 {string} string "Error: Invalid TMDB ID"
+// @Router /media/by-tmdb-id [get]
+func (contr MediaController) GetMediaAvailability(c *gin.Context) {
+	media := &db.Media{}
+	err := c.ShouldBindJSON(media)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid request body. Error: " + err.Error(),
+		})
+		return
+	}
+
+	exists, err := contr.service.GetMediaAvailability(media)
+	c.JSON(200, gin.H{
+		"exists": exists,
+	})
 }

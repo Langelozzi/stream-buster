@@ -57,5 +57,7 @@ func runPostDeploymentScripts(database *gorm.DB) error {
 
 	post_deployment_functions.CreateTestData(database)
 
+	post_deployment_functions.UpdateNullAvailability(database)
+
 	return nil
 }

@@ -13,7 +13,7 @@ import { getMovieDetails } from '../../api/services/movie.service';
 import { Episode } from '../../models/episode';
 import { MediaDetailsModalEpisodes } from './media-details-modal-episodes/MediaDetailsModalEpisodes';
 import { Season } from '../../models/season';
-import { getContentExists } from '../../api/services/cdn.service';
+import { getMediaAvailability } from '../../api/services/media.service';
 
 // Defining styles using makeStyles
 const useStyles = makeStyles({
@@ -132,7 +132,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     }
 
     const fetchContentAvailable = async () => {
-        const doesExists = await getContentExists(media.Media?.TMDBID!, isTV);
+        const doesExists = await getMediaAvailability(media.Media!);
 
         setAvailable(doesExists);
     }

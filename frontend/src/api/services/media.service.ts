@@ -6,7 +6,7 @@ import instance from "../axios";
 export const getMedia = (id: number) => {
     try {
         const res = instance.get("/media/", { params: { id: id } })
-        
+
         return res
     } catch (error) {
         return error
@@ -21,4 +21,14 @@ export const createMedia = async (media: Media | Movie | TV): Promise<Media> => 
         console.error('Error Creating Media', error);
         throw error;
     }
-} 
+}
+
+export const getMediaAvailability = async (media: Media): Promise<number> => {
+    try {
+        const res = await instance.post("/media/availability", media);
+        return res.data.exists;
+    } catch (error) {
+        console.error('Error getting media availability', error);
+        throw error;
+    }
+}
