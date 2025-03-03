@@ -24,14 +24,6 @@ export const Router = () => {
                     <Route path={routes.register} Component={RegistrationPage} />
 
                     {/* Private Routes */}
-                    <Route
-                        path={routes.home}
-                        element={
-                            <PrivateRoute>
-                                <HomePage />
-                            </PrivateRoute>
-                        }
-                    />
                     < Route
                         path={routes.dashboard}
                         element={

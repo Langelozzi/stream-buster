@@ -29,14 +29,14 @@ export const MediaDetailsModalDescMovie: React.FC<MediaDetailsModalDescMovieProp
     return (
         <Box sx={styles.detailsContainer}>
             <Grid2 container spacing={isMobile ? 2 : 6}>
-                <Grid2 xs={12} md={8}>
+                <Grid2 size={{ xs: 12, md: 8 }}>
                     <Box>
                         <Typography>{year}&nbsp;&nbsp;{runtimeHours}{t('dictionary.hourLetter')} {runtimeMinutes}{t('dictionary.minuteLetter')}</Typography>
                         <br />
                         <Typography>{overview}</Typography>
                     </Box>
                 </Grid2>
-                <Grid2 xs={12} md={4}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                     <Typography>{t('dictionary.genres')}: {genres}</Typography>
                 </Grid2>
             </Grid2>

@@ -1,6 +1,6 @@
-import { useState, FormEvent, useEffect, useRef } from 'react';
-import { Box, CircularProgress, Typography, Button, Pagination } from '@mui/material';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Box, CircularProgress, Typography, Pagination } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
 import { TV } from '../../models/tv';
 import { Movie } from '../../models/movie';
 import { searchMulti } from '../../api/services/search.service';
@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 export const SearchResultPage = () => {
     const { t } = useTranslation();
     const [searchParams, setSearchParams] = useSearchParams();
-    const navigate = useNavigate();
 
     // Get query and page from URL parameters
     const query = searchParams.get('q') || '';
@@ -19,7 +18,6 @@ export const SearchResultPage = () => {
     // State for the search query and the results
     const [results, setResults] = useState<(TV | Movie)[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [page, setPage] = useState<number>(paramPage);
     const [totalPages, setTotalPages] = useState<number>(1);
 
     // Function to fetch search results based on query
@@ -37,17 +35,8 @@ export const SearchResultPage = () => {
         }
     };
 
-    // Handle form submission
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (query.trim()) {
-            // Update URL parameter
-            setSearchParams({ q: query.trim(), page: '1' });
-        }
-    };
-
     // Handle page change with debounce to prevent rapid requests
-    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
         // Prevent rapid page changes by disabling if already loading
         if (loading) return;
 
@@ -75,7 +64,7 @@ export const SearchResultPage = () => {
                     <Typography variant="h5" sx={{ fontWeight: "bold" }}>{t('dictionary.searchResults')}:</Typography>
                     <Box display="flex" flexWrap="wrap" justifyContent="flex-start" gap={2} mt={2}>
                         {results.map((media, index) => (
-                            <MediaCard media={media} key={`${media.Id}-${index}`} />
+                            <MediaCard media={media} key={`${media.MediaID}-${index}`} />
                         ))}
                     </Box>
                     {/* Pagination controls - hidden during loading */}

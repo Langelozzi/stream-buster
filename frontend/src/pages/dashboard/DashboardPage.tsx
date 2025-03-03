@@ -4,7 +4,6 @@ import { useState } from "react";
 import { UserDashboard } from "../../components/dashboard/UserDashboard";
 import { AdminDashboard } from "../../components/dashboard/AdminDashboard";
 import { Box, Grid2 } from "@mui/material";
-import { AskQuery } from "../../components/chat/AskQuery";
 
 export const DashboardPage = () => {
     const { user } = useUser();

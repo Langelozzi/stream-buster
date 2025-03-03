@@ -69,7 +69,7 @@ export const Navbar: React.FC = () => {
                                 <Typography
                                     variant={isMobile ? "body1" : "h6"}
                                     sx={{ mr: isMobile ? 1 : 2, cursor: 'pointer' }}
-                                    onClick={() => navigate(routes.browse)}
+                                    onClick={() => navigate(!!user ? routes.browse : routes.root)}
                                     noWrap
                                 >
                                     {t('dictionary.streambuster')}

@@ -27,17 +27,17 @@ export const MediaDetailsModalDescTV: React.FC<MediaDetailsModalDescTVProps> = (
     return (
         <Box sx={styles.detailsContainer}>
             <Grid2 container spacing={isMobile ? 2 : 6}>
-                <Grid2 xs={12} md={8}>
+                <Grid2 size={{ xs: 12, md: 8 }}>
                     <Box>
                         <Typography>{endYear}&nbsp;&nbsp;{numSeasons} {numSeasons > 1 ? t('dictionary.seasons') : t('dictionary.season')}</Typography>
                         <br />
                     </Box>
                 </Grid2>
-                <Grid2 xs={12} md={4}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                     <Typography>{t('dictionary.genres')}: {tv.Media?.Genres?.map(genre => genre.Name).join(', ')}</Typography>
                 </Grid2>
 
-                <Grid2 xs={12}>
+                <Grid2 size={12}>
                     <Typography variant={isMobile ? 'h6' : 'h5'}>{t('dictionary.seasonLetter')}{currentEpisode?.SeasonNumber}:{t('dictionary.episodeLetter')}{currentEpisode?.EpisodeNumber} "{currentEpisode?.Name}"</Typography>
                     <Typography>{currentEpisode?.Overview}</Typography>
                 </Grid2>
