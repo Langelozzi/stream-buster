@@ -11,6 +11,8 @@ func SetSearchRoutes(router *gin.RouterGroup) {
 	group := router.Group("/search")
 	{
 		group.GET("/multi", controller.GetMultiMediaSearchResults)
+		group.GET("/movie", controller.GetMovieSearchResults)
+		group.GET("/tv", controller.GetTVSearchResults)
 		group.GET("/trending/movie", controller.GetTrendingMovies)
 		group.GET("/trending/tv", controller.GetTrendingTV)
 	}

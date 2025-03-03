@@ -23,6 +23,24 @@ func (service *SearchService) SearchMultiMedia(query string, page int) (*api.Sea
 	return searchResults, nil
 }
 
+func (service *SearchService) SearchMovies(query string, page int) (*api.SearchPage, error) {
+	searchResults, err := service.dao.SearchMovies(query, page)
+	if err != nil {
+		return nil, err
+	}
+
+	return searchResults, nil
+}
+
+func (service *SearchService) SearchTV(query string, page int) (*api.SearchPage, error) {
+	searchResults, err := service.dao.SearchTV(query, page)
+	if err != nil {
+		return nil, err
+	}
+
+	return searchResults, nil
+}
+
 func (service *SearchService) SearchTrendingMovies(timeWindow string, page int) (*api.SearchPage, error) {
 	searchResults, err := service.dao.GetTrendingMovies(timeWindow, page)
 	if err != nil {

@@ -29,6 +29,38 @@ export const searchMulti = async (query: string, page: number = 1): Promise<Sear
     }
 };
 
+export const searchMovies = async (query: string, page: number = 1): Promise<SearchPage> => {
+    try {
+        const response = await axios.get(`/search/movie`, {
+            params: {
+                query: query,
+                page: page
+            },
+        });
+
+        return response.data as SearchPage;
+    } catch (error) {
+        console.error('Error fetching search results:', error);
+        throw error;
+    }
+};
+
+export const searchTv = async (query: string, page: number = 1): Promise<SearchPage> => {
+    try {
+        const response = await axios.get(`/search/tv`, {
+            params: {
+                query: query,
+                page: page
+            },
+        });
+
+        return response.data as SearchPage;
+    } catch (error) {
+        console.error('Error fetching search results:', error);
+        throw error;
+    }
+};
+
 export const searchTrendingMovies = async (timeWindow: string = "week", page: number = 1): Promise<SearchPage> => {
     try {
         const response = await axios.get(`/search/trending/movie`, {

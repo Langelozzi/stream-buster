@@ -12,6 +12,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 interface MediaCarouselProps {
     title: string;
+    emptyMessage?: string;
     items: any[];
     renderItem: (item: any) => JSX.Element;
 }
@@ -45,7 +46,7 @@ const styles = {
     divider: { borderColor: 'gray', marginTop: 1 },
 };
 
-export const MediaCarousel: React.FC<MediaCarouselProps> = ({ title, items, renderItem }) => {
+export const MediaCarousel: React.FC<MediaCarouselProps> = ({ title, emptyMessage, items, renderItem }) => {
     const theme = useTheme();
     const [scrollPosition] = useState(0);
     const carouselRef = useRef<HTMLDivElement>(null);
@@ -120,13 +121,19 @@ export const MediaCarousel: React.FC<MediaCarouselProps> = ({ title, items, rend
                 )}
 
                 <Box ref={carouselRef} sx={styles.carouselContainer}>
-                    <Stack direction="row" spacing={1}>
-                        {items.map((item, index) => (
-                            <Box key={index} sx={styles.itemContainer}>
-                                {renderItem(item)}
-                            </Box>
-                        ))}
-                    </Stack>
+                    {items.length === 0 ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                            <Typography variant="h6">{emptyMessage}</Typography>
+                        </Box>
+                    ) : (
+                        <Stack direction="row" spacing={1}>
+                            {items.map((item, index) => (
+                                <Box key={index} sx={styles.itemContainer}>
+                                    {renderItem(item)}
+                                </Box>
+                            ))}
+                        </Stack>
+                    )}
                 </Box>
 
                 {showRightArrow && (
