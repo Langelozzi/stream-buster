@@ -90,3 +90,28 @@ func (contr *CDNController) GetTVContent(c *gin.Context) {
 
 	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(html))
 }
+
+// CheckContentExists Checks if the content exists in the source api
+// @Summary Check if the content exists
+// @Description Pings the source api to check if the content exists
+// @Tags cdn
+// @Accept  json
+// @Produce  object
+// @Param tmdbId path string true "tmdbId of the content"
+// @Success 200 {string} object "If the content exists or not"
+// @Failure 400 {object} object "Error: "
+// @Router /cdn/{tmdbId}/exists [get]
+func (contr *CDNController) CheckContentExists(c *gin.Context) {
+	// get the tmdbId from the route params
+	tmdbId := c.Param("tmdbId")
+
+	// get the isTV from the query params
+	isTV, _ := strconv.ParseBool(c.DefaultQuery("isTV", "false"))
+
+	// call the Service
+	exists := contr.service.CheckContentExists(tmdbId, isTV)
+
+	c.JSON(200, gin.H{
+		"exists": exists,
+	})
+}

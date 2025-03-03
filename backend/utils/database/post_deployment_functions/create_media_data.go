@@ -12,7 +12,7 @@ import (
 )
 
 // CreateTestData creates test data for User, Media, MediaType, and CurrentlyWatching
-func CreateTestData(database *gorm.DB) {
+func CreateTestData(database *gorm.DB) error {
 	// Step 1: Create test user if not exists (same as before)
 	var existingUser models.User
 	result := database.First(&existingUser, 1)
@@ -44,6 +44,8 @@ func CreateTestData(database *gorm.DB) {
 	} else if result.Error != nil && errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		createCurrentlyWatchingEntry(database)
 	}
+
+	return nil
 }
 
 // createMediaTypes creates two rows in the MediaType table: TV and Movie
