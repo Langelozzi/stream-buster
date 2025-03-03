@@ -1,9 +1,18 @@
 import { Container, Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../../router/Routes';
+import { useUser } from '../../hooks/useUser';
+import { useEffect } from 'react';
 
 export const HomePage = () => {
     const navigate = useNavigate();
+    const user = useUser();
+
+    useEffect(() => {
+        if (user) {
+            navigate(routes.browse);
+        }
+    }, [user]);
 
     const handleLogin = () => {
         navigate(routes.login)
