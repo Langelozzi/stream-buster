@@ -13,12 +13,8 @@ const styles = {
         backgroundColor: 'black',
     },
     divider: {
-        borderColor: 'white',
-        marginBottom: 16,
-    },
-    episodeDivider: {
-        borderColor: 'grey',
-        marginTop: 2,
+        borderColor: 'gray',
+        my: 1,
     },
     headerContainer: {
         display: 'flex',
@@ -98,7 +94,7 @@ export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps>
             <List sx={styles.episodeList}>
                 {episodes?.map((episode) => (
                     <Box key={episode.EpisodeTMDBID}>
-                        <Divider sx={styles.episodeDivider} />
+                        <Divider sx={styles.divider} />
                         <EpisodeListItem tv={tv} episode={episode} />
                     </Box>
                 ))}
