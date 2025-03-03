@@ -221,7 +221,11 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
 
                 <Box p={isMobile ? 2 : 6}>
                     {detailedMedia && isTV && currentEpisode && (
-                        <MediaDetailsModalDescTV tv={detailedMedia as TV} currentEpisode={currentEpisode} />
+                        <MediaDetailsModalDescTV
+                            tv={detailedMedia as TV}
+                            currentEpisode={currentEpisode}
+                            available={available}
+                        />
                     )}
                     {detailedMedia && !isTV && (
                         <MediaDetailsModalDescMovie movie={detailedMedia as Movie} />

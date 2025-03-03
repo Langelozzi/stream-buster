@@ -44,7 +44,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
         },
         title: {
             position: 'absolute',
-            bottom: '70px',
+            bottom: available === 0 ? '20px' : '70px',
             left: '20px',
             zIndex: 3,
         },

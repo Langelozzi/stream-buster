@@ -14,9 +14,10 @@ const styles = {
 interface MediaDetailsModalDescTVProps {
     tv: TV;
     currentEpisode?: Episode
+    available: number
 }
 
-export const MediaDetailsModalDescTV: React.FC<MediaDetailsModalDescTVProps> = ({ tv, currentEpisode }) => {
+export const MediaDetailsModalDescTV: React.FC<MediaDetailsModalDescTVProps> = ({ tv, currentEpisode, available }) => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -37,10 +38,12 @@ export const MediaDetailsModalDescTV: React.FC<MediaDetailsModalDescTVProps> = (
                     <Typography>{t('dictionary.genres')}: {tv.Media?.Genres?.map(genre => genre.Name).join(', ')}</Typography>
                 </Grid2>
 
-                <Grid2 size={12}>
-                    <Typography variant={isMobile ? 'h6' : 'h5'}>{t('dictionary.seasonLetter')}{currentEpisode?.SeasonNumber}:{t('dictionary.episodeLetter')}{currentEpisode?.EpisodeNumber} "{currentEpisode?.Name}"</Typography>
-                    <Typography>{currentEpisode?.Overview}</Typography>
-                </Grid2>
+                {available !== 0 && (
+                    <Grid2 size={12}>
+                        <Typography variant={isMobile ? 'h6' : 'h5'}>{t('dictionary.seasonLetter')}{currentEpisode?.SeasonNumber}:{t('dictionary.episodeLetter')}{currentEpisode?.EpisodeNumber} "{currentEpisode?.Name}"</Typography>
+                        <Typography>{currentEpisode?.Overview}</Typography>
+                    </Grid2>
+                )}
             </Grid2>
         </Box>
     );
