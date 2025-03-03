@@ -9,14 +9,16 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from '../../../hooks/useUser';
 import { onAddToList } from '../../../api/services/currentlyWatching.service';
 import { useSnackbar } from '../../../hooks/useSnackBar';
+import { AvailabilityInfo } from './AvailabilityInfo';
 
 interface MediaDetailsModalHeaderProps {
     media: Movie | TV;
     currentEpisode?: Episode;
+    available: number;
     onClose: () => void;
 }
 
-export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode, onClose }) => {
+export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = ({ media, currentEpisode, available, onClose }) => {
     // Hooks
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -77,6 +79,13 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 backgroundColor: 'rgba(0, 0, 0, 0.7)',
             },
         },
+        availabilityContainer: {
+            display: 'flex',
+            alignItems: 'center',
+        },
+        availabilityText: {
+            marginLeft: 1
+        }
     };
 
 
@@ -117,15 +126,15 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
             ...styles.modalContainer,
         }}>
             {/* Close Button */}
-            <IconButton 
-                onClick={onClose} 
+            <IconButton
+                onClick={onClose}
                 aria-label="close"
                 size={isMobile ? "small" : "medium"}
                 sx={styles.closeButton}
             >
                 <Close />
             </IconButton>
-            
+
             {/* Image Overlay */}
             <Box
                 sx={{
@@ -142,41 +151,45 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                 <Typography variant={isMobile ? "h5" : "h4"} fontWeight="bold">
                     {media.Media?.Title}
                 </Typography>
+                <AvailabilityInfo available={available} />
             </Box>
             {/* Controls */}
-            <Box sx={{
-                ...styles.controls,
-                left: isMobile ? '10px' : '20px'
-            }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    sx={styles.controlButton}
-                    startIcon={<PlayArrow />}
-                    onClick={onPlay}
-                    size={isMobile ? "small" : "medium"}
-                >
-                    {t('button.play')}
-                </Button>
 
-                <Tooltip title={t('dictionary.addToMyList')} arrow>
-                    <IconButton
-                        onClick={onAdd}
-                        sx={styles.roundButton}
+            {available != 0 && (
+                <Box sx={{
+                    ...styles.controls,
+                    left: isMobile ? '10px' : '20px'
+                }}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        sx={styles.controlButton}
+                        startIcon={<PlayArrow />}
+                        onClick={onPlay}
                         size={isMobile ? "small" : "medium"}
                     >
-                        <Add />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title={t('dictonary.rate')} arrow>
-                    <IconButton
-                        sx={styles.roundButton}
-                        size={isMobile ? "small" : "medium"}
-                    >
-                        <ThumbUp />
-                    </IconButton>
-                </Tooltip>
-            </Box>
+                        {t('button.play')}
+                    </Button>
+
+                    <Tooltip title={t('dictionary.addToMyList')} arrow>
+                        <IconButton
+                            onClick={onAdd}
+                            sx={styles.roundButton}
+                            size={isMobile ? "small" : "medium"}
+                        >
+                            <Add />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t('dictonary.rate')} arrow>
+                        <IconButton
+                            sx={styles.roundButton}
+                            size={isMobile ? "small" : "medium"}
+                        >
+                            <ThumbUp />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            )}
             {SnackbarComponent}
         </Box>
     );

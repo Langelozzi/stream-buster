@@ -50,7 +50,7 @@ func (dao MediaDao) CreateMedia(media *db.Media) (*db.Media, error) {
 		Columns: []clause.Column{
 			{Name: "tmdb_id"}, // Define the unique constraint causing the conflict
 		},
-		DoUpdates: clause.AssignmentColumns([]string{"overview", "poster_image"}), // Specify columns to update
+		DoUpdates: clause.AssignmentColumns([]string{"overview", "poster_image", "availability", "updated_at"}), // Specify columns to update
 	}).Create(media).Error; err != nil {
 		return nil, err
 	}

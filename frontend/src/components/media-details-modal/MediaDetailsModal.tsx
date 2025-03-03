@@ -14,6 +14,7 @@ import { getMovieDetails } from '../../api/services/movie.service';
 import { Episode } from '../../models/episode';
 import { MediaDetailsModalEpisodes } from './media-details-modal-episodes/MediaDetailsModalEpisodes';
 import { Season } from '../../models/season';
+import { getMediaAvailability } from '../../api/services/media.service';
 
 // Define styles as a JSON object
 const styles = {
@@ -106,6 +107,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     const [currentSeason, setCurrentSeason] = useState<Season | null>(null);
     const [episodes, setEpisodes] = useState<Episode[] | null>(null);
     const [currentEpisode, setCurrentEpisode] = useState<Episode | null>(null);
+    const [available, setAvailable] = useState<number>(-1);
 
     // Functions
     const fetchDetailedTV = async () => {
@@ -120,15 +122,21 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         setDetailedMedia(movie);
     }
 
-    const determineCurrentSeason = () => {
-        const currentSeason: Season = (detailedMedia as TV).Seasons.filter(season => season.SeasonNumber === currentSeasonNumber)[0];
-        setCurrentSeason(currentSeason);
-    }
-
     const fetchEpisodesForCurrentSeason = async () => {
         const episodes: Episode[] = await getEpisodesForSeason(media.Media?.TMDBID!, currentSeason?.SeasonNumber!);
 
         setEpisodes(episodes);
+    }
+
+    const fetchContentAvailable = async () => {
+        const doesExists = await getMediaAvailability(media.Media!);
+
+        setAvailable(doesExists);
+    }
+
+    const determineCurrentSeason = () => {
+        const currentSeason: Season = (detailedMedia as TV).Seasons.filter(season => season.SeasonNumber === currentSeasonNumber)[0];
+        setCurrentSeason(currentSeason);
     }
 
     // Callbacks
@@ -178,7 +186,13 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         if (isTV) {
             determineCurrentEpisode();
         }
-    }, [episodes])
+    }, [episodes]);
+
+    useEffect(() => {
+        if (isOpen && detailedMedia) {
+            fetchContentAvailable();
+        }
+    }, [isOpen, detailedMedia]);
 
     // Render nothing if modal is not open
     if (!isOpen) return null;
@@ -197,7 +211,12 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
             >
                 {/* Header Section with Background Image (will need to pass current episode in for tv shows) */}
                 {detailedMedia && (
-                    <MediaDetailsModalHeader media={detailedMedia} currentEpisode={currentEpisode ?? undefined} onClose={onClose} />
+                    <MediaDetailsModalHeader
+                        media={detailedMedia}
+                        currentEpisode={currentEpisode ?? undefined}
+                        available={available}
+                        onClose={onClose}
+                    />
                 )}
 
                 <Box p={isMobile ? 2 : 6}>
@@ -209,7 +228,7 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
                     )}
 
                     {/* Episode List Section (should be conditionally rendered if it's a tv show)*/}
-                    {detailedMedia && isTV && episodes && currentSeason && (
+                    {detailedMedia && available != 0 && isTV && episodes && currentSeason && (
                         <MediaDetailsModalEpisodes
                             tv={detailedMedia as TV}
                             episodes={episodes}
