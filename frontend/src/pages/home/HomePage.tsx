@@ -1,50 +1,44 @@
-import { useEffect, useState } from "react";
-import { getWatchList } from "../../api/services/currentlyWatching.service";
-import MediaList from "../../components/media-list/medialist";
-import { useUser } from "../../hooks/useUser";
-import { Box, Typography } from "@mui/material";
+import { Container, Box, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '../../router/Routes';
+import { useUser } from '../../hooks/useUser';
+import { useEffect } from 'react';
 
 export const HomePage = () => {
-    const user = useUser()
-    const [currentlyWatchings, setCurrentlyWatchings] = useState<any[]>([])
+    const navigate = useNavigate();
+    const user = useUser();
+
     useEffect(() => {
-        // const test = async () => {
-        //     const res = await searchMulti("How to train your dragon")
-        //     
-        //     const himym = res[0]
-        //     
-        //     const createdMedia = await createMedia(himym.Media!)
-        // }
-        //
-        // if (first == 0) {
-        //     setFirst(1)
-        //     test()
-        // }
-
-        const getMediaList = async () => {
-            const currentlyWatchingList = await getWatchList()
-            setCurrentlyWatchings(currentlyWatchingList)
+        if (user) {
+            navigate(routes.browse);
         }
-        getMediaList()
+    }, [user]);
 
-    }, [])
+    const handleLogin = () => {
+        navigate(routes.login)
+    };
+
+    const handleSignUp = () => {
+        navigate(routes.register);
+    };
 
     return (
-        <>
-            {user ? (
-                <>
-                    <Box padding={2}>
-
-                        <Typography>Continue Watching</Typography>
-                        <MediaList currentlyWatchings={currentlyWatchings}></MediaList>
-                    </Box>
-                </>
-            ) : (
-                <>
-                    <div>Welcome to stream buster</div>
-                    <div>login or sign up</div>
-                </>
-            )}
-        </>
-    )
-}
+        <Container maxWidth="sm">
+            <Box textAlign="center" mt={5}>
+                <Typography variant="h3" gutterBottom>
+                    Welcome to StreamBuster
+                </Typography>
+                <Box mt={3}>
+                    <Button variant="contained" color="primary" onClick={handleLogin} fullWidth>
+                        Login
+                    </Button>
+                </Box>
+                <Box mt={2}>
+                    <Button variant="outlined" color="primary" onClick={handleSignUp} fullWidth>
+                        Sign Up
+                    </Button>
+                </Box>
+            </Box>
+        </Container>
+    );
+};

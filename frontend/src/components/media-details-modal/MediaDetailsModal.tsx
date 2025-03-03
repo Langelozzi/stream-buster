@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
     Box,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import { TV } from '../../models/tv';
 import { Movie } from '../../models/movie';
 import { MediaDetailsModalHeader } from './media-details-modal-header/MediaDetailsModalHeader';
@@ -15,8 +16,8 @@ import { MediaDetailsModalEpisodes } from './media-details-modal-episodes/MediaD
 import { Season } from '../../models/season';
 import { getMediaAvailability } from '../../api/services/media.service';
 
-// Defining styles using makeStyles
-const useStyles = makeStyles({
+// Define styles as a JSON object
+const styles = {
     overlay: {
         position: 'fixed',
         top: 0,
@@ -34,7 +35,7 @@ const useStyles = makeStyles({
         maxWidth: 1200,
         backgroundColor: 'black',
         color: 'white',
-        borderRadius: 8,
+        borderRadius: 4,
         overflowY: 'auto', // Enable vertical scrolling in the modal
         maxHeight: '90vh',
         margin: '0 auto',
@@ -74,7 +75,7 @@ const useStyles = makeStyles({
         borderColor: 'white',
         marginBottom: 16,
     },
-});
+};
 
 interface MediaDetailsModalProps {
     media: Movie | TV;
@@ -84,10 +85,6 @@ interface MediaDetailsModalProps {
     currentEpisodeNumber?: number | undefined;
 }
 
-/*
-NOTES:
-- When user goes back from media player it should remember state of browse page
-*/
 const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     // Props
     const {
@@ -98,9 +95,9 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
         currentEpisodeNumber = 1,
     } = props;
 
-
     // Hooks
-    const classes = useStyles();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Constants
     const isTV = media.Media?.MediaType?.Name.toLowerCase() === 'tv';
@@ -200,20 +197,35 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
     // Render nothing if modal is not open
     if (!isOpen) return null;
     return (
-        <Box onClick={onClose} className={classes.overlay}>
-            <Box onClick={(e) => e.stopPropagation()} className={classes.modalContainer}>
+        <Box onClick={onClose} sx={styles.overlay}>
+            <Box
+                onClick={(e) => e.stopPropagation()}
+                sx={{
+                    ...styles.modalContainer,
+                    maxHeight: isMobile ? '100vh' : '90vh',
+                    maxWidth: isMobile ? '100%' : 1200,
+                    width: isMobile ? '100%' : '80%',
+                    height: isMobile ? '100vh' : 'auto',
+                    margin: isMobile ? 0 : '0 auto',
+                }}
+            >
                 {/* Header Section with Background Image (will need to pass current episode in for tv shows) */}
                 {detailedMedia && (
                     <MediaDetailsModalHeader
                         media={detailedMedia}
                         currentEpisode={currentEpisode ?? undefined}
                         available={available}
+                        onClose={onClose}
                     />
                 )}
 
-                <Box p={6}>
+                <Box p={isMobile ? 2 : 6}>
                     {detailedMedia && isTV && currentEpisode && (
-                        <MediaDetailsModalDescTV tv={detailedMedia as TV} currentEpisode={currentEpisode} />
+                        <MediaDetailsModalDescTV
+                            tv={detailedMedia as TV}
+                            currentEpisode={currentEpisode}
+                            available={available}
+                        />
                     )}
                     {detailedMedia && !isTV && (
                         <MediaDetailsModalDescMovie movie={detailedMedia as Movie} />

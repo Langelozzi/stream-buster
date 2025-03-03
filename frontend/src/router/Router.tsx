@@ -9,6 +9,7 @@ import { UserProvider } from '../contexts/UserContext';
 import { RegistrationPage } from '../pages/registration/RegistrationPage';
 import { Navbar } from '../components/navbar/Navbar';
 import { routes } from './Routes.ts';
+import { SearchResultPage } from '../pages/search/SearchResultPage.tsx';
 
 
 export const Router = () => {
@@ -23,14 +24,6 @@ export const Router = () => {
                     <Route path={routes.register} Component={RegistrationPage} />
 
                     {/* Private Routes */}
-                    <Route
-                        path={routes.home}
-                        element={
-                            <PrivateRoute>
-                                <HomePage />
-                            </PrivateRoute>
-                        }
-                    />
                     < Route
                         path={routes.dashboard}
                         element={
@@ -44,6 +37,14 @@ export const Router = () => {
                         element={
                             <PrivateRoute>
                                 <BrowsePage />
+                            </PrivateRoute>
+                        }
+                    />
+                    <Route
+                        path={routes.search}
+                        element={
+                            <PrivateRoute>
+                                <SearchResultPage />
                             </PrivateRoute>
                         }
                     />

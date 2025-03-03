@@ -1,7 +1,6 @@
 import React from "react";
 import { Episode } from "../../../models/episode";
-import { Avatar, Box, ListItem, ListItemAvatar, ListItemText, Typography, IconButton } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Avatar, Box, ListItem, ListItemAvatar, ListItemText, Typography, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import PlayCircleFilledWhiteIcon from '@mui/icons-material/PlayCircleOutline';
 import { TV } from "../../../models/tv";
 import { useNavigate } from "react-router-dom";
@@ -9,19 +8,15 @@ import { useTranslation } from "react-i18next";
 import { onAddToList } from "../../../api/services/currentlyWatching.service";
 import { useUser } from "../../../hooks/useUser";
 
-const useStyles = makeStyles({
+// Define styles as a JSON object
+const styles = {
     listItem: {
         padding: '12px 0',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'flex-start',
         gap: '16px',
-        '@media (max-width: 600px)': { // Media query for mobile screens
-            flexDirection: 'column',
-            alignItems: 'center',
-        },
     },
-
     avatarContainer: {
         position: 'relative', // Set relative position to contain the overlay
     },
@@ -34,8 +29,7 @@ const useStyles = makeStyles({
         color: 'white',
         borderRadius: '50%',
     }
-
-});
+};
 
 interface EpisodeListItemProps {
     episode: Episode;
@@ -47,8 +41,9 @@ export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
     const { episode, tv } = props;
 
     const { t } = useTranslation();
-    const classes = useStyles();
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const onPlayEpisode = () => {
         onAddToList(tv, user, episode.SeasonNumber, episode.EpisodeNumber)
@@ -56,22 +51,39 @@ export const EpisodeListItem: React.FC<EpisodeListItemProps> = (props) => {
     }
 
     return (
-        <ListItem key={episode.EpisodeTMDBID} className={classes.listItem}>
+        <ListItem key={episode.EpisodeTMDBID}
+            sx={{
+                ...styles.listItem,
+                flexDirection: isMobile ? 'column' : 'row',
+                alignItems: isMobile ? 'center' : 'flex-start',
+                padding: isMobile ? '16px 8px' : '12px 0',
+            }}
+        >
             <ListItemAvatar>
-                <Box className={classes.avatarContainer} sx={{ width: 200, height: 100 }}>
+                <Box sx={{
+                    ...styles.avatarContainer,
+                    width: isMobile ? '100%' : 200,
+                    height: isMobile ? 'auto' : 100,
+                    aspectRatio: isMobile ? '16/9' : 'auto'
+                }}>
                     <Avatar
                         variant="square"
                         src={episode.StillPath}
                         sx={{ width: '100%', height: '100%' }}
                     />
-                    <IconButton className={classes.playButton} onClick={onPlayEpisode}>
-                        <PlayCircleFilledWhiteIcon fontSize="large" />
+                    <IconButton sx={styles.playButton} onClick={onPlayEpisode}>
+                        <PlayCircleFilledWhiteIcon fontSize={isMobile ? "medium" : "large"} />
                     </IconButton>
                 </Box>
             </ListItemAvatar>
             <ListItemText
                 primary={
-                    <Box ml={2} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Box ml={isMobile ? 0 : 2} mt={isMobile ? 2 : 0} sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 1,
+                        width: '100%'
+                    }}>
                         <Typography variant="body1" fontWeight="bold">
                             {`${episode.EpisodeNumber}. ${episode.Name}`}
                         </Typography>
