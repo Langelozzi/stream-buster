@@ -1,7 +1,7 @@
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Search, Close } from '@mui/icons-material';
 import debounce from 'lodash/debounce';
 import { IconButton, useMediaQuery, useTheme } from '@mui/material';
@@ -75,6 +75,9 @@ export const NavSearch: React.FC<NavSearchProps> = ({ autoFocus = false }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+    // Create a ref for the input element
+    const inputRef = useRef<HTMLInputElement>(null);
+
     // Effect to track previous path
     useEffect(() => {
         // Only store paths that are not search or watch pages as previous paths
@@ -107,7 +110,11 @@ export const NavSearch: React.FC<NavSearchProps> = ({ autoFocus = false }) => {
     // Handle clear button click
     const handleClearSearch = () => {
         setSearchValue('');
-        debouncedNavigate('');
+        // debouncedNavigate('');
+        // Refocus the input after clearing
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
     };
 
     // Effect to sync search input with URL query parameter
@@ -137,6 +144,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ autoFocus = false }) => {
                 <Search />
             </SearchIconWrapper>
             <StyledInputBase
+                inputRef={inputRef}
                 placeholder="Search…"
                 value={searchValue}
                 onChange={handleSearchChange}
