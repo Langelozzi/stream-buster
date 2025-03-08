@@ -48,46 +48,127 @@ const styles = {
 
 export const MediaCarousel: React.FC<MediaCarouselProps> = ({ title, emptyMessage, items, renderItem }) => {
     const theme = useTheme();
-    const [scrollPosition] = useState(0);
     const carouselRef = useRef<HTMLDivElement>(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(true);
+    const [showRightArrow, setShowRightArrow] = useState(false);
+    const [contentLoaded, setContentLoaded] = useState(false);
 
-    const updateArrows = () => {
-        if (carouselRef.current) {
-            const maxScroll = carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
-            setShowLeftArrow(scrollPosition > 0);
-            setShowRightArrow(maxScroll > 0 && scrollPosition < maxScroll);
-        }
+    const checkOverflow = () => {
+        if (!carouselRef.current) return;
+
+        const { scrollWidth, clientWidth } = carouselRef.current;
+        // Initial right arrow visibility check - show if content overflows
+        setShowRightArrow(scrollWidth > clientWidth);
     };
 
-    // Update arrows on mount
+    const handleScroll = () => {
+        if (!carouselRef.current) return;
+
+        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+        setShowLeftArrow(scrollLeft > 0);
+        setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 1); // Small buffer for rounding errors
+    };
+
+    // Check for overflow when items change
     useEffect(() => {
-        updateArrows();
+        setContentLoaded(false);
+        // First set a small timeout to check after initial render
+        const initialTimer = setTimeout(() => {
+            checkOverflow();
+        }, 50);
+
+        // Add a longer timeout to account for image loading
+        const imageLoadTimer = setTimeout(() => {
+            checkOverflow();
+            setContentLoaded(true);
+        }, 500);
+
+        return () => {
+            clearTimeout(initialTimer);
+            clearTimeout(imageLoadTimer);
+        };
     }, [items]);
 
-    // Update arrows on resize
+    // Set up image load detection
     useEffect(() => {
-        const handleResize = () => updateArrows();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, [scrollPosition]);
+        if (!carouselRef.current || items.length === 0) return;
 
-    // Update arrows on scroll event
-    useEffect(() => {
-        const handleScroll = () => {
-            if (!carouselRef.current) return;
-            const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-            setShowLeftArrow(scrollLeft > 0);
-            setShowRightArrow(scrollLeft < scrollWidth - clientWidth);
+        // Find all images within the carousel
+        const images = carouselRef.current.querySelectorAll('img');
+        if (images.length === 0) {
+            // No images, just check for overflow immediately
+            checkOverflow();
+            setContentLoaded(true);
+            return;
+        }
+
+        let loadedCount = 0;
+        const totalImages = images.length;
+
+        const handleImageLoad = () => {
+            loadedCount++;
+            if (loadedCount === totalImages) {
+                // All images loaded, now check for overflow
+                checkOverflow();
+                setContentLoaded(true);
+            }
         };
 
+        // Add load event listeners to all images
+        images.forEach(img => {
+            if (img.complete) {
+                handleImageLoad();
+            } else {
+                img.addEventListener('load', handleImageLoad);
+            }
+        });
+
+        // Cleanup
+        return () => {
+            images.forEach(img => {
+                img.removeEventListener('load', handleImageLoad);
+            });
+        };
+    }, [items]);
+
+    // Use ResizeObserver to detect content changes
+    useEffect(() => {
+        if (!carouselRef.current) return;
+
+        const resizeObserver = new ResizeObserver(() => {
+            checkOverflow();
+            handleScroll();
+        });
+
+        resizeObserver.observe(carouselRef.current);
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [contentLoaded]); // Re-run when content loaded changes
+
+    // Update on window resize
+    useEffect(() => {
+        const handleResize = () => {
+            checkOverflow();
+            handleScroll();
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Update on scroll
+    useEffect(() => {
         const carousel = carouselRef.current;
-        carousel?.addEventListener('scroll', handleScroll);
+        if (!carousel) return;
+
+        carousel.addEventListener('scroll', handleScroll);
+        // Initial check
         handleScroll();
 
         return () => {
-            carousel?.removeEventListener('scroll', handleScroll);
+            carousel.removeEventListener('scroll', handleScroll);
         };
     }, []);
 
