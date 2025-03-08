@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import { User } from "../../models/user";  // Adjust the path as necessary
-import { UsageStats } from "./usage-stats/UsageStats";  // Adjust the path as necessary
 import { getAllUsers } from "../../api/services/user.service";
-import { UserType } from "../../enums/userType.enum";
+import { UserUsageInfo } from "../usage-stats/UserUsageInfo";
+import { isAdminUser } from "../../utils/user.helpers";
+import { useTranslation } from "react-i18next";
 
 const styles = {
     card: {
@@ -21,11 +22,11 @@ interface AdminDashboardProps {
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
+    const { t } = useTranslation();
+
     const [users, setUsers] = useState<User[]>([]);
 
     useEffect(() => {
-        // Placeholder for fetching users from the API
-        // Replace with actual fetch logic
         const fetchUsers = async () => {
             const allUsers = await getAllUsers(true);
             setUsers(allUsers);
@@ -38,40 +39,40 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ user }) => {
             {/* Welcome Card */}
             <Card sx={styles.card}>
                 <CardContent>
-                    <Typography variant="h5">Welcome back, {user.FirstName}</Typography>
+                    <Typography variant="h5">{t('dictionary.welcomeBack', { name: user.FirstName })}</Typography>
                     <br />
-                    <UsageStats
-                        userId={user.ID}
-                        maxRequestCount={user.UserRoles[0]?.Role.MaxRequestCount}
-                        isAdmin={true}
-                    />
+                    <UserUsageInfo user={user} isAdmin={true} />
                 </CardContent>
             </Card>
 
             {/* User Usage Card */}
             <Card sx={styles.card}>
                 <CardContent>
-                    <Typography variant="h6" gutterBottom>User Usage</Typography>
+                    <Typography variant="h6" gutterBottom>{t('dictionary.userUsage')}</Typography>
                     <TableContainer component={Paper}>
                         <Table aria-label="User Usage Table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>User</TableCell>
-                                    <TableCell>Request Usage</TableCell>
+                                    <TableCell>{t('columnHeader.user')}</TableCell>
+                                    <TableCell>{t('columnHeader.email')}</TableCell>
+                                    <TableCell>{t('columnHeader.usage')}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {users.filter(otherUser => otherUser.ID !== user.ID).map((user) => (
                                     <TableRow key={user.ID}>
-                                        <TableCell>
-                                            {user.FirstName} {user.LastName}
+                                        <TableCell sx={{ verticalAlign: 'top', width: '150px' }}>
+                                            <Typography variant="body1">
+                                                {`${user.FirstName} ${user.LastName}`}
+                                            </Typography>
+                                        </TableCell>
+                                        <TableCell sx={{ verticalAlign: 'top', width: '150px' }}>
+                                            <Typography variant="body1">
+                                                {user.Email}
+                                            </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <UsageStats
-                                                userId={user.ID}
-                                                maxRequestCount={user.UserRoles[0]?.Role.MaxRequestCount}
-                                                isAdmin={user.UserRoles[0]?.RoleID === UserType.Admin}
-                                            />
+                                            <UserUsageInfo user={user} isAdmin={isAdminUser(user)} />
                                         </TableCell>
                                     </TableRow>
                                 ))}

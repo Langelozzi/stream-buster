@@ -14,6 +14,6 @@ type AuthServiceInterface interface {
 	CheckCredentials(password string, user *models.User) bool
 	VerifyToken(tokenString string) (*jwt.Token, error)
 	RefreshToken(refreshTokenString string) (string, error)
-	SetTokenCookie(c *gin.Context, tokenString string)
+	SetCookie(c *gin.Context, cookieName, value string, maxAge int)
 	HashPassword(password string) (string, error)
 }

@@ -11,11 +11,6 @@ import (
 func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("token")
-		if err != nil || tokenString == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "No valid access token"})
-			c.Abort()
-			return
-		}
 
 		token, err := service.VerifyToken(tokenString)
 		if err != nil || !token.Valid {
@@ -28,12 +23,12 @@ func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 
 			accessTokenString, err := service.RefreshToken(refreshTokenString)
 			if err != nil {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to refresh token"})
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unable to refresh token" + err.Error()})
 				c.Abort()
 				return
 			}
 
-			service.SetTokenCookie(c, accessTokenString)
+			service.SetCookie(c, "token", accessTokenString, 3600)
 
 			token, err = service.VerifyToken(accessTokenString)
 			if err != nil || !token.Valid {
@@ -42,16 +37,19 @@ func Auth(service interfaces.AuthServiceInterface) gin.HandlerFunc {
 				return
 			}
 		}
-
-		// Extract claims from the verified token
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			c.Set("user", claims)
+			c.Set("ID", claims["id"])
+			c.Set("Email", claims["email"])
+			c.Set("FirstName", claims["fname"])
+			c.Set("LastName", claims["lname"])
+			c.Set("Issuer", claims["iss"])
+			c.Set("Exp", claims["exp"])
+			c.Set("Iat", claims["iat"])
 		} else {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
 			c.Abort()
 			return
 		}
-
 		c.Next()
 	}
 }

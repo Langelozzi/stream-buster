@@ -16,6 +16,16 @@ func NewMovieController(service interfaces.MovieServiceInterface) *MovieControll
 	}
 }
 
+// GetMovieDetails retrieves the details of a movie by its tmdbId (id)
+// @Summary Get movie details by id
+// @Description Retrieve the details of a movie from TMDB using the id
+// @Tags movie
+// @Accept  json
+// @Produce  json
+// @Param id path string true "tmdbId of the movie"
+// @Success 200 {object} api.Movie "The movie record"
+// @Failure 400 {object} object "Error: Unable to procure content"
+// @Router /movie/{id} [get]
 func (contr *MovieController) GetMovieDetails(c *gin.Context) {
 	// Get the series ID
 	seriesId, err := strconv.Atoi(c.Param("id"))

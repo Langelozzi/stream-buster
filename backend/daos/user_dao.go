@@ -3,6 +3,7 @@ package daos
 import (
 	"github.com/STREAM-BUSTER/stream-buster/models"
 	"github.com/STREAM-BUSTER/stream-buster/utils/database"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -19,7 +20,7 @@ func (dao *UserDao) GetAllUsersDao(includeDeleted bool, full bool) ([]models.Use
 	query := db.Model(&models.User{})
 
 	if full {
-		query.Preload("Usage").Preload("UserRoles.Role").Preload("Configs.Config")
+		attachAssociatedRecords(query)
 	}
 	if !includeDeleted {
 		query.Where("deleted_at IS NULL")
@@ -39,7 +40,7 @@ func (dao *UserDao) GetUserDao(id int, includeDeleted bool, full bool) (*models.
 	query := db.Model(&models.User{})
 
 	if full {
-		query.Preload("Usage").Preload("UserRoles.Role").Preload("Configs.Config")
+		attachAssociatedRecords(query)
 	}
 	if !includeDeleted {
 		query.Where("deleted_at IS NULL")
@@ -59,7 +60,7 @@ func (dao *UserDao) GetUserByEmailDao(email string, includeDeleted bool, full bo
 	query := db.Model(&models.User{})
 
 	if full {
-		query.Preload("Usage").Preload("UserRoles.Role").Preload("Configs.Config")
+		attachAssociatedRecords(query)
 	}
 
 	if !includeDeleted {
@@ -115,4 +116,8 @@ func (dao *UserDao) SoftDeleteUserDao(id int) error {
 	}
 
 	return nil
+}
+
+func attachAssociatedRecords(query *gorm.DB) {
+	query.Preload("TotalRequestCount").Preload("UserRoles.Role").Preload("Configs.Config")
 }

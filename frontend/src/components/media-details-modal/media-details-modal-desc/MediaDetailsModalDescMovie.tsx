@@ -1,21 +1,23 @@
-import { Box, Grid2, Typography } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { Box, Grid2, Typography, useMediaQuery, useTheme } from '@mui/material';
 import React from 'react';
 import { Movie } from '../../../models/movie';
+import { useTranslation } from 'react-i18next';
 
-const useStyles = makeStyles(() => ({
+// Define styles as a JSON object
+const styles = {
     detailsContainer: {
         paddingBottom: '20px',
-    },
-
-}));
+    }
+};
 
 interface MediaDetailsModalDescMovieProps {
     movie: Movie;
 }
 
 export const MediaDetailsModalDescMovie: React.FC<MediaDetailsModalDescMovieProps> = ({ movie }) => {
-    const classes = useStyles();
+    const { t } = useTranslation();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const year = new Date(movie.ReleaseDate!).getUTCFullYear();
     const overview = movie.Media?.Overview;
@@ -25,17 +27,17 @@ export const MediaDetailsModalDescMovie: React.FC<MediaDetailsModalDescMovieProp
     const genres = movie.Media?.Genres?.map(genre => genre.Name).join(', ');
 
     return (
-        <Box className={classes.detailsContainer}>
-            <Grid2 container spacing={6}>
-                <Grid2 size={8}>
+        <Box sx={styles.detailsContainer}>
+            <Grid2 container spacing={isMobile ? 2 : 6}>
+                <Grid2 size={{ xs: 12, md: 8 }}>
                     <Box>
-                        <Typography>{year}&nbsp;&nbsp;{runtimeHours}h {runtimeMinutes}m</Typography>
+                        <Typography>{year}&nbsp;&nbsp;{runtimeHours}{t('dictionary.hourLetter')} {runtimeMinutes}{t('dictionary.minuteLetter')}</Typography>
                         <br />
                         <Typography>{overview}</Typography>
                     </Box>
                 </Grid2>
-                <Grid2 size={4}>
-                    <Typography>Genres: {genres}</Typography>
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                    <Typography>{t('dictionary.genres')}: {genres}</Typography>
                 </Grid2>
             </Grid2>
         </Box>

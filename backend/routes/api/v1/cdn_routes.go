@@ -12,5 +12,6 @@ func SetCDNRoutes(router *gin.RouterGroup) {
 	{
 		group.GET("/movie/:tmdbId", controller.GetMovieContent)
 		group.GET("/tv/:tmdbId/:seasonNum/:episodeNum", controller.GetTVContent)
+		group.GET("/:tmdbId/exists", controller.CheckContentExists)
 	}
 }

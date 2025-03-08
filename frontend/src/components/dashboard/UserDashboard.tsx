@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography } from "@mui/material";
 import { User } from "../../models/user";
-import { UsageStats } from "./usage-stats/UsageStats";
+import { UserUsageInfo } from '../usage-stats/UserUsageInfo';
 
 const styles = {
     card: {
@@ -19,8 +19,8 @@ interface UserDashboardProps {
 }
 
 export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
-    const { FirstName, UserRoles } = user;
-    const maxRequestCount = UserRoles[0]?.Role?.MaxRequestCount || 20;
+    const { FirstName } = user;
+    // const maxRequestCount = UserRoles[0]?.Role?.MaxRequestCount || 20;
 
     return (
         <Card sx={styles.card}>
@@ -29,7 +29,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({ user }) => {
                     Welcome back, {FirstName}
                 </Typography>
                 <br />
-                <UsageStats userId={user.ID} maxRequestCount={maxRequestCount} isAdmin={false} />
+                <UserUsageInfo user={user} isAdmin={false} />
             </CardContent>
         </Card>
     );

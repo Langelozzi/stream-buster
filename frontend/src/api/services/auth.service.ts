@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import axios from '../axios';
+import instance from '../axios';
 
 export const postLogin = async (form: FormData) => {
     try {
@@ -25,5 +26,10 @@ export const postRegister = async (form: FormData) => {
 
 export const sendTestRequest = async () => {
     const res: AxiosResponse = await axios.get("/auth/test");
+    return res;
+}
+
+export const logoutUser = async () => {
+    const res = await instance.get("/auth/logout");
     return res;
 }

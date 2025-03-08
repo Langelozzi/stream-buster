@@ -9,13 +9,17 @@ import (
 	"time"
 )
 
-func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
+func ParseSearchPageResponse(json string) (*api.SearchPage, error) {
 	jsonMap, err := JSONToMap(json)
 	if err != nil {
 		return nil, err
 	}
 
+	pageNum := int(jsonMap["page"].(float64))
+	totalPages := int(jsonMap["total_pages"].(float64))
+	totalResults := int(jsonMap["total_results"].(float64))
 	var castedResults []interface{}
+
 	// Access the "results" array
 	if results, ok := jsonMap["results"].([]interface{}); ok {
 		// Iterate through the results and cast them to our structs
@@ -40,7 +44,58 @@ func ParseSearchMultiMediaResponse(json string) ([]interface{}, error) {
 		fmt.Println("No results found or results is not an array")
 	}
 
-	return castedResults, nil
+	searchPage := api.SearchPage{
+		Page:         pageNum,
+		TotalPages:   totalPages,
+		TotalResults: totalResults,
+		Results:      castedResults,
+	}
+
+	return &searchPage, nil
+}
+
+func ParseSearchPageResponseSingleType(json string, mediaTypeName string) (*api.SearchPage, error) {
+	jsonMap, err := JSONToMap(json)
+	if err != nil {
+		return nil, err
+	}
+
+	pageNum := int(jsonMap["page"].(float64))
+	totalPages := int(jsonMap["total_pages"].(float64))
+	totalResults := int(jsonMap["total_results"].(float64))
+	var castedResults []interface{}
+
+	// Access the "results" array
+	if results, ok := jsonMap["results"].([]interface{}); ok {
+		// Iterate through the results and cast them to our structs
+		for _, item := range results {
+			if itemMap, ok := item.(map[string]interface{}); ok {
+				mediaType := &db.MediaType{
+					Name: mediaTypeName,
+				}
+				media := CastToMedia(itemMap, mediaType)
+
+				if mediaType.Name == "movie" {
+					movie := CastToMovie(itemMap, media, false)
+					castedResults = append(castedResults, movie)
+				} else if mediaType.Name == "tv" {
+					tv := CastToTV(itemMap, media, false)
+					castedResults = append(castedResults, tv)
+				}
+			}
+		}
+	} else {
+		fmt.Println("No results found or results is not an array")
+	}
+
+	searchPage := api.SearchPage{
+		Page:         pageNum,
+		TotalPages:   totalPages,
+		TotalResults: totalResults,
+		Results:      castedResults,
+	}
+
+	return &searchPage, nil
 }
 
 func ParseTVDetailsResponse(json string) (*api.TV, error) {
@@ -141,6 +196,16 @@ func CastToMedia(obj map[string]interface{}, mediaType *db.MediaType) *db.Media 
 			title = obj["title"].(string)
 		}
 	}
+	var mediaTypeId uint
+
+	if mediaType.Name == "tv" {
+		mediaType.ID = 1
+		mediaTypeId = 1
+
+	} else {
+		mediaType.ID = 2
+		mediaTypeId = 2
+	}
 
 	var posterPath string
 	if obj["poster_path"] != nil {
@@ -167,6 +232,7 @@ func CastToMedia(obj map[string]interface{}, mediaType *db.MediaType) *db.Media 
 		Overview:    overview,
 		PosterImage: posterPath,
 		MediaType:   mediaType,
+		MediaTypeId: mediaTypeId,
 		Genres:      castedGenres,
 	}
 }

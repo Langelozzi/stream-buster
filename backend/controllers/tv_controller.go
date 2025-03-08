@@ -16,6 +16,16 @@ func NewTVController(service interfaces.TVServiceInterface) *TVController {
 	}
 }
 
+// GetTVDetails retrieves the details of a tv show by its tmdbId (id)
+// @Summary Get tv show details by id
+// @Description Retrieve the details of a tv show from TMDB using the id
+// @Tags tv
+// @Accept  json
+// @Produce  json
+// @Param id path string true "tmdbId of the tv show"
+// @Success 200 {object} api.TV "The tv record"
+// @Failure 400 {object} object "Error: Unable to procure content"
+// @Router /tv/{id} [get]
 func (contr *TVController) GetTVDetails(c *gin.Context) {
 	// Get the series ID
 	seriesId, err := strconv.Atoi(c.Param("id"))
@@ -38,6 +48,17 @@ func (contr *TVController) GetTVDetails(c *gin.Context) {
 	c.JSON(200, content)
 }
 
+// GetEpisodesInSeason retrieves the list of episodes in a specific season of a tv show
+// @Summary Get episodes of a show by season number
+// @Description Retrieve a list of episodes in a specific season of a tv show
+// @Tags tv
+// @Accept  json
+// @Produce  json
+// @Param id path string true "tmdbId of the tv show"
+// @Param seasonNum path number true "the season number"
+// @Success 200 {array} api.TV "The list of tv records in that season"
+// @Failure 400 {object} object "Error: Unable to procure content"
+// @Router /tv/{id}/season/{seasonNum}/episodes [get]
 func (contr *TVController) GetEpisodesInSeason(c *gin.Context) {
 	// Get the series ID
 	seriesId, err := strconv.Atoi(c.Param("id"))

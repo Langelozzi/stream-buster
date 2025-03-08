@@ -8,6 +8,8 @@ import {
 import { makeStyles } from '@mui/styles';
 import { postRegister } from '../../api/services/auth.service';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { routes } from '../../router/Routes';
 
 const useStyles = makeStyles(() => ({
     paper: {
@@ -71,6 +73,7 @@ interface Errors {
 }
 
 export const RegistrationForm: React.FC = () => {
+    const { t } = useTranslation();
     const classes = useStyles();
     const navigate = useNavigate();
     const [formValues, setFormValues] = useState<FormValues>({
@@ -86,13 +89,13 @@ export const RegistrationForm: React.FC = () => {
     const validateErrors = (formValues: FormValues) => {
         const errors: Errors = {};
         if (!!formValues.email && (!formValues.email.includes('@') || !formValues.email.includes('.'))) {
-            errors.email = "Must be a valid email";
+            errors.email = t('error.mustBeValidEmail');
         }
         if (!!formValues.password && formValues.password.length < 8) {
-            errors.password = "Password must be at least 8 characters long";
+            errors.password = t('error.passwordLength');
         }
         if (!!formValues.confirmPassword && formValues.password !== formValues.confirmPassword) {
-            errors.confirmPassword = "Passwords do not match";
+            errors.confirmPassword = t('error.mismatchPasswords');
         }
         if (!formValues.firstName || !formValues.lastName || !formValues.email || !formValues.password || !formValues.confirmPassword) {
             setIsValid(false);
@@ -117,11 +120,11 @@ export const RegistrationForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (formValues.password !== formValues.confirmPassword) {
-            setErrors({ confirmPassword: 'Passwords do not match' });
+            setErrors({ confirmPassword: t('error.mismatchPasswords') });
         } else {
             setErrors({});
             // Submit the form data here
-            console.log(formValues);
+
 
             const formData: FormData = new FormData();
             formData.append("firstName", formValues.firstName);
@@ -131,24 +134,24 @@ export const RegistrationForm: React.FC = () => {
 
             const res = await postRegister(formData);
             if (res?.status === 201) {
-                navigate('/login');
+                navigate(routes.login);
             }
         }
     };
 
     const goToLogin = () => {
-        navigate('/login');
+        navigate(routes.login);
     }
 
     return (
         <Box className={classes.paper}>
             <Typography variant="h5" align="center" gutterBottom>
-                Register
+                {t('dictionary.register')}
             </Typography>
             <form onSubmit={handleSubmit} className={classes.form}>
                 <TextField
                     className={classes.input}
-                    label="First Name"
+                    label={t('dictionary.firstName')}
                     variant="outlined"
                     fullWidth
                     name="firstName"
@@ -158,7 +161,7 @@ export const RegistrationForm: React.FC = () => {
                 />
                 <TextField
                     className={classes.input}
-                    label="Last Name"
+                    label={t('dictionary.lastName')}
                     variant="outlined"
                     fullWidth
                     name="lastName"
@@ -168,7 +171,7 @@ export const RegistrationForm: React.FC = () => {
                 />
                 <TextField
                     className={classes.input}
-                    label="Email"
+                    label={t('dictionary.email')}
                     type="email"
                     variant="outlined"
                     fullWidth
@@ -181,7 +184,7 @@ export const RegistrationForm: React.FC = () => {
                 />
                 <TextField
                     className={classes.input}
-                    label="Password"
+                    label={t('dictionary.password')}
                     type="password"
                     variant="outlined"
                     fullWidth
@@ -194,7 +197,7 @@ export const RegistrationForm: React.FC = () => {
                 />
                 <TextField
                     className={classes.input}
-                    label="Confirm Password"
+                    label={t('dictionary.confirmPassword')}
                     type="password"
                     variant="outlined"
                     fullWidth
@@ -212,13 +215,13 @@ export const RegistrationForm: React.FC = () => {
                     className={classes.button}
                     disabled={!isValid}
                 >
-                    Register
+                    {t('dictionary.register')}
                 </Button>
             </form>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
                 <Typography sx={{ display: 'inline' }}>
-                    Already have an account? Click&nbsp;
+                    {t('dictionary.alreadyHaveAccount')}&nbsp;
                 </Typography>
                 <Typography
                     variant="body1"
@@ -226,10 +229,10 @@ export const RegistrationForm: React.FC = () => {
                     sx={{ cursor: 'pointer', textDecoration: 'underline', display: 'inline' }}
                     onClick={goToLogin}
                 >
-                    here
+                    {t('dictionary.here')}
                 </Typography>
                 <Typography sx={{ display: 'inline' }}>
-                    &nbsp;to login
+                    &nbsp;{t('dictionary.toLogin')}
                 </Typography>
             </Box>
         </Box>

@@ -41,6 +41,6 @@ func (service *UserService) DeleteUser(id int, softDelete bool) error {
 	return service.dao.DeleteUserDao(id)
 }
 
-func (service *UserService) GetUserUsageByUserId(userId int) (*models.Usage, error) {
+func (service *UserService) GetUserUsageByUserId(userId int) ([]models.UserEndpointUsage, error) {
 	return service.usageDao.GetUsageByUserId(userId)
 }

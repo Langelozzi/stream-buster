@@ -116,7 +116,7 @@ func (service AuthService) RefreshToken(refreshTokenString string) (string, erro
 	if ok {
 
 		// create new token
-		email, ok := claims["sub"].(string)
+		email, ok := claims["email"].(string)
 		if !ok {
 			return "", fmt.Errorf("Error parsing username from claims")
 		}
@@ -134,15 +134,15 @@ func (service AuthService) RefreshToken(refreshTokenString string) (string, erro
 	}
 }
 
-func (service AuthService) SetTokenCookie(c *gin.Context, tokenString string) {
+func (service AuthService) SetCookie(c *gin.Context, cookieName, value string, maxAge int) {
 	c.SetCookie(
-		"token",                        // Name of the cookie
-		tokenString,                    // Value of the cookie
-		3600,                           // MaxAge (1 hour)
+		cookieName,                     // Name of the cookie
+		value,                          // Value of the cookie
+		maxAge,                         // Max age of the cookie in seconds
 		"/",                            // Path
 		utils.GetEnvVariable("DOMAIN"), // Domain
 		false,                          // Secure flag (whether the cookie should be sent only over HTTPS)
-		false,                          // HttpOnly flag (whether the cookie is inaccessible to JavaScript)
+		true,                           // HttpOnly flag (whether the cookie is inaccessible to JavaScript)
 	)
 }
 

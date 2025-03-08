@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import instance from '../../api/axios';
 import { TextField, Button, Typography, Paper, List, ListItem, ListItemText, CircularProgress, Card } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const styles = {
 	card: {
@@ -49,6 +50,8 @@ interface AskQueryResponse {
 }
 
 export const AskQuery: React.FC = () => {
+	const { t } = useTranslation();
+
 	const [query, setQuery] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string>('');
@@ -78,13 +81,13 @@ export const AskQuery: React.FC = () => {
 
 	return (
 		<Card sx={styles.card}>
-			<Typography variant="h5">Chatbuster</Typography>
-			<Typography variant="body2" gutterBottom>Have a question? Ask our AI powered Chatbuster!</Typography>
+			<Typography variant="h5">{t('dictionary.chatbuster')}</Typography>
+			<Typography variant="body2" gutterBottom>{t('dictionary.askChatbuster')}</Typography>
 			<form onSubmit={handleSubmit} style={{ ...styles.input } as any}>
 				<TextField
 					fullWidth
 					variant="outlined"
-					label="Enter your query"
+					label={t('dictionary.enterQuery')}
 					value={query}
 					onChange={handleQueryChange}
 					required
@@ -92,7 +95,7 @@ export const AskQuery: React.FC = () => {
 					sx={styles.input}
 				/>
 				<Button variant="contained" color="primary" type="submit" sx={styles.button} disabled={loading}>
-					{loading ? <CircularProgress size={24} /> : 'Submit'}
+					{loading ? <CircularProgress size={24} /> : t('button.submit')}
 				</Button>
 			</form>
 			{error && <Typography color="error">{error}</Typography>}
@@ -100,7 +103,7 @@ export const AskQuery: React.FC = () => {
 				{history.map((item, index) => (
 					<Paper key={index} style={{ margin: '8px 0', padding: '16px' }} elevation={3}>
 						<ListItem>
-							<ListItemText primary={`Query: ${item.query}`} secondary={`Response: ${item.reply}`} />
+							<ListItemText primary={`${t('dictionary.query')}: ${item.query}`} secondary={`${t('dictionary.response')}: ${item.reply}`} />
 						</ListItem>
 					</Paper>
 				))}

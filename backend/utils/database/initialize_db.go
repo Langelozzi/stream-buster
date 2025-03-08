@@ -24,7 +24,8 @@ func InitializeDb() {
 		&models.UserConfig{},
 		&models.Role{},
 		&models.UserRole{},
-		&models.Usage{},
+		&models.Endpoint{},
+		&models.UserEndpointUsage{},
 		&db.CurrentlyWatching{},
 		&db.Media{},
 		&db.MediaType{},
@@ -48,9 +49,15 @@ func InitializeDb() {
 }
 
 func runPostDeploymentScripts(database *gorm.DB) error {
-	post_deployment_functions.InsertRoles(database)
-
-	post_deployment_functions.CreateAdminUser(database)
+	err := post_deployment_functions.CreateUserTotalRequestCountView(database)
+	err = post_deployment_functions.InsertRoles(database)
+	err = post_deployment_functions.CreateAdminUser(database)
+	err = post_deployment_functions.CreateTestData(database)
+	err = post_deployment_functions.UpdateNullAvailability(database)
+	err = post_deployment_functions.AddUniqueConstraintToCurrentlyWatching(database)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
