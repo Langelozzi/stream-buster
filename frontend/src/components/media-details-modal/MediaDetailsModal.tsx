@@ -202,11 +202,12 @@ const MediaDetailsModal: React.FC<MediaDetailsModalProps> = (props) => {
                 onClick={(e) => e.stopPropagation()}
                 sx={{
                     ...styles.modalContainer,
-                    maxHeight: isMobile ? '100vh' : '90vh',
+                    maxHeight: isMobile ? '100%' : '90vh',
                     maxWidth: isMobile ? '100%' : 1200,
                     width: isMobile ? '100%' : '80%',
-                    height: isMobile ? '100vh' : 'auto',
+                    height: isMobile ? 'calc(100% - env(safe-area-inset-top))' : 'auto',
                     margin: isMobile ? 0 : '0 auto',
+                    paddingTop: isMobile ? 'env(safe-area-inset-top)' : 0,
                 }}
             >
                 {/* Header Section with Background Image (will need to pass current episode in for tv shows) */}
