@@ -110,7 +110,7 @@ export const NavSearch: React.FC<NavSearchProps> = ({ autoFocus = false }) => {
     // Handle clear button click
     const handleClearSearch = () => {
         setSearchValue('');
-        // debouncedNavigate('');
+        debouncedNavigate('');
         // Refocus the input after clearing
         if (inputRef.current) {
             inputRef.current.focus();
