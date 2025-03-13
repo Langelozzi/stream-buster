@@ -18,7 +18,7 @@ const ControlBar: React.FC<ControlBarProps> = ({ goToNext, goToPrev }) => {
             padding={2}
         >
             {/* Watch Previous Episode */}
-            <Tooltip title="Watch Previous Episode" arrow>
+            <Tooltip title="Watch Previous Episode (P)" arrow>
                 <Button
                     variant="contained"
                     onClick={goToPrev}
@@ -45,7 +45,7 @@ const ControlBar: React.FC<ControlBarProps> = ({ goToNext, goToPrev }) => {
             </Tooltip>
 
             {/* Watch Next Episode */}
-            <Tooltip title="Watch Next Episode" arrow>
+            <Tooltip title="Watch Next Episode (N)" arrow>
                 <Button
                     variant="contained"
                     onClick={goToNext}
