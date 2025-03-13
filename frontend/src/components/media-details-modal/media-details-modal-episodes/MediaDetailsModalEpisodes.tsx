@@ -5,6 +5,7 @@ import { EpisodeListItem } from "./EpisodeListItem";
 import { TV } from "../../../models/tv";
 import { Season } from "../../../models/season";
 import { useTranslation } from "react-i18next";
+import { EpisodeList } from "./EpisodeList";
 
 // Define styles as a JSON object
 const styles = {
@@ -91,14 +92,7 @@ export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps>
                 </Select>
             </Box>
 
-            <List sx={styles.episodeList}>
-                {episodes?.map((episode) => (
-                    <Box key={episode.EpisodeTMDBID}>
-                        <Divider sx={styles.divider} />
-                        <EpisodeListItem tv={tv} episode={episode} />
-                    </Box>
-                ))}
-            </List>
+            <EpisodeList tv={tv} episodes={episodes} />
         </>
     );
 };

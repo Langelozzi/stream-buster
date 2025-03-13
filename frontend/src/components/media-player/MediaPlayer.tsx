@@ -21,7 +21,7 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ tmdbId, seasonNum, epi
                 justifyContent: 'center',
                 alignItems: 'center',
                 width: '100%',
-                height: '90%',
+                height: '70vh',
             }}
         >
             <iframe
