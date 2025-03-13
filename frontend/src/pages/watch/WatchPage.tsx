@@ -72,7 +72,6 @@ export const WatchPage = () => {
         navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum - 1}`)
     }
 
-    const isTv = seasonNum !== undefined && episodeNum !== undefined;
     const [loading, setLoading] = useState<boolean>(true);
     const [currentMedia, setCurrentMedia] = useState<TV | Movie>();
     const [currentSeason, setCurrentSeason] = useState<Episode[]>();
@@ -80,16 +79,14 @@ export const WatchPage = () => {
     const [error, setError] = useState<string | null>(null);
 
     const handleNext = () => {
-        if (isTv) {
-            console.log('Going to next episode');
-            // Implementation would go here
+        if (isTV) {
+            goToNext()
         }
     };
 
     const handlePrevious = () => {
-        if (isTv) {
-            console.log('Going to previous episode');
-            // Implementation would go here
+        if (isTV) {
+            goToPrev()
         }
     };
 
@@ -103,7 +100,7 @@ export const WatchPage = () => {
             setLoading(true);
             setError(null);
             try {
-                if (isTv) {
+                if (isTV) {
                     const tvDetails = await getTVDetails(tmdbId);
                     setCurrentMedia(tvDetails as TV);
 
@@ -128,7 +125,7 @@ export const WatchPage = () => {
         };
 
         fetchMedia();
-    }, [tmdbId, seasonNum, episodeNum, isTv]);
+    }, [tmdbId, seasonNum, episodeNum, isTV]);
 
     if (error) {
         return <div>Error loading media: {error}</div>;
@@ -183,7 +180,9 @@ export const WatchPage = () => {
 
             </Grid>
 
-            <EpisodeList tv={currentMedia} episodes={currentSeason} styles={{}} />
+            {isTV && (
+                <EpisodeList tv={currentMedia as TV} episodes={currentSeason} styles={{}} loading={loading} />
+            )}
         </Box>
     );
 }

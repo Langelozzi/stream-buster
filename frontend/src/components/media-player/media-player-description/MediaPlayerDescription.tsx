@@ -8,7 +8,7 @@ import { ExpandableText } from '../../expandable-text/ExpandableText';
 import ControlBar from '../../../pages/watch/ControlBar';
 
 // Format functions
-const formatDate = (dateString: String) => {
+const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.getFullYear().toString();
@@ -34,7 +34,6 @@ interface MediaPlayerDescriptionProps {
 
 export const MediaPlayerDescription: React.FC<MediaPlayerDescriptionProps> = ({
     media,
-    currentSeason,
     currentEpisode,
     seasonNum,
     episodeNum,
@@ -42,7 +41,7 @@ export const MediaPlayerDescription: React.FC<MediaPlayerDescriptionProps> = ({
     goToNext,
     goToPrev,
 }) => {
-    const isTv = seasonNum !== undefined && episodeNum !== undefined;
+    const isTv = !!seasonNum && !!episodeNum;
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -63,8 +62,8 @@ export const MediaPlayerDescription: React.FC<MediaPlayerDescriptionProps> = ({
                     </Typography>
                 )}
 
-                {goToPrev && goToNext && (
-                    <ControlBar goToNext={goToNext} goToPrev={goToPrev} />
+                {isTv && (
+                    <ControlBar goToNext={goToNext!} goToPrev={goToPrev!} />
                 )}
             </Box>
 
@@ -86,7 +85,7 @@ export const MediaPlayerDescription: React.FC<MediaPlayerDescriptionProps> = ({
                         }}
                     >
                         <Typography variant="body2" color="white">
-                            {isTv && formatDate(media?.FirstAirDate) + " - " + formatRuntime(currentEpisode?.Runtime)}
+                            {isTv && formatDate((media as TV)?.FirstAirDate?.toString()!) + " - " + formatRuntime((currentEpisode as Episode)?.Runtime)}
                         </Typography>
                         <Box sx={{ flex: 3 }}>
                             {isTv ? (

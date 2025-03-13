@@ -1,4 +1,3 @@
-// MediaPlayer.tsx
 import React from 'react';
 import { Box } from '@mui/material';
 import { API_BASE_URL } from '../../utils/constants';
