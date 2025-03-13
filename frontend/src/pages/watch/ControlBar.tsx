@@ -13,15 +13,9 @@ const ControlBar: React.FC<ControlBarProps> = ({ goToNext, goToPrev }) => {
     return (
         <Box
             display="flex"
-            justifyContent="space-between"
+            justifyContent="center"
             alignItems="center"
-            width="60%"
             padding={2}
-            sx={{
-                "@media (max-width: 600px)": {
-                    width: "100%", // Adjust width for mobile if needed
-                },
-            }}
         >
             {/* Watch Previous Episode */}
             <Tooltip title="Watch Previous Episode" arrow>
@@ -46,7 +40,6 @@ const ControlBar: React.FC<ControlBarProps> = ({ goToNext, goToPrev }) => {
                             },
                         }}
                     >
-                        Previous
                     </Box>
                 </Button>
             </Tooltip>
@@ -74,7 +67,6 @@ const ControlBar: React.FC<ControlBarProps> = ({ goToNext, goToPrev }) => {
                             },
                         }}
                     >
-                        Next
                     </Box>
                 </Button>
             </Tooltip>

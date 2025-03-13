@@ -38,7 +38,7 @@ export const WatchPage = () => {
         navigate(-1);
     };
 
-    const goToNext = () => {
+    const goToNext = (): undefined => {
         const currentlyWatching: CurrentlyWatching = {
             MediaId: media?.ID,
             UserID: user.user?.ID,
@@ -50,7 +50,7 @@ export const WatchPage = () => {
         navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum + 1}`)
     }
 
-    const goToPrev = () => {
+    const goToPrev = (): undefined => {
         const currentlyWatching: CurrentlyWatching = {
             MediaId: media?.ID,
             UserID: user.user?.ID,
