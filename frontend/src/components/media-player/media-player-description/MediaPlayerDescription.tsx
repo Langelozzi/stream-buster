@@ -1,15 +1,11 @@
-// MediaPlayerDescription.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Chip, Paper, Typography } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
-import { getEpisodesForSeason, getTVDetails } from '../../../api/services/tv.service';
-import { getMovieDetails } from '../../../api/services/movie.service';
 import { TV } from '../../../models/tv';
 import { Movie } from '../../../models/movie';
 import { Episode } from '../../../models/episode';
 import { ExpandableText } from '../../expandable-text/ExpandableText';
 import ControlBar from '../../../pages/watch/ControlBar';
-import useKeyboardShortcuts from '../../../hooks/useKeyboardShortcuts';
 
 // Format functions
 const formatDate = (dateString: String) => {
@@ -26,64 +22,27 @@ const formatRuntime = (minutes: number) => {
 };
 
 interface MediaPlayerDescriptionProps {
-    tmdbId: number;
+    media?: TV | Movie;
+    currentSeason?: Episode[];
+    currentEpisode?: Episode;
     seasonNum?: number;
     episodeNum?: number;
+    loading: boolean;
     goToNext?: () => void;
     goToPrev?: () => void;
 }
 
 export const MediaPlayerDescription: React.FC<MediaPlayerDescriptionProps> = ({
-    tmdbId,
+    media,
+    currentSeason,
+    currentEpisode,
     seasonNum,
     episodeNum,
+    loading,
     goToNext,
     goToPrev,
 }) => {
-    const isTv = seasonNum!! && episodeNum!!;
-    const [loading, setLoading] = useState<boolean>(true);
-    const [media, setMedia] = useState<TV | Movie>();
-    const [, setCurrentSeason] = useState<Episode[]>();
-    const [currentEpisode, setCurrentEpisode] = useState<Episode>();
-
-    const handleNext = () => {
-        if (isTv && goToNext) goToNext();
-    };
-
-    const handlePrevious = () => {
-        if (isTv && goToPrev) goToPrev();
-    };
-
-    useKeyboardShortcuts({
-        n: handleNext,
-        p: handlePrevious,
-    });
-
-    useEffect(() => {
-        const fetchMedia = async () => {
-            setLoading(true);
-            if (isTv) {
-                const m = await getTVDetails(tmdbId);
-                console.log('m', m);
-                setMedia(m as TV);
-
-                const s = await getEpisodesForSeason(tmdbId, seasonNum);
-                console.log('s', s);
-                setCurrentSeason(s);
-                try {
-                    setCurrentEpisode(s[episodeNum - 1]);
-                } catch (e) {
-                    console.error("error getting season and episode:", e);
-                }
-            } else {
-                const m = await getMovieDetails(tmdbId);
-                console.log('m', m);
-                setMedia(m as Movie);
-            }
-            setLoading(false);
-        };
-        fetchMedia();
-    }, [tmdbId, seasonNum, episodeNum, isTv]);
+    const isTv = seasonNum !== undefined && episodeNum !== undefined;
 
     return (
         <Box sx={{ width: '100%' }}>

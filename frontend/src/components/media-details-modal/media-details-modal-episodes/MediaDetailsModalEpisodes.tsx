@@ -1,7 +1,6 @@
 import React from "react";
 import { Episode } from "../../../models/episode";
-import { Typography, Divider, List, Box, Select, MenuItem, SelectChangeEvent, useMediaQuery, useTheme } from "@mui/material";
-import { EpisodeListItem } from "./EpisodeListItem";
+import { Typography, Box, Select, MenuItem, SelectChangeEvent, useMediaQuery, useTheme } from "@mui/material";
 import { TV } from "../../../models/tv";
 import { Season } from "../../../models/season";
 import { useTranslation } from "react-i18next";
@@ -39,6 +38,7 @@ const styles = {
         },
     },
 };
+
 
 interface MediaDetailsModalEpisodesProps {
     tv: TV;
@@ -92,7 +92,7 @@ export const MediaDetailsModalEpisodes: React.FC<MediaDetailsModalEpisodesProps>
                 </Select>
             </Box>
 
-            <EpisodeList tv={tv} episodes={episodes} />
+            <EpisodeList tv={tv} episodes={episodes} styles={{ episodeList: styles.episodeList, divider: styles.divider }} />
         </>
     );
 };
