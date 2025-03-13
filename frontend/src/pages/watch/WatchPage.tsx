@@ -10,6 +10,7 @@ import { CurrentlyWatching } from "../../models/currently_watching";
 import { useUser } from "../../hooks/useUser";
 import { getFormattedDate } from "../../utils/date.helpter";
 import { Media } from "../../models/media";
+import { MediaPlayerDescription } from "../../components/media-player/media-player-description/MediaPlayerDescription";
 
 export const WatchPage = () => {
     // Hooks
@@ -51,6 +52,8 @@ export const WatchPage = () => {
     }
 
     const goToPrev = (): undefined => {
+        if (episodeNum <= 1)
+            return;
         const currentlyWatching: CurrentlyWatching = {
             MediaId: media?.ID,
             UserID: user.user?.ID,
@@ -61,9 +64,6 @@ export const WatchPage = () => {
         updateCurrentlyWatching(currentlyWatching)
         navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum - 1}`)
     }
-
-    // Effects
-    // Write an effect to fetch the media and episode information from api if not passed as router state
 
     return (
         <Box sx={{ padding: 2 }}>
@@ -84,11 +84,26 @@ export const WatchPage = () => {
                     {tmdbId && !isTV && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: "column" }}>
                             <MediaPlayer tmdbId={tmdbId} />
+                            <MediaPlayerDescription
+                                tmdbId={tmdbId}
+                                seasonNum={seasonNum}
+                                episodeNum={episodeNum}
+                                goToNext={goToNext}
+                                goToPrev={goToPrev}
+                            />
                         </Box>
                     )}
                     {!!isTV && !!episodeNum && !!seasonNum && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: "column" }}>
-                            <MediaPlayer goToNext={goToNext} goToPrev={goToPrev} tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
+                            <MediaPlayer tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
+
+                            <MediaPlayerDescription
+                                tmdbId={tmdbId}
+                                seasonNum={seasonNum}
+                                episodeNum={episodeNum}
+                                goToNext={goToNext}
+                                goToPrev={goToPrev}
+                            />
                         </Box>
                     )}
                 </Grid>
