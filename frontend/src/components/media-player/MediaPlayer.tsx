@@ -14,13 +14,14 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ tmdbId, seasonNum, epi
         : `${API_BASE_URL}/cdn/movie/${tmdbId}`;
 
     return (
+
         <Box
             sx={{
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 width: '100%',
-                height: '70vh',
+                height: { xs: '25vh', md: '70vh' },
             }}
         >
             <iframe
