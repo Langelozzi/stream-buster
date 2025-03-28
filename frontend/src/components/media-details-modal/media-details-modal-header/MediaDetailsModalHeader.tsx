@@ -1,13 +1,13 @@
-import React from 'react';
-import { Box, IconButton, Button, Typography, Tooltip, useMediaQuery, useTheme } from '@mui/material';
-import { PlayArrow, Add, ThumbUp, Close } from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { Box, IconButton, Button, Typography, Tooltip, useMediaQuery, useTheme, CircularProgress } from '@mui/material';
+import { PlayArrow, Add, ThumbUp, Close, Check } from '@mui/icons-material';
 import { Movie } from '../../../models/movie';
 import { TV } from '../../../models/tv';
 import { useNavigate } from 'react-router-dom';
 import { Episode } from '../../../models/episode';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../../hooks/useUser';
-import { onAddToList } from '../../../api/services/currentlyWatching.service';
+import { getIsOnWatchList, onAddToList } from '../../../api/services/currentlyWatching.service';
 import { useSnackbar } from '../../../hooks/useSnackBar';
 import { AvailabilityInfo } from './AvailabilityInfo';
 
@@ -25,7 +25,9 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
     const user = useUser();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const { showSnackbar, SnackbarComponent } = useSnackbar()
+    const { showSnackbar, SnackbarComponent } = useSnackbar();
+    const [isOnWatchList, setIsOnWatchList] = useState<boolean>(false);
+    const [isOnWatchListLoading, setIsOnWatchListLoading] = useState<boolean>(true);
 
     // Define styles as a JSON object
     const styles = {
@@ -88,6 +90,22 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
         }
     };
 
+    //useEffects 
+    useEffect(() => {
+        const onPageLoad = async () => {
+            try {
+                setIsOnWatchListLoading(true);
+                const watchList: boolean = await getIsOnWatchList(user.user?.ID!, media.Media?.TMDBID!);
+                setIsOnWatchList(watchList);
+            } catch (error) {
+                console.error("Error fetching watchlist status:", error);
+            } finally {
+                setIsOnWatchListLoading(false);
+            }
+        };
+
+        onPageLoad();
+    }, []);
 
     // Constants
     const defaultBackdropImage = "https://cdn.prod.website-files.com/5e261bc81db8f19fa664899d/64add0eb758ddc8d390ed4a0_out-0.png"
@@ -116,6 +134,7 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
         try {
             await onAddToList(media, user, currentEpisode?.SeasonNumber, currentEpisode?.EpisodeNumber)
             showSnackbar("Successfully added to watchlist")
+            setIsOnWatchList(true)
         } catch (error) {
             showSnackbar("Error added to watchlist")
         }
@@ -174,10 +193,24 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                     <Tooltip title={t('dictionary.addToMyList')} arrow>
                         <IconButton
                             onClick={onAdd}
-                            sx={styles.roundButton}
+                            sx={{
+                                ...styles.roundButton,
+                                '&.Mui-disabled': {
+                                    backgroundColor: "rgba(255, 255, 255, 0.3)",
+                                },
+                            }}
                             size={isMobile ? "small" : "medium"}
+                            disabled={isOnWatchListLoading || isOnWatchList} // Disable button while loading
+                            disableRipple
+                            disableFocusRipple
                         >
-                            <Add />
+                            {isOnWatchListLoading ? (
+                                <CircularProgress size={24} />
+                            ) : isOnWatchList ? (
+                                <Check />
+                            ) : (
+                                <Add />
+                            )}
                         </IconButton>
                     </Tooltip>
                     <Tooltip title={t('dictonary.rate')} arrow>
@@ -189,8 +222,9 @@ export const MediaDetailsModalHeader: React.FC<MediaDetailsModalHeaderProps> = (
                         </IconButton>
                     </Tooltip>
                 </Box>
-            )}
+            )
+            }
             {SnackbarComponent}
-        </Box>
+        </Box >
     );
 };

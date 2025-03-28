@@ -12,6 +12,7 @@ func SetCurrentlyWatchingRoutes(router *gin.RouterGroup) {
 	{
 		group.POST("/", controller.CreateCurrentlyWatchingHandler)
 		group.GET("/getall", controller.GetAllCurrentlyWatchingHandler)
+		group.GET("/:userID/:tmdbID", controller.GetCurrentlyWatchingHandlerByTMDBID)
 		group.GET("/watchlist", controller.GetWatchlist)
 		group.PUT("/update", controller.UpdateCurrentlyWatchingHandler)
 		group.DELETE("/delete/:mediaId", controller.DeleteCurrentlyWatchingHandler)
