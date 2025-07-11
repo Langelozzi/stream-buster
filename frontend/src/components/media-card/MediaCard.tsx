@@ -100,6 +100,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({ media, currentlyWatching, 
                         transform: 'translateY(-8px)', // Moves the card up
                         boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.7)', // Increases box shadow
                         height: 'auto', // Allows the card to grow
+                        cursor: 'pointer'
                     },
                 }}
             >

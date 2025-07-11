@@ -9,7 +9,8 @@ import (
 )
 
 func InitCDNDependencies() *controllers.CDNController {
-	var dao daoInterfaces.CDNDaoInterface = daos.NewCDNDao()
+	//var dao daoInterfaces.CDNDaoInterface = daos.NewVidSrcDao()
+	var dao daoInterfaces.CDNDaoInterface = daos.NewVidLinkDao()
 	var service servInterfaces.CDNServiceInterface = services.NewCDNService(dao)
 
 	return controllers.NewCDNController(service)

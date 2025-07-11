@@ -55,7 +55,6 @@ func (contr MediaController) CreateMedia(c *gin.Context) {
 			})
 			return
 		}
-
 	} else if err != nil {
 
 		c.JSON(400, gin.H{
@@ -65,7 +64,6 @@ func (contr MediaController) CreateMedia(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, createdMedia)
-
 }
 
 // GetMediaById retrieves a media record by its ID
@@ -83,7 +81,7 @@ func (contr MediaController) GetMediaById(c *gin.Context) {
 	if err != nil {
 		c.String(400, "Error parsing mediaId")
 	}
-	media, err := contr.service.GetMediaById(mediaId)
+	media, _ := contr.service.GetMediaById(mediaId)
 	c.JSON(200, media)
 }
 

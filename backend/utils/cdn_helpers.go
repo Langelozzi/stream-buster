@@ -1,37 +1,32 @@
 package utils
 
-import (
-	"fmt"
-	"io"
-	"net/http"
-	"strconv"
-)
+func GetWrappedHtmlContent(contentSrcUrl string) string {
+	// Create a wrapped HTML with an iframe
+	wrappedHTML := `
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<title>Video Embed</title>
+			<style>
+				iframe {
+					width: 100%;
+					height: 100vh; /* Use viewport height for the iframe */
+					border: none;
+				}
+				html, body {
+					margin: 0;
+					padding: 0;
+					width: 100%;
+					height: 100%;
+					overflow: hidden; /* Hide overflow to prevent scrollbars */
+				}
+			</style>
+		</head>
+		<body>
+			<iframe src="` + contentSrcUrl + `" allowFullScreen></iframe>
+		</body>
+		</html>`
 
-// DoesContentExist Asynchronous function to check if content exists for the given TMDB ID
-func DoesContentExist(tmdbId int, isTV bool) bool {
-	baseUrl := GetEnvVariable("VIDSRC_BASE_URL")
-
-	var url string
-	if isTV {
-		url = fmt.Sprintf("%s/tv/%s", baseUrl, strconv.Itoa(tmdbId))
-	} else {
-		url = fmt.Sprintf("%s/movie/%s", baseUrl, strconv.Itoa(tmdbId))
-	}
-
-	// Ping the vidsrc API to check if the content exists
-	response, err := http.Get(url)
-	//body, err := io.ReadAll(response.Body)
-	if err != nil || response.StatusCode != http.StatusOK {
-		fmt.Println(response.StatusCode)
-		return false
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-
-		}
-	}(response.Body)
-
-	fmt.Println(response.StatusCode)
-	return true
+	return wrappedHTML
 }
