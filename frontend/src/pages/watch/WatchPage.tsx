@@ -1,9 +1,14 @@
-
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MediaPlayer } from "../../components/media-player/MediaPlayer";
-import { Box, IconButton, Typography } from "@mui/material";
+import {
+    Box,
+    IconButton,
+    Link,
+    Typography,
+    Card
+} from "@mui/material";
 import BackIcon from '@mui/icons-material/ArrowBack';
-import Grid from "@mui/material/Grid2"
+import Grid from "@mui/material/Grid2";
 import { useEffect, useState } from "react";
 import { updateCurrentlyWatching } from "../../api/services/currentlyWatching.service";
 import { CurrentlyWatching } from "../../models/currently_watching";
@@ -37,6 +42,12 @@ export const WatchPage = () => {
 
     // State
     const [media] = useState<Media | undefined>(location.state?.media);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [currentMedia, setCurrentMedia] = useState<TV | Movie>();
+    const [currentSeason, setCurrentSeason] = useState<Episode[]>();
+    const [currentEpisode, setCurrentEpisode] = useState<Episode>();
+    const [error, setError] = useState<string | null>(null);
+    const [showAdblockMessage, setShowAdblockMessage] = useState(true);
 
     // Constants
     const isTV = !!seasonNum && !!episodeNum;
@@ -53,40 +64,33 @@ export const WatchPage = () => {
             SeasonNumber: seasonNum,
             EpisodeNumber: episodeNum + 1,
             UpdatedAt: getFormattedDate()
-        }
-        updateCurrentlyWatching(currentlyWatching)
-        navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum + 1}`)
-    }
+        };
+        updateCurrentlyWatching(currentlyWatching);
+        navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum + 1}`);
+    };
 
     const goToPrev = (): undefined => {
-        if (episodeNum <= 1)
-            return;
+        if (episodeNum <= 1) return;
         const currentlyWatching: CurrentlyWatching = {
             MediaId: media?.ID,
             UserID: user.user?.ID,
             SeasonNumber: seasonNum,
             EpisodeNumber: episodeNum - 1,
             UpdatedAt: getFormattedDate()
-        }
-        updateCurrentlyWatching(currentlyWatching)
-        navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum - 1}`)
-    }
-
-    const [loading, setLoading] = useState<boolean>(true);
-    const [currentMedia, setCurrentMedia] = useState<TV | Movie>();
-    const [currentSeason, setCurrentSeason] = useState<Episode[]>();
-    const [currentEpisode, setCurrentEpisode] = useState<Episode>();
-    const [error, setError] = useState<string | null>(null);
+        };
+        updateCurrentlyWatching(currentlyWatching);
+        navigate(`/watch/${tmdbId}/${seasonNum}/${episodeNum - 1}`);
+    };
 
     const handleNext = () => {
         if (isTV) {
-            goToNext()
+            goToNext();
         }
     };
 
     const handlePrevious = () => {
         if (isTV) {
-            goToPrev()
+            goToPrev();
         }
     };
 
@@ -132,24 +136,49 @@ export const WatchPage = () => {
     }
 
     return (
-        <Box sx={{ padding: 2, }}>
+        <Box sx={{ padding: 2 }}>
             <Grid container spacing={2} alignItems="center">
-                <Grid size={1} component="div" sx={{ textAlign: 'left' }}> {/* Browse Button Section */}
-                    <IconButton onClick={handleBrowseClick} aria-label="browse">
-                        <BackIcon sx={{ color: 'white' }} />
-                    </IconButton>
-                </Grid>
+                <IconButton onClick={handleBrowseClick} aria-label="browse">
+                    <BackIcon sx={{ color: 'white' }} />
+                </IconButton>
                 {media && (
-                    <Grid size={11} component="div"> {/* Title Section */}
-                        <Typography variant="h5" align="left" gutterBottom>
-                            {media?.Title}
-                        </Typography>
-                    </Grid>
+                    <Typography variant="h5" align="left" gutterBottom>
+                        {media?.Title}
+                    </Typography>
                 )}
+
                 <Grid size={12} component="div">
+                    {showAdblockMessage && (
+                        <Box sx={{ marginBottom: 2 }}>
+                            <Card sx={{ position: 'relative', padding: 2, backgroundColor: '#fff8dc' }}>
+                                <IconButton
+                                    size="small"
+                                    onClick={() => setShowAdblockMessage(false)}
+                                    sx={{ position: 'absolute', top: 4, right: 4 }}
+                                    aria-label="close"
+                                >
+                                    ×
+                                </IconButton>
+                                <Typography variant="body1">
+                                    We are sorry to announce that Streambuster must now adhere to ad limitations.
+                                    We recommend downloading the following ad blocker:{' '}
+                                    <Link
+                                        href="https://chromewebstore.google.com/detail/gighmmpiobklfepjocnamgkkbiglidom?utm_source=item-share-cb."
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        AdBlock (Chrome Web Store)
+                                    </Link>
+                                </Typography>
+                            </Card>
+                        </Box>
+                    )}
+
                     {tmdbId && !isTV && (
-                        <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: "column" }}>
-                            <MediaPlayer tmdbId={tmdbId} />
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+                            <Box sx={{ width: '75%' }}>
+                                <MediaPlayer tmdbId={tmdbId} />
+                            </Box>
                             <MediaPlayerDescription
                                 media={currentMedia}
                                 loading={loading}
@@ -160,10 +189,12 @@ export const WatchPage = () => {
                             />
                         </Box>
                     )}
-                    {!!isTV && !!episodeNum && !!seasonNum && (
-                        <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: "column" }}>
-                            <MediaPlayer tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
 
+                    {!!isTV && !!episodeNum && !!seasonNum && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
+                            <Box sx={{ width: '75%' }}>
+                                <MediaPlayer tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
+                            </Box>
                             <MediaPlayerDescription
                                 media={currentMedia}
                                 currentSeason={currentSeason}
@@ -177,7 +208,6 @@ export const WatchPage = () => {
                         </Box>
                     )}
                 </Grid>
-
             </Grid>
 
             {isTV && (
@@ -185,4 +215,4 @@ export const WatchPage = () => {
             )}
         </Box>
     );
-}
+};

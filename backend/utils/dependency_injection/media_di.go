@@ -9,7 +9,7 @@ import (
 )
 
 func InitMediaDependencies() *controllers.MediaController {
-	var cdnDao daoInterfaces.CDNDaoInterface = daos.NewCDNDao()
+	var cdnDao daoInterfaces.CDNDaoInterface = daos.NewVidLinkDao()
 	var cdnService servInterfaces.CDNServiceInterface = services.NewCDNService(cdnDao)
 
 	var dao daoInterfaces.MediaDaoInterface = daos.NewMediaDao()

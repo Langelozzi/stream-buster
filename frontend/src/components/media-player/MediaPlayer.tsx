@@ -21,13 +21,12 @@ export const MediaPlayer: React.FC<MediaPlayerProps> = ({ tmdbId, seasonNum, epi
                 justifyContent: 'center',
                 alignItems: 'center',
                 width: '100%',
-                height: { xs: '25vh', md: '70vh' },
+                aspectRatio: '16 / 9'
             }}
         >
             <iframe
                 src={src}
                 allowFullScreen
-                sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation"
                 style={{
                     border: 'none',
                     width: '100%',
