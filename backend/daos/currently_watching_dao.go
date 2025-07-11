@@ -46,6 +46,28 @@ func (dao *CurrentlyWatchingDao) GetCurrentlyWatchingById(userID uint, mediaId u
 	return &currentlyWatching, nil
 }
 
+func (dao *CurrentlyWatchingDao) GetCurrentlyWatchingByTMDBId(userID uint, TMDBID uint, includeDeleted bool) (*db.CurrentlyWatching, error) {
+	databaseInstance := database.GetInstance()
+	var currentlyWatching db.CurrentlyWatching
+
+	// Join the media table to filter by tmdb_id
+	query := databaseInstance.
+		Joins("JOIN media ON media.id = currently_watchings.media_id").
+		Where("currently_watchings.user_id = ? AND media.tmdb_id = ?", userID, TMDBID)
+
+	// Exclude deleted records if includeDeleted is false
+	if !includeDeleted {
+		query = query.Where("currently_watchings.deleted_at IS NULL")
+	}
+
+	// Execute query
+	if err := query.First(&currentlyWatching).Error; err != nil {
+		return nil, err
+	}
+
+	return &currentlyWatching, nil
+}
+
 func (dao *CurrentlyWatchingDao) GetCurrentlyWatchingByUserId(userID uint, includeDeleted bool) ([]*db.CurrentlyWatching, error) {
 	databaseInstance := database.GetInstance()
 

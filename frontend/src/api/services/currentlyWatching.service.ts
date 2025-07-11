@@ -38,6 +38,17 @@ export const updateCurrentlyWatching = async (data: CurrentlyWatching) => {
     }
 }
 
+export const getIsOnWatchList = async (userID: number, tmdbID: number, includeDeleted = false): Promise<boolean> => {
+    try {
+        const result = await instance.get(`/currently-watching/${userID}/${tmdbID}`, {
+            params: { includeDeleted }
+        });
+        return result.data.exists;
+    } catch (error) {
+        console.error("Error fetching watch list:", error);
+        throw error;
+    }
+};
 
 export const getWatchList = async (): Promise<CurrentlyWatching[]> => {
     try {

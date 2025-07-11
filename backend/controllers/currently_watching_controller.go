@@ -128,6 +128,66 @@ func (contr *CurrentlyWatchingController) GetCurrentlyWatchingHandler(c *gin.Con
 	c.JSON(200, watch)
 }
 
+// GetCurrentlyWatchingHandler retrieves a currently watching record by TMDB ID
+// @Summary Retrieve a currently watching record
+// @Description Get a currently watching record by TMDB ID
+// @Tags currently-watching
+// @Accept  json
+// @Produce  json
+// @Param userID path int true "User ID"
+// @Param tmdbID path int true "TMDB ID"
+// @Param includeDeleted query bool false "Set to false to exclude soft deleted record" default(false)
+// @Success 200 {object} db.CurrentlyWatching "Successfully retrieved the currently watching record"
+// @Failure 400 {object} map[string]interface{} "Error: Record not found"
+// @Router /currently-watching/{userID}/{tmdbID}/ [get]
+func (contr *CurrentlyWatchingController) GetCurrentlyWatchingHandlerByTMDBID(c *gin.Context) {
+	// Parse userID from path
+	userIDStr := c.Param("userID")
+	userID, err := strconv.Atoi(userIDStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid user ID. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// Parse tmdbID from path
+	tmdbIDStr := c.Param("tmdbID")
+	tmdbID, err := strconv.Atoi(tmdbIDStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid TMDB ID. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// Parse includeDeleted query parameter (default: false)
+	includeDeletedStr := c.DefaultQuery("includeDeleted", "false")
+	includeDeleted, err := strconv.ParseBool(includeDeletedStr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "Invalid includeDeleted query. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// Call the service function to fetch the currently watching record
+	watch, err := contr.service.GetCurrentlyWatchingByTMDBId(uint(userID), uint(tmdbID), includeDeleted)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"message": "No currently watching records found. Error: " + err.Error(),
+		})
+		return
+	}
+
+	// Return true if the record exists, otherwise false
+	if watch == nil {
+		c.JSON(200, gin.H{"exists": false})
+	} else {
+		c.JSON(200, gin.H{"exists": true})
+	}
+}
+
 // UpdateCurrentlyWatchingHandler updates a currently watching record
 // @Summary Update a currently watching record
 // @Description update a currently watching record
