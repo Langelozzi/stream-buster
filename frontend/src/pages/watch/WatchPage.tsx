@@ -176,7 +176,12 @@ export const WatchPage = () => {
 
                     {tmdbId && !isTV && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-                            <Box sx={{ width: '75%' }}>
+                            <Box sx={{
+                                width: {
+                                    xs: '100%', // 100% width on extra small screens and up
+                                    lg: '75%',  // 75% width on large and up
+                                }
+                            }}>
                                 <MediaPlayer tmdbId={tmdbId} />
                             </Box>
                             <MediaPlayerDescription
@@ -192,7 +197,12 @@ export const WatchPage = () => {
 
                     {!!isTV && !!episodeNum && !!seasonNum && (
                         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: "column" }}>
-                            <Box sx={{ width: '75%' }}>
+                            <Box sx={{
+                                width: {
+                                    xs: '100%', // 100% width on extra small screens and up
+                                    lg: '75%',  // 75% width on large and up
+                                }
+                            }}>
                                 <MediaPlayer tmdbId={tmdbId} seasonNum={seasonNum} episodeNum={episodeNum} />
                             </Box>
                             <MediaPlayerDescription
