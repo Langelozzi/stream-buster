@@ -1,203 +1,203 @@
 # StreamBuster — Deployment Runbook
 
-> Everything we currently know about how StreamBuster is deployed. Last verified: 2026-07-23.
+> How StreamBuster is deployed to the M1 via CamAppEngine.
+> Last verified: 2026-07-24. The DigitalOcean droplet it replaces is documented
+> in §9 and is still running as the rollback target.
 
 ## 1. Topology
 
-Single **DigitalOcean droplet** — a shared box that also runs unrelated apps
-(worlds-bucket-list, budget, etc.).
+Both halves run as Docker containers on a **Mac mini / MacBook (Apple Silicon)**,
+deployed by **CamAppEngine**. The database did not move — it is still the same
+Neon instance the droplet used.
 
 | | |
 |---|---|
-| **Host** | `146.190.120.67` |
-| **Hostname** | `ubuntu-s-1vcpu-1gb-amd-sfo3-01` (1 vCPU / 1 GB, region `sfo3`) |
-| **OS** | Ubuntu (kernel 6.11) |
-| **Login** | `root@146.190.120.67`, SSH **key** auth (already trusted in `known_hosts`) |
-| **Containers** | **None** — no Docker; processes run directly |
-| **Git remote** | `github.com/Langelozzi/stream-buster` |
-
-There is **no CamAppEngine involvement** for this box — `~/deploy.yaml` only manages
-`m1` / pixel-game / qmetry, not StreamBuster.
+| **Host** | `100.64.207.6` (Tailscale), `camerons-MacBook-Pro.local`, arm64 |
+| **Login** | `camer@100.64.207.6`, key `~/.ssh/id_ed25519` |
+| **Containers** | colima + Docker (`brew`), started by `homebrew.mxcl.colima` |
+| **Reverse proxy** | Homebrew nginx on **:8080**, unprivileged, `homebrew.mxcl.nginx` |
+| **Database** | Neon serverless Postgres, us-east-2 (unchanged) |
+| **Deploy tool** | CamAppEngine, config `~/deploy.yaml`, project `stream-buster` |
 
 ```
-                    ┌──────────────── nginx (TLS, certbot) ────────────────┐
- api.streambuster.xyz ─┼─▶ proxy_pass http://localhost:8080  (Go backend)   │
-     streambuster.xyz ─┼─▶ static  /var/www/streambuster.xyz/.../dist       │
- dev.streambuster.xyz ─┼─▶ static  /var/www/dev.streambuster.xyz/.../dist   │
-                    └───────────────────────────────────────────────────────┘
- Backend  : /root/stream-buster/backend  →  `go run main.go` in screen `goserver` (:8080)
- Database : Neon serverless Postgres (us-east-2)  [conn string in backend/.env]
+   Cloudflare / edge  ──▶  M1:8080  ──▶ nginx (Host-based vhosts)
+                                          ├─ api.streambuster.xyz ─▶ 127.0.0.1:8790 ─▶ api  (Go, :8080)
+                                          └─ streambuster.xyz     ─▶ 127.0.0.1:8791 ─▶ web  (nginx, :80)
+                                                                                        │
+   api ──────────────────────────────────────────────────────────────────────▶ Neon (us-east-2)
 ```
 
-## 2. The three clones on the server
+Both published ports bind **127.0.0.1 only** — nothing reaches a container
+without passing through the host nginx first.
 
-The frontend and backend are deployed from **separate git clones**:
+> ⚠️ **Public ingress is not wired up yet.** The M1 is reachable only over
+> Tailscale; nginx there runs unprivileged so it cannot bind :80/:443, and no
+> `cloudflared` is installed. The `camfung.dev` apps on this same box get public
+> traffic through an edge host at `178.128.151.171`. Until `streambuster.xyz`
+> and `api.streambuster.xyz` are pointed at an edge that forwards to
+> **M1:8080 with the `Host` header preserved**, the site keeps serving from the
+> droplet. Host-based vhosts mean a tunnel that rewrites `Host` will 404.
 
-| Path | Role | Branch | Served by |
+## 2. How CamAppEngine deploys this
+
+One command deploys both apps:
+
+```bash
+camappengine deploy -project stream-buster -env streambuster -server m1
+```
+
+Per app (`api`, then `web`) it:
+
+1. **Syncs** `https://github.com/langelozzi/stream-buster` into
+   `~/apps/stream-buster/<app>` — `git checkout development && git reset --hard
+   origin/development`. **It deploys what is on GitHub, not your working tree.**
+2. **Copies** that app's secrets file in as `.env` (see §3). Untracked, so the
+   `reset --hard` on the next deploy leaves it alone.
+3. **Runs** `docker compose up -d --build --remove-orphans` in the clone.
+4. **Writes** `/opt/homebrew/etc/nginx/servers/<host>.conf` proxying to the
+   app's port, runs `nginx -t`, and reloads. A failed config test removes the
+   file rather than leaving a broken route.
+
+Deploy one side only with `-app api` or `-app web`. Neither declares
+`dependson`, so each deploys independently.
+
+### One compose file, two apps
+
+Both apps clone the *same repo*, so both get the same `docker-compose.yml`. The
+copied-in `.env` decides which service actually starts:
+
+| App | `COMPOSE_PROFILES` | `COMPOSE_PROJECT_NAME` | Host port |
 |---|---|---|---|
-| `/root/stream-buster/backend` | Backend (running) | `development` | `go run` in screen `goserver` → nginx `api.streambuster.xyz` |
-| `/var/www/streambuster.xyz/html/stream-buster/frontend/dist` | Prod frontend | `development` | nginx static |
-| `/var/www/dev.streambuster.xyz/html/stream-buster/frontend/dist` | Dev frontend | `maintance` (sic) | nginx static |
+| `api` | `api` | `streambuster-api` | 8790 |
+| `web` | `web` | `streambuster-web` | 8791 |
 
-> ⚠️ The backend clone carries a **long-standing uncommitted local edit to
-> `middlewares/cors_middleware.go`**. Never `git reset --hard` or full-dir-rsync the
-> backend — you'll wipe it. Only copy the specific files you changed.
+Distinct project names keep the two stacks from adopting each other's
+containers under `--remove-orphans`.
 
-## 3. Backend deployment
+Run the whole stack locally with `COMPOSE_PROFILES=all docker compose up --build`.
 
-Prereqs on the box: **Go 1.23.2** is installed (`/usr/bin/go`).
+## 3. Configuration and secrets
 
-1. **Stage** the changed/new `.go` files locally (tar preserves paths):
-   ```bash
-   cd backend
-   tar -czf /tmp/sb-backend.tgz \
-     middlewares/usage_tracking_middleware.go routes/router.go \
-     utils/database/initialize_db.go  <...new files...>
-   ```
-   (macOS `tar` adds AppleDouble `._*` files — Go ignores them, but clean with
-   `find . -name '._*' -delete` after extract.)
-2. **Copy + compile-gate** (the running server is unaffected by editing source on disk,
-   so build *before* restarting):
-   ```bash
-   scp /tmp/sb-backend.tgz root@146.190.120.67:/tmp/
-   ssh root@146.190.120.67 '
-     cd /root/stream-buster/backend
-     # back up files you overwrite:
-     cp -a middlewares/usage_tracking_middleware.go /tmp/sb-bak-$(date +%s)-usage.go   # etc.
-     tar -xzf /tmp/sb-backend.tgz -C /root/stream-buster/backend
-     find . -name "._*" -delete
-     go build ./...           # ← must succeed before restarting
-   '
-   ```
-3. **Restart** the process inside the `goserver` screen:
-   ```bash
-   ssh root@146.190.120.67 "
-     screen -S goserver -X stuff \$'\003'                                   # Ctrl-C stops go run
-     # wait for :8080 to free, then:
-     screen -S goserver -X stuff \$'cd /root/stream-buster/backend && go run main.go\n'
-   "
-   ```
-   Restart triggers `database.InitializeDb()` → GORM **AutoMigrate on the prod Neon DB**
-   (additive; fatal-on-error, so a serving process means migration succeeded).
-4. **Verify:** `curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/api/v1/analytics/me`
-   → `401` = new code live (`404` = old code still running).
+Secrets live **outside the repo**, on the machine that runs `camappengine`, and
+are named in `~/deploy.yaml` as `secretsfile`:
 
-> The backend is NOT a systemd service and NOT a compiled binary in prod — it's
-> literally `go run main.go` in a detached `screen`. Restarting recompiles (~10–20 s
-> of API downtime).
+| App | Local path |
+|---|---|
+| `api` | `~/deploy-secrets/stream-buster/api/.env` |
+| `web` | `~/deploy-secrets/stream-buster/web/.env` |
 
-## 4. Frontend deployment
+`api/.env` carries the Compose wiring above plus everything `backend/.env` has
+(`DB_CONNECTION_STRING`, `JWT_SECRET_TOKEN`, `DOMAIN`, the TMDB/CDN keys) and
+one new variable:
 
-**node/npm are NOT installed on the server.** The build happens locally and the static
-`dist/` is copied up. `dist` is **gitignored** (`.gitignore` line 28) — only
-`dist/index.html` + `vite.svg` were force-added; `dist/assets/` (the hashed JS/CSS) is
-untracked. **A git-pull frontend deploy therefore breaks** (index.html points at assets
-that aren't in git). Always build locally and copy the whole `dist/`.
+- **`CORS_ALLOWED_ORIGINS`** — comma-separated exact origins. Credentialed
+  routes rule out a wildcard, so every front end must be listed. Unset falls
+  back to `http://localhost:5173`.
+
+`web/.env` holds no secrets — it sets `VITE_API_URL`, which Vite **inlines at
+image build time**. Changing the API URL requires a rebuild, not a restart.
+
+Keep `api/.env` in sync with `backend/.env` when app config changes; nothing
+enforces it.
+
+## 4. Verification
 
 ```bash
-cd frontend
-npm ci                                   # if deps changed
-npx vite build                           # PROD  → dist/      (uses .env)
-npx vite build --mode dev --outDir dist-dev --emptyOutDir   # DEV → dist-dev/ (uses .env.dev)
+M1=http://100.64.207.6:8080          # over Tailscale, before public ingress exists
 
-TS=$(date +%Y%m%d-%H%M%S)
-P=/var/www/streambuster.xyz/html/stream-buster/frontend/dist
-D=/var/www/dev.streambuster.xyz/html/stream-buster/frontend/dist
+# containers
+ssh camer@100.64.207.6 'zsh -lc "docker ps --filter name=streambuster"'   # both (healthy)
 
-ssh root@146.190.120.67 "cp -a $P $P.bak-$TS"          # backup
-rsync -az --delete -e "ssh" dist/     root@146.190.120.67:$P/
-ssh root@146.190.120.67 "cp -a $D $D.bak-$TS"          # backup
-rsync -az --delete -e "ssh" dist-dev/ root@146.190.120.67:$D/
+# frontend
+curl -s -o /dev/null -w '%{http_code}\n' -H 'Host: streambuster.xyz' $M1/          # 200
+curl -s -o /dev/null -w '%{http_code}\n' -H 'Host: streambuster.xyz' $M1/watch/123 # 200, SPA fallback
+
+# API: 401 -> login -> 200 with real data
+H='Host: api.streambuster.xyz'
+curl -s -o /dev/null -w '%{http_code}\n' -H "$H" $M1/api/v1/user/current           # 401
+curl -s -c /tmp/ck -X POST -H "$H" -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'email=admin@admin.com' --data-urlencode 'password=111' \
+  $M1/api/v1/auth/login
+curl -s -b /tmp/ck -o /dev/null -w '%{http_code}\n' -H "$H" $M1/api/v1/user/current # 200
+
+# CORS
+curl -s -i -X OPTIONS -H "$H" -H 'Origin: https://streambuster.xyz' \
+  -H 'Access-Control-Request-Method: GET' $M1/api/v1/user/current | grep -i access-control
 ```
 
-`--delete` removes stale hashed assets. No nginx reload needed (static files).
+`rm /tmp/ck` afterwards — it holds a live session token.
 
-## 5. Configuration / environment
+> ⚠️ `admin@admin.com` / `111` is the seeded default from
+> `backend/utils/database/post_deployment_functions/create_admin_user.go`.
+> Rotate it.
 
-**Frontend** (Vite, baked in at build time):
-- `frontend/.env` → `VITE_API_URL=https://api.streambuster.xyz/api/v1` (prod build).
-- `frontend/.env.dev` → same URL today; consumed by `vite build --mode dev` for the dev
-  site. Repoint this to change what `dev.streambuster.xyz` talks to (there is only one
-  backend, so a real split needs a second backend + `api.dev.streambuster.xyz` vhost).
-- Local dev override (commented in `.env`): `http://localhost:8080/api/v1`.
+## 5. Database and migrations
 
-**Backend** (`godotenv`, loaded from `backend/.env` at runtime):
-- `DB_CONNECTION_STRING` — Neon serverless Postgres, region **us-east-2** (`…neon.tech/neondb`,
-  `sslmode=require`). **Credentials live only in `backend/.env` on the server — not in git.**
-- Backend listens on `:8080` (`router.Run(":8080")` in `main.go`).
+Unchanged by the move. GORM `AutoMigrate` runs on every backend start from
+`utils/database/initialize_db.go`, followed by the idempotent post-deployment
+seeders, and `main.go` registers new routes into the `endpoints` table.
+Migrations are additive and `log.Fatalf` on failure — a container that reaches
+`healthy` means the migration succeeded. The healthcheck allows a 40s
+`start_period` for exactly this.
 
-## 6. Database & migrations
+Because the droplet is still running against the **same Neon database**, both
+backends share it during the transition. That is safe (additive migrations,
+idempotent seeders) but means data written on one is immediately visible to the
+other.
 
-- **Neon serverless Postgres** (single DB, shared by prod). No migration tool — GORM
-  `AutoMigrate` runs every backend start from `utils/database/initialize_db.go`
-  (`InitializeDb`), plus post-deployment seeders (`runPostDeploymentScripts`:
-  roles, admin user, endpoint records, etc.).
-- Migrations are **additive** (create tables/columns; never drops). A failed migrate is
-  `log.Fatalf` → the process won't serve, which is your signal.
-- `main.go` also runs `CreateEndpointRecords` on boot, auto-registering any new routes
-  into the `endpoints` table.
+## 6. Rollback
 
-## 7. nginx / domains / TLS
+DNS still points at the droplet, so during the transition rollback is "do
+nothing". Once cut over:
 
-- Config: `/etc/nginx/sites-enabled/{api.streambuster.xyz, streambuster.xyz, dev.streambuster.xyz}`.
-- TLS via **Let's Encrypt / certbot** (`/etc/letsencrypt/live/<domain>/`). HTTP→HTTPS redirects.
-- `api.streambuster.xyz` → `proxy_pass http://localhost:8080` with `X-Forwarded-*` headers.
-- SPA vhosts use `try_files $uri /index.html`.
-- Reload after config changes: `nginx -t && systemctl reload nginx`.
+- **Fast:** point `streambuster.xyz` / `api.streambuster.xyz` back at
+  `146.190.120.67`. The droplet is untouched and still serving.
+- **Per app on the M1:** `cd ~/apps/stream-buster/<app> && docker compose down`,
+  then `rm /opt/homebrew/etc/nginx/servers/<host>.conf && nginx -s reload`.
+- **Previous image:** deploys build in place; there is no image history to roll
+  back to. Redeploy an older commit by pointing the environment's `branch` at
+  it in `~/deploy.yaml` and deploying again.
 
-## 8. Verification (prove a real 200)
+## 7. Gotchas
 
-```bash
-# login as the seeded admin (role 1) to get the token cookie, then hit the admin API
-BASE=https://api.streambuster.xyz/api/v1
-curl -s -c /tmp/ck -X POST $BASE/auth/login \
-  -H 'Content-Type: application/x-www-form-urlencoded' \
-  --data-urlencode 'email=admin@admin.com' --data-urlencode 'password=111'
-curl -s -b /tmp/ck -o /dev/null -w '%{http_code}\n' $BASE/analytics/overview   # → 200
-```
-A `200` on `/analytics/overview` also confirms the `request_logs` table exists (its
-window query hits it). Sites: `https://streambuster.xyz/` and `/dev.streambuster.xyz/`
-should return `200` and reference the freshly-built `index-<hash>.js`.
+- **Compose interpolates every service, including inactive profiles.** A `${VAR:?}`
+  in the `web` service breaks the `api` deploy, whose `.env` has no `VITE_API_URL`.
+  Build args need defaults, not required-markers.
+- **Non-interactive ssh on macOS has no `/opt/homebrew/bin`.** CamAppEngine
+  prefixes its own commands, but anything you run by hand needs `zsh -lc`.
+- **nginx on the M1 listens on 8080, not 80** — it runs unprivileged as `camer`.
+  Routing is by `Host`, so an edge proxy must preserve that header.
+- **The deploy is from GitHub.** Uncommitted or unpushed work is invisible to it,
+  and `development` is protected — changes land through a PR.
+- **`go.sum` used to be gitignored.** Container builds start from a clean clone,
+  so it must stay committed or `go mod download` has nothing to verify against.
+- **`GetEnvVariable` used to `log.Fatalf` when `.env` was missing.** Containers
+  ship no `.env`; it now warns once and reads the process environment.
+- **Vite bakes `VITE_API_URL` into the bundle.** It is a build arg, not runtime
+  config.
+- Other apps share the M1 (`pixelizer` 8777, `qmetry` 8781, `demo` 3210, immich
+  2283) — do not reuse those ports.
 
-> ⚠️ `admin@admin.com` / `111` is the **seeded default** from
-> `backend/utils/database/post_deployment_functions/create_admin_user.go`. Rotate it in
-> production.
+## 8. App entry points
 
-## 9. Rollback
+- Frontend SPA at `/`, client-side routed (nginx `try_files` → `index.html`).
+- API under `/api/v1`, Swagger UI at `/api/v1/swagger/index.html` — the only
+  unauthenticated 200 the API serves, and what the container healthcheck uses.
 
-**Frontend** — backups sit beside each live dir:
-```bash
-rm -rf $P && mv $P.bak-<TS> $P        # prod   (same pattern for dev $D)
-```
-**Backend** — restore the overwritten files and drop the new ones, then restart:
-```bash
-cd /root/stream-buster/backend
-git checkout -- middlewares/usage_tracking_middleware.go routes/router.go utils/database/initialize_db.go
-rm -f controllers/analytics_controller.go daos/analytics_dao.go \
-      daos/interfaces/analytics_dao_interface.go middlewares/admin_middleware.go \
-      models/analytics.go models/request_log.go routes/api/v1/analytics_routes.go \
-      services/analytics_service.go services/interfaces/analytics_service_interface.go \
-      utils/dependency_injection/analytics_di.go
-# restart goserver screen (see §3). The empty request_logs table is harmless;
-# `DROP TABLE request_logs;` if you truly want it gone.
-```
+## 9. Previous deployment (DigitalOcean droplet) — rollback target
 
-## 10. Gotchas
+Still running at **`146.190.120.67`** (`root@`, key auth), Ubuntu, no Docker:
 
-- **Shell is zsh** — an unquoted `$VAR` holding several `ssh -o` flags is **not**
-  word-split; inline the flags or you'll get `keyword ... extra arguments`.
-- **macOS `tar`/scp** emit AppleDouble `._*` files; Go ignores files starting with `.`/`_`
-  but clean them up.
-- **Analytics routes are not usage-tracked** (they live in the private group, not the
-  usage-tracking group), so hitting them does not create `request_logs` rows.
-- Only **one backend** (`:8080`) serves both `api.streambuster.xyz` and, indirectly, the
-  dev frontend. There is no separate dev API.
-- Other apps share this droplet (ports 3000 node, 8123 python, plus their own screens);
-  don't disturb them.
-
-## 11. App entry points
-
-- Dashboard route (frontend): **`/dashboard`** (behind `PrivateRoute`). Admins (role 1)
-  see the analytics bento view; everyone else sees their personal usage view.
-- New analytics API: `GET /api/v1/analytics/overview?userId=` (admin-only) and
-  `GET /api/v1/analytics/me` (self).
+- **Backend:** `/root/stream-buster/backend`, `go run main.go` in a `screen`
+  named `goserver`, nginx proxying `api.streambuster.xyz` → `localhost:8080`.
+  Restart with `screen -S goserver -X stuff $'\003'` then
+  `stuff $'cd /root/stream-buster/backend && go run main.go\n'`.
+- **Frontend:** node/npm are **not** installed there; `dist` was built locally
+  and rsync'd to `/var/www/streambuster.xyz/html/stream-buster/frontend/dist`
+  (dev site under `/var/www/dev.streambuster.xyz/...`).
+- **TLS:** Let's Encrypt / certbot, configs in `/etc/nginx/sites-enabled/`.
+- It carries a **long-standing uncommitted edit to
+  `middlewares/cors_middleware.go`** — the origin list that made production
+  work. That list is now `CORS_ALLOWED_ORIGINS` (§3), so the edit is obsolete,
+  but do not `git reset --hard` there while the box is still the fallback.
+- The box also runs unrelated apps (worlds-bucket-list, budget); leave them be.
