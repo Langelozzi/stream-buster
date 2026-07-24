@@ -20,7 +20,7 @@ Neon instance the droplet used.
 | **Deploy tool** | CamAppEngine, config `~/deploy.yaml`, project `stream-buster` |
 
 ```
-   Cloudflare / edge  ──▶  M1:8080  ──▶ nginx (Host-based vhosts)
+   chickenwinsvm:443  ──▶  M1:8080  ──▶ nginx (Host-based vhosts)
                                           ├─ api.streambuster.xyz ─▶ 127.0.0.1:8790 ─▶ api  (Go, :8080)
                                           └─ streambuster.xyz     ─▶ 127.0.0.1:8791 ─▶ web  (nginx, :80)
                                                                                         │
@@ -30,13 +30,50 @@ Neon instance the droplet used.
 Both published ports bind **127.0.0.1 only** — nothing reaches a container
 without passing through the host nginx first.
 
-> ⚠️ **Public ingress is not wired up yet.** The M1 is reachable only over
-> Tailscale; nginx there runs unprivileged so it cannot bind :80/:443, and no
-> `cloudflared` is installed. The `camfung.dev` apps on this same box get public
-> traffic through an edge host at `178.128.151.171`. Until `streambuster.xyz`
-> and `api.streambuster.xyz` are pointed at an edge that forwards to
-> **M1:8080 with the `Host` header preserved**, the site keeps serving from the
-> droplet. Host-based vhosts mean a tunnel that rewrites `Host` will 404.
+## 1a. Public ingress (edge VPS) — pending DNS
+
+The M1 is Tailscale-only and its nginx is unprivileged, so it cannot bind
+:80/:443. Public traffic arrives the same way `camfung.dev` does: through the
+**edge VPS `chickenwinsvm`** at `178.128.151.171` (tailnet `100.118.152.28`),
+which terminates TLS on a wildcard cert and proxies to `http://100.64.207.6:8080`
+with `Host` preserved — the M1 does the per-host routing.
+
+The proxy config is written and **staged, not active**, at
+`/root/nginx-staged/tls-wildcard-streambuster-xyz.conf` on the edge. Installing
+it before the cert exists makes `nginx -t` fail, which blocks every later reload
+and would take `camfung.dev` down with it.
+
+Remaining steps, in order:
+
+1. **Move `streambuster.xyz` to Cloudflare.** It is still on Namecheap
+   (`dns1/dns2.registrar-servers.com`); camfung.dev is on
+   `sureena/harvey.ns.cloudflare.com`. Recreate the existing records in the new
+   zone still pointing at the droplet — nothing changes for users yet. Confirm
+   the API token in `/root/.secrets/cloudflare.ini` covers the new zone.
+2. **Issue the wildcard cert** (DNS-01, so it works while DNS still points at
+   the droplet — no downtime, no reachability requirement):
+   ```bash
+   certbot certonly --dns-cloudflare \
+     --dns-cloudflare-credentials /root/.secrets/cloudflare.ini \
+     -d streambuster.xyz -d '*.streambuster.xyz'
+   ```
+3. **Activate the proxy config:**
+   ```bash
+   mv /root/nginx-staged/tls-wildcard-streambuster-xyz.conf \
+      /etc/nginx/camappengine/
+   nginx -t && systemctl reload nginx
+   ```
+4. **Flip the A records** for `streambuster.xyz` and `api.streambuster.xyz` to
+   `178.128.151.171`. Cert and route are already live, so the cutover is clean.
+
+> ⚠️ **Leave `dev.streambuster.xyz` on the droplet.** The M1 has no route for it,
+> and an unmatched `Host` there falls through to the stock "Welcome to nginx"
+> page rather than 404ing — a silent wrong-content failure. The edge block
+> matches `*.streambuster.xyz`, so only DNS keeps dev away from it.
+
+Verified already, from the edge over the tailnet: `streambuster.xyz` → 200,
+SPA fallback → 200, `api.streambuster.xyz` swagger → 200 and unauthenticated
+→ 401. Only TLS and DNS remain.
 
 ## 2. How CamAppEngine deploys this
 
