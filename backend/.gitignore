@@ -31,8 +31,5 @@ _temp/
 pkg/
 bin/
 
-# Go modules
-go.sum
-
 # Environment files
 .env
