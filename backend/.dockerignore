@@ -1,0 +1,14 @@
+# Secrets never belong in an image layer.
+.env
+.env.*
+
+.git
+.gitignore
+.idea/
+.vscode/
+
+Dockerfile
+.dockerignore
+Makefile
+README.md
+technical_documentation/

@@ -1,0 +1,71 @@
+# StreamBuster — deployed by CamAppEngine.
+#
+# CamAppEngine clones this repo to ~/apps/stream-buster/<app> on the target
+# host, copies that app's secrets file in as `.env`, then runs
+# `docker compose up -d --build` in the clone. Both apps therefore deploy from
+# this one file: the copied-in .env sets COMPOSE_PROFILES to pick which service
+# starts, and COMPOSE_PROJECT_NAME to keep the two stacks separate on the box.
+#
+# Host nginx (port 8080) proxies each public hostname to the published port
+# below, which is why both bind to 127.0.0.1 only — nothing reaches a container
+# without going through nginx first.
+#
+#   api.streambuster.xyz -> 127.0.0.1:8790 -> api:8080
+#   streambuster.xyz     -> 127.0.0.1:8791 -> web:80
+#
+# Run the whole stack locally with:  COMPOSE_PROFILES=all docker compose up --build
+
+services:
+  api:
+    profiles: [api, all]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:${API_HOST_PORT:-8790}:8080"
+    # Supplies DB_CONNECTION_STRING, JWT_SECRET_TOKEN, DOMAIN, the TMDB/CDN
+    # keys and CORS_ALLOWED_ORIGINS. Not in git — CamAppEngine copies it in.
+    env_file:
+      - .env
+    environment:
+      GIN_MODE: ${GIN_MODE:-release}
+    restart: unless-stopped
+    healthcheck:
+      # Swagger's index is the only unauthenticated 200 the API serves.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/api/v1/swagger/index.html"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # AutoMigrate against Neon runs before the listener opens.
+      start_period: 40s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  web:
+    profiles: [web, all]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Baked into the bundle at build time. Defaulted rather than required,
+        # because Compose interpolates every service in the file — including
+        # ones whose profile is inactive — so a `:?` here would break the api
+        # deploy, whose .env has no VITE_API_URL.
+        VITE_API_URL: ${VITE_API_URL:-https://api.streambuster.xyz/api/v1}
+    ports:
+      - "127.0.0.1:${WEB_HOST_PORT:-8791}:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

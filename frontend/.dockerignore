@@ -1,0 +1,17 @@
+node_modules
+dist
+dist-dev
+
+# The image writes its own .env.production from the VITE_API_URL build arg;
+# never let a host env file decide what gets baked into the bundle.
+.env
+.env.*
+
+*.tsbuildinfo
+.DS_Store
+.git
+.gitignore
+Dockerfile
+.dockerignore
+README.md
+vercel.json

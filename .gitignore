@@ -1,0 +1,5 @@
+.DS_Store
+
+# Compose reads this for COMPOSE_PROFILES and the backend's secrets;
+# CamAppEngine copies it in per app at deploy time.
+.env
